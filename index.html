@@ -1766,7 +1766,7 @@ tr:last-child td { border-bottom: 0; }
   const DAY = 86400000;
 
   function defaultSettings() {
-    return { examDate: null, newPerDay: 10, setN: 8, setM: 12, reuse: false, retry: true,
+    return { examDate: null, sessionSize: 20, setN: 8, setM: 12, reuse: false, retry: true,
       timer: false, cats: ALL_CATS.slice(), choices: 5 };
   }
 
@@ -1816,23 +1816,9 @@ tr:last-child td { border-bottom: 0; }
     return { correct };
   }
 
-  function todayQueue(p, items, now) {
-    const today = dayNum(now);
-    const dl = daysLeft(p.settings, now);
-    const eve = dl != null && dl <= 1;
-    const due = [];
-    const fresh = [];
-    for (const it of items) {
-      const r = p.items[it.id];
-      if (r && r.b) {
-        if (r.due <= today || (eve && r.b <= 2)) due.push([it.id, r.b, r.due]);
-      } else fresh.push(it);
-    }
-    due.sort((a, b) => a[1] - b[1] || a[2] - b[2]);
-    const introduced = p.intro && p.intro.day === today ? p.intro.count : 0;
-    const quota = Math.max(0, (p.settings.newPerDay | 0) - introduced);
-    fresh.sort((a, b) => (a.src === 'note' ? 0 : 1) - (b.src === 'note' ? 0 : 1));
-    return due.map(d => d[0]).concat(fresh.slice(0, quota).map(it => it.id));
+  // 완전 랜덤 출제: 켜 둔 문항 전체에서 n개를 고르게 뽑는다 (과거 기록과 무관).
+  function randomSession(items, n, rng = Math.random) {
+    return shuffle(items, rng).slice(0, Math.max(0, n | 0));
   }
 
   function masteryOf(p, fid, items) {
@@ -1900,9 +1886,7 @@ tr:last-child td { border-bottom: 0; }
     for (const it of bank) if (enabledIds.includes(it.f)) (byF[it.f] = byF[it.f] || []).push(it);
     const avail = enabledIds.filter(id => byF[id]);
     n = Math.max(0, Math.min(n, avail.length));
-    const W = { none: 3, low: 3, mid: 2, high: 1 };
-    const wCache = {};
-    const weightOf = id => (wCache[id] = wCache[id] || W[masteryOf(p, id, byF[id] || []).level]);
+    const weightOf = () => 1; // 완전 랜덤: 정답률이나 풀이 기록에 따라 가중치를 두지 않는다
 
     const chosen = [];
     const numClusters = n >= 7 ? 3 : n >= 4 ? 2 : n >= 2 ? 1 : 0;
@@ -1928,13 +1912,10 @@ tr:last-child td { border-bottom: 0; }
       if (dupable.length) chosen[chosen.length - 1] = dupable[Math.floor(rng() * dupable.length)];
     }
 
-    const today = dayNum(new Date());
     const usedItems = new Set();
     const pickItem = fid => {
       const list = byF[fid].filter(it => !usedItems.has(it.id));
-      const fresh = list.filter(it => { const r = p.items[it.id]; return !r || !r.b || r.due <= today; });
-      const tier = fresh.length ? fresh : list;
-      const it = tier[Math.floor(rng() * tier.length)];
+      const it = list[Math.floor(rng() * list.length)];
       usedItems.add(it.id);
       return it.id;
     };
@@ -1992,7 +1973,7 @@ tr:last-child td { border-bottom: 0; }
     return pick ? fillDefaults(pick) : null;
   }
 
-  FT.core = { INTERVALS, ALL_CATS, newProgress, fillDefaults, dayNum, daysLeft, intervalFor, applyAnswer, todayQueue,
+  FT.core = { INTERVALS, ALL_CATS, newProgress, fillDefaults, dayNum, daysLeft, intervalFor, applyAnswer, randomSession,
     masteryOf, shuffle, pairKey, clusterMates, enabledFallacies, pickChoices, buildMatchingSet, explainNot,
     topConfusions, guessStats, mergeProgress };
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -2344,7 +2325,7 @@ tr:last-child td { border-bottom: 0; }
         h('div', { class: 'row' }, h('span', { class: 'score', text: ok + ' / ' + results.length }),
           h('span', { class: 'muted small', text: '확실 ' + by('sure') + ' · 애매 ' + by('unsure') + ' · 찍음 ' + by('guess') })));
       const lucky = results.filter(r => r.correct && r.conf !== 'sure').length;
-      if (lucky) panel.append(h('p', { class: 'banner', text: '맞힌 문제 중 ' + lucky + '개는 애매하거나 찍어서 맞혔어요. 이 문제들은 복습 단계가 올라가지 않으니 곧 다시 나옵니다.' }));
+      if (lucky) panel.append(h('p', { class: 'banner', text: '맞힌 문제 중 ' + lucky + '개는 애매하거나 찍어서 맞혔어요. 실력으로 굳히려면 해당 오류의 단서 카드를 한 번 더 보세요.' }));
       const actions = h('div', { class: 'row' });
       if (opts.again) actions.append(btn('한 번 더', opts.again, 'btn primary'));
       actions.append(link('home', '홈으로'));
@@ -2521,6 +2502,7 @@ tr:last-child td { border-bottom: 0; }
     $bar.save.dataset.mode = m;
     $bar.saveText.textContent = { cloud: '계정에 저장', local: '이 브라우저에 저장', memory: '저장 안 됨' }[m] || '';
   });
+  function lastWrong(i) { const r = P.items[i.id]; return !!(r && r.h && r.h.length && !r.h[r.h.length - 1].c); }
   function shortName(f) { return f.name.replace(/에 호소하는 오류$/, ' 호소').replace(/의 오류$/, '').replace(/ 오류$/, ''); }
   function pairText(a, b) { const k = C.pairKey(a, b); for (const c of FT.clusters) if (c.pairs[k]) return c.pairs[k]; return ''; }
   function levelVar(lv) { return lv === 'low' ? 'var(--bad)' : lv === 'mid' ? 'var(--mid)' : lv === 'high' ? 'var(--ok)' : 'var(--none)'; }
@@ -2529,25 +2511,26 @@ tr:last-child td { border-bottom: 0; }
   function home() {
     setBar('', false);
     const now = new Date();
-    const q = C.todayQueue(P, enabledItems(), now);
-    const dueN = q.filter(id => P.items[id] && P.items[id].b).length;
-    const newN = q.length - dueN;
+    const pool = enabledItems();
+    const n = Math.min(P.settings.sessionSize || 20, pool.length);
     const dl = C.daysLeft(P.settings, now);
     const seen = ITEMS.filter(i => P.items[i.id]).length;
     const noteAll = ITEMS.filter(i => i.src === 'note');
     const noteSeen = noteAll.filter(i => P.items[i.id]).length;
-    const eyebrow = dl == null ? '오늘 할 일' : dl > 0 ? '시험까지 ' + dl + '일 · 오늘 할 일' : dl === 0 ? '오늘이 시험날 · 마지막 점검' : '시험이 끝났어요';
+    const wrongN = ITEMS.filter(lastWrong).length;
+    const eyebrow = dl == null ? '랜덤으로 풀기' : dl > 0 ? '시험까지 ' + dl + '일' : dl === 0 ? '오늘이 시험날 · 마지막 점검' : '시험이 끝났어요';
 
     const today = h('section', { class: 'panel today' },
       h('div', { class: 'stack' },
         h('div', { class: 'eyebrow', text: eyebrow }),
         h('div', { class: 'stats' },
-          h('div', null, h('span', { class: 'big', text: String(dueN) }), h('span', { class: 'small muted', text: '복습할 문항' })),
-          h('div', null, h('span', { class: 'big', text: String(newN) }), h('span', { class: 'small muted', text: '새 문항' })),
-          h('div', null, h('span', { class: 'big', text: seen + '/' + ITEMS.length }), h('span', { class: 'small muted', text: '풀어 본 문항 · 노트 원문 ' + noteSeen + '/' + noteAll.length }))),
-        dl == null ? h('a', { href: '#prefs', class: 'small', text: '시험 날짜를 넣으면 복습 간격을 시험일에 맞춰 드려요 →' }) : null),
+          h('div', null, h('span', { class: 'big', text: seen + '/' + ITEMS.length }), h('span', { class: 'small muted', text: '풀어 본 문항 · 노트 원문 ' + noteSeen + '/' + noteAll.length })),
+          h('div', null, h('span', { class: 'big', text: String(wrongN) }), h('span', { class: 'small muted', text: '마지막에 틀린 문항' }))),
+        h('p', { class: 'small muted', text: '문제는 켜 둔 범주의 ' + pool.length + '문항 전체에서 매번 무작위로 뽑습니다.' }),
+        dl == null ? h('a', { href: '#prefs', class: 'small', text: '시험 날짜를 넣으면 화면 위에 D-day가 표시돼요 →' }) : null),
       h('div', { class: 'stack' },
-        q.length ? link('review', '오늘 공부 시작', 'btn primary') : h('span', { class: 'small muted', text: '오늘 복습은 끝났어요' }),
+        link('review', '랜덤 ' + n + '문제', 'btn primary'),
+        wrongN ? btn('틀린 문제 다시 풀기', () => { NAV.drillWrong = true; go('drill'); }, 'btn') : null,
         link('match', '매칭 세트 풀기')));
 
     const map = h('div', { class: 'map' });
@@ -2567,7 +2550,7 @@ tr:last-child td { border-bottom: 0; }
 
     const groups = [
       ['시험 형식', [['match', '매칭 세트', '논제 ' + P.settings.setN + '개 + 보기 ' + P.settings.setM + '개, 시험지 그대로', true], ['exam', '모의고사', '세트 3개 · 20분 · 끝나고 성적표']]],
-      ['기본 연습', [['review', '오늘 복습', '틀린 것과 새 문항을 간격 반복으로'], ['drill', '한 문제씩', '논제 하나씩 판정하고 바로 해설'], ['cards', '단서 카드', '정의 · 알아보는 신호 · 헷갈리는 상대']]],
+      ['기본 연습', [['review', '랜덤 문제', '전체 문제 은행에서 매번 무작위로 ' + n + '개'], ['drill', '한 문제씩', '논제 하나씩 판정하고 바로 해설'], ['cards', '단서 카드', '정의 · 알아보는 신호 · 헷갈리는 상대']]],
       ['구별 훈련', [['duel', '구별 대결', '헷갈리는 묶음만 집중해서'], ['contrast', '대조 쌍', '같은 소재, 다른 오류 두 개'], ['formal', '형식 오류 훈련', '문장 → 기호 → 타당/부당']]],
       ['정리 · 점검', [['report', '약점 리포트', '정답률과 자주 헷갈린 짝'], ['summary', '시험 직전 요약', '31개를 한 장에'], ['notecheck', '노트 검증', '내 노트 속 실수 찾기'],
         ['speed', '스피드 라운드', '정의 보고 이름 맞히기 60초'], ['basics', '바탕 개념', '기술·설명·논증, 연역·귀납 등']]],
@@ -2648,7 +2631,8 @@ tr:last-child td { border-bottom: 0; }
     const srcSel = h('select', { id: 'drillSrc', 'aria-label': '출처' }, h('option', { value: '', text: '노트 + 변형 + 신규' }), h('option', { value: 'note', text: '노트 원문만' }), h('option', { value: 'gen', text: '변형 · 신규만' }));
     const wrongBox = h('input', { type: 'checkbox', id: 'drillWrong' });
     const countEl = h('span', { class: 'small muted' });
-    const start = btn('20문제 시작', () => begin(), 'btn primary', { id: 'drillStart' });
+    const size = P.settings.sessionSize || 20;
+    const start = btn(size + '문제 시작', () => begin(), 'btn primary', { id: 'drillStart' });
     function fillF() {
       clear(fSel);
       fSel.append(h('option', { value: '', text: '모든 오류' }));
@@ -2661,10 +2645,11 @@ tr:last-child td { border-bottom: 0; }
         && (!srcSel.value || (srcSel.value === 'note' ? i.src === 'note' : i.src !== 'note'))
         && (!wrongBox.checked || (P.items[i.id] && P.items[i.id].h.length && !P.items[i.id].h[P.items[i.id].h.length - 1].c)));
     }
-    function update() { const n = pool().length; countEl.textContent = '조건에 맞는 문항 ' + n + '개'; start.textContent = Math.min(20, n) + '문제 시작'; start.disabled = n === 0; }
+    function update() { const n = pool().length; countEl.textContent = '조건에 맞는 문항 ' + n + '개'; start.textContent = Math.min(size, n) + '문제 시작'; start.disabled = n === 0; }
     if (NAV.drillFallacy) { const f = F[NAV.drillFallacy]; catSel.value = f.cat; }
     fillF();
     if (NAV.drillFallacy) { fSel.value = NAV.drillFallacy; NAV.drillFallacy = null; }
+    if (NAV.drillWrong) { wrongBox.checked = true; NAV.drillWrong = false; }
     catSel.addEventListener('change', () => { fillF(); update(); });
     for (const el of [fSel, srcSel, wrongBox]) el.addEventListener('change', update);
     update();
@@ -2672,24 +2657,18 @@ tr:last-child td { border-bottom: 0; }
       h('p', { class: 'lead', text: '논제 하나를 읽고 오류를 고른 뒤, 확신도를 눌러 제출하세요. 바로 말풍선으로 해설이 열립니다. 숫자 키 1~5로 고르고 Enter로 넘어갈 수 있어요.' }),
       h('section', { class: 'panel stack' }, h('div', { class: 'row' }, catSel, fSel, srcSel), h('label', { class: 'check' }, wrongBox, '마지막에 틀린 문항만'), h('div', { class: 'row' }, countEl, h('span', { class: 'spacer' }), start)));
     function begin() {
-      const q = shuffle(pool()).slice(0, 20);
+      const q = shuffle(pool()).slice(0, size);
       clear($view);
       runQuiz($view, q, { again: () => render() });
     }
   }
 
-  // ───────────────────────── review (spaced repetition)
+  // ───────────────────────── random session
   function review() {
-    setBar('오늘 복습', true);
-    const q = C.todayQueue(P, enabledItems(), new Date()).map(id => itemById[id]);
-    if (!q.length) {
-      $view.append(h('section', { class: 'panel stack' }, h('h1', { class: 'h2', text: '오늘 복습은 끝났어요' }),
-        h('p', { class: 'lead', text: '복습할 때가 된 문항도, 오늘 배정된 새 문항도 없습니다. 매칭 세트로 실전 연습을 하거나, 설정에서 하루 새 문항 수를 늘릴 수 있어요.' }),
-        h('div', { class: 'row' }, link('match', '매칭 세트', 'btn primary'), link('drill', '한 문제씩'), link('prefs', '설정'))));
-      return;
-    }
-    const due = q.filter(i => P.items[i.id] && P.items[i.id].b).length;
-    $view.append(h('p', { class: 'small muted', text: '복습 ' + due + '개 + 새 문항 ' + (q.length - due) + '개. 틀리거나 찍어서 맞힌 문제는 곧 다시 나옵니다.' }));
+    setBar('랜덤 문제', true);
+    const pool = enabledItems();
+    const q = C.randomSession(pool, P.settings.sessionSize || 20, rng);
+    $view.append(h('p', { class: 'small muted', text: '켜 둔 범주의 ' + pool.length + '문항 중에서 무작위로 ' + q.length + '개를 뽑았어요. 다시 풀면 새로 뽑습니다.' }));
     runQuiz($view, q, { again: () => render() });
   }
 
@@ -3097,8 +3076,8 @@ tr:last-child td { border-bottom: 0; }
       return h('label', { class: 'check' }, cb, c.name);
     });
 
-    const perDay = h('input', { type: 'number', id: 'newPerDay', min: '0', max: '60', value: String(s.newPerDay) });
-    perDay.addEventListener('change', change(() => { s.newPerDay = Math.max(0, Math.min(60, parseInt(perDay.value, 10) || 0)); perDay.value = String(s.newPerDay); }));
+    const perDay = h('input', { type: 'number', id: 'sessionSize', min: '5', max: '50', value: String(s.sessionSize || 20) });
+    perDay.addEventListener('change', change(() => { s.sessionSize = Math.max(5, Math.min(50, parseInt(perDay.value, 10) || 20)); perDay.value = String(s.sessionSize); }));
 
     const choiceSeg = h('div', { class: 'seg', role: 'group', 'aria-label': '한 문제씩 보기 수' });
     for (const [v, t] of [[5, '5개'], ['all', '31개 전부']]) {
@@ -3153,11 +3132,11 @@ tr:last-child td { border-bottom: 0; }
 
     $view.append(h('h1', { class: 'h2', text: '설정 · 백업' }),
       h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '시험 날짜' }),
-        h('p', { class: 'small muted', text: '넣어 두면 D-day가 표시되고, 복습 간격이 남은 날짜의 절반을 넘지 않게 줄어듭니다. 시험 전날에는 아직 불안한 문항이 모두 다시 나와요.' }),
+        h('p', { class: 'small muted', text: '넣어 두면 화면 위에 D-day가 표시됩니다.' }),
         h('div', { class: 'row' }, date, btn('지우기', () => { date.value = ''; s.examDate = null; touch(); updateBar(); }, 'btn ghost'))),
       h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '공부 범위' }), h('p', { class: 'small muted', text: '시험 범위에 없는 범주는 꺼 두세요. 출제와 보기에서 빠집니다.' }), h('div', { class: 'row' }, catBoxes), catMsg),
       h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '문제 수' }),
-        h('div', { class: 'row' }, h('label', { for: 'newPerDay', text: '하루 새 문항' }), perDay),
+        h('div', { class: 'row' }, h('label', { for: 'sessionSize', text: '한 번에 풀 문제 수 (랜덤 문제 · 한 문제씩)' }), perDay),
         h('div', { class: 'row' }, h('span', { text: '한 문제씩 보기 수' }), choiceSeg)),
       h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '매칭 세트' }),
         h('div', { class: 'row' }, h('label', { for: 'setN', text: '논제' }), nSel, h('label', { for: 'setM', text: '보기' }), mSel),
