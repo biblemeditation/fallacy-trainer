@@ -1,0 +1,3190 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="논리학 오류 31개를 시험 형식(논제와 보기 매칭)으로 연습하는 학습 앱. 말풍선 해설, 간격 반복 복습, 약점 리포트.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171c26" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232a47c4'/%3E%3Cpath d='M9 10h14M9 16h9M9 22h12' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>논리 오류 매칭</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column (max 760px) like an exam sheet; passages set in serif like a printed test,
+   UI in a plain sans, numbers/labels in mono. Ink-blue accent, highlighter yellow for cues. */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --surface-2: #f7f8fb;
+  --ink: #1a2232;
+  --muted: #5a6476;
+  --line: #dde2ea;
+  --line-strong: #c3cad6;
+  --accent: #2a47c4;
+  --accent-ink: #ffffff;
+  --accent-soft: #e7ecfb;
+  --mark: #ffe24f;
+  --mark-ink: #1a2232;
+  --ok: #1d7f55;
+  --ok-soft: #e2f3ea;
+  --bad: #c2372d;
+  --bad-soft: #fbe6e3;
+  --mid: #b07a06;
+  --mid-soft: #fbf0d6;
+  --none: #d4d9e2;
+  --shadow: 0 1px 2px rgba(20, 30, 60, .06), 0 6px 20px rgba(20, 30, 60, .06);
+  --f-ui: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --f-text: "Noto Serif KR", "AppleMyungjo", "Batang", serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 10px;
+  --step--1: .8125rem;
+  --step-0: .9375rem;
+  --step-1: 1.0625rem;
+  --step-2: 1.3rem;
+  --step-3: 1.7rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131b; --surface: #171c26; --surface-2: #1c2230; --ink: #e6e9ef; --muted: #9aa3b3;
+    --line: #2a3141; --line-strong: #3a4357; --accent: #8199ff; --accent-ink: #0f131b; --accent-soft: #1e2748;
+    --mark: rgba(255, 214, 0, .32); --mark-ink: #fff6c8; --ok: #4cc38a; --ok-soft: #12291f; --bad: #ff7b6f; --bad-soft: #321716;
+    --mid: #e6b443; --mid-soft: #2e2510; --none: #343c4d; --shadow: 0 1px 2px rgba(0, 0, 0, .3); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131b; --surface: #171c26; --surface-2: #1c2230; --ink: #e6e9ef; --muted: #9aa3b3;
+  --line: #2a3141; --line-strong: #3a4357; --accent: #8199ff; --accent-ink: #0f131b; --accent-soft: #1e2748;
+  --mark: rgba(255, 214, 0, .32); --mark-ink: #fff6c8; --ok: #4cc38a; --ok-soft: #12291f; --bad: #ff7b6f; --bad-soft: #321716;
+  --mid: #e6b443; --mid-soft: #2e2510; --none: #343c4d; --shadow: 0 1px 2px rgba(0, 0, 0, .3); color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: var(--step-0); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+button, select, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+a { color: var(--accent); }
+h1, h2, h3 { text-wrap: balance; line-height: 1.3; margin: 0; }
+p { margin: 0; }
+.num, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+/* ── top bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+.bar-in { max-width: 760px; margin: 0 auto; display: flex; align-items: center; gap: 10px; min-height: 52px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.bar-back { border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; width: 34px; height: 34px; font-size: 18px; line-height: 1; }
+.brand { font-weight: 600; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand b { color: var(--accent); font-weight: 700; }
+.bar-title { color: var(--muted); font-size: var(--step--1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.bar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.dday { font-family: var(--f-mono); font-weight: 600; font-size: var(--step--1); color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; }
+.save { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.save i { width: 7px; height: 7px; border-radius: 50%; background: var(--none); display: inline-block; }
+.save[data-mode="cloud"] i { background: var(--ok); }
+.save[data-mode="local"] i { background: var(--mid); }
+.save[data-mode="memory"] i { background: var(--bad); }
+
+/* ── page column */
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 20px 120px; display: flex; flex-direction: column; gap: 18px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.loading { color: var(--muted); }
+.eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: .01em; color: var(--muted); }
+.h1 { font-size: var(--step-3); font-weight: 700; }
+.h2 { font-size: var(--step-2); font-weight: 700; }
+.h3 { font-size: var(--step-1); font-weight: 600; }
+.lead { color: var(--muted); }
+.muted { color: var(--muted); }
+.small { font-size: var(--step--1); }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.spacer { flex: 1; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; min-width: 0; }
+.panel.tight { padding: 14px; }
+
+/* ── buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line-strong); background: var(--surface);
+  border-radius: 8px; padding: 9px 14px; font-weight: 500; min-height: 40px; text-decoration: none; color: var(--ink); }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn.ghost { border-color: transparent; background: transparent; color: var(--accent); }
+.btn.danger { border-color: var(--bad); color: var(--bad); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.block { width: 100%; }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 7px 12px; min-height: 36px; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+select, input[type="date"], input[type="number"], textarea { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 7px 10px; min-height: 38px; max-width: 100%; }
+textarea { width: 100%; min-height: 110px; font-family: var(--f-mono); font-size: 12px; }
+label.check { display: inline-flex; gap: 8px; align-items: center; }
+.badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--muted); white-space: nowrap; }
+.badge.note { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.badge.ok { border-color: var(--ok); color: var(--ok); background: var(--ok-soft); }
+.badge.bad { border-color: var(--bad); color: var(--bad); background: var(--bad-soft); }
+
+/* ── home */
+.today { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; }
+.today .big { font-family: var(--f-mono); font-size: var(--step-3); font-weight: 600; line-height: 1; }
+.today .stats { display: flex; gap: 22px; flex-wrap: wrap; }
+.today .stats div { display: flex; flex-direction: column; gap: 4px; }
+.map { display: grid; gap: 10px; }
+.map-row { display: grid; grid-template-columns: 66px 1fr; gap: 10px; align-items: start; }
+.map-cat { font-size: var(--step--1); font-weight: 600; color: var(--muted); padding-top: 5px; }
+.map-cells { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.cell { border: 1px solid var(--line); background: var(--surface-2); border-radius: 6px; padding: 3px 8px 3px 6px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; }
+.cell::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: var(--none); flex-shrink: 0; }
+.cell[data-level="low"]::before { background: var(--bad); }
+.cell[data-level="mid"]::before { background: var(--mid); }
+.cell[data-level="high"]::before { background: var(--ok); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; gap: 5px; align-items: center; }
+.legend i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; background: var(--none); }
+.modes { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.mode { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: var(--ink); min-width: 0; }
+.mode:hover { border-color: var(--accent); }
+.mode b { font-size: var(--step-1); }
+.mode span { font-size: var(--step--1); color: var(--muted); }
+.mode.key { border-color: var(--accent); background: var(--accent-soft); }
+.group-title { font-size: var(--step--1); font-weight: 600; color: var(--muted); margin-top: 6px; }
+
+/* ── passage (exam text) */
+.passage { font-family: var(--f-text); font-size: 1.02rem; line-height: 1.85; letter-spacing: -.005em; word-break: keep-all; overflow-wrap: anywhere; }
+.passage mark { background: var(--mark); color: var(--mark-ink); padding: 0 2px; border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.qmeta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: var(--step--1); color: var(--muted); }
+
+/* ── choices (single question) */
+.choices { display: grid; gap: 8px; }
+.choice { text-align: left; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; min-height: 44px; }
+.choice .k { font-family: var(--f-mono); font-weight: 600; color: var(--muted); width: 1.3em; flex-shrink: 0; }
+.choice[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.choice.is-ok { border-color: var(--ok); background: var(--ok-soft); }
+.choice.is-bad { border-color: var(--bad); background: var(--bad-soft); }
+.choice:disabled { cursor: default; color: var(--ink); }
+
+/* ── speech bubble */
+.bubble { position: relative; margin-top: 12px; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow); animation: pop .16s ease-out; }
+.bubble::before { content: ""; position: absolute; top: -8px; left: 28px; width: 14px; height: 14px; background: var(--surface-2); border-left: 1px solid var(--line-strong); border-top: 1px solid var(--line-strong); transform: rotate(45deg); }
+.bubble .ans { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: baseline; }
+.bubble .ans dt { font-size: 12px; color: var(--muted); font-weight: 600; }
+.bubble .ans dd { margin: 0; font-weight: 600; }
+.bubble .ans dd.ok { color: var(--ok); }
+.bubble .ans dd.bad { color: var(--bad); text-decoration: line-through; text-decoration-thickness: 1px; }
+.bubble h4 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+.bubble p { line-height: 1.65; }
+.bubble .foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+@keyframes pop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .bubble { animation: none; } }
+
+/* ── matching sheet */
+.bogi { border: 1.5px solid var(--ink); border-radius: 4px; padding: 12px 14px 12px; position: relative; background: var(--surface); }
+.bogi-title { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--surface); padding: 0 8px; font-weight: 600; font-size: var(--step--1); }
+.bogi-list { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.bogi-list span { white-space: nowrap; font-size: var(--step--1); }
+.bogi-list span.used { color: var(--muted); text-decoration: line-through; }
+.bogi-list b { font-family: var(--f-mono); margin-right: 3px; }
+.qrow { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 14px; display: grid; grid-template-columns: auto 1fr auto; gap: 10px 12px; align-items: start; cursor: pointer; }
+.qrow .qn { font-family: var(--f-mono); font-weight: 600; padding-top: 3px; }
+.qrow .slot { min-width: 54px; min-height: 36px; border: 1.5px dashed var(--line-strong); border-radius: 8px; display: grid; place-items: center; font-family: var(--f-mono); font-weight: 600; background: var(--surface-2); }
+.qrow.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.qrow.active .slot { border-color: var(--accent); border-style: solid; }
+.qrow .slot.filled { border-style: solid; border-color: var(--ink); }
+.qrow.is-ok .slot { border-color: var(--ok); color: var(--ok); background: var(--ok-soft); }
+.qrow.is-bad .slot { border-color: var(--bad); color: var(--bad); background: var(--bad-soft); }
+.qrow .bubble { grid-column: 1 / -1; cursor: auto; }
+.qrow .hint { grid-column: 2 / -1; font-size: 12px; color: var(--muted); }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 1px solid var(--line-strong); box-shadow: 0 -8px 24px rgba(10, 20, 40, .12);
+  padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.sheet-in { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+.sheet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.sheet-grid button { text-align: left; border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 8px 10px; font-size: var(--step--1); display: flex; gap: 6px; align-items: center; min-height: 40px; }
+.sheet-grid button b { font-family: var(--f-mono); }
+.sheet-grid button:disabled { opacity: .4; text-decoration: line-through; }
+.banner { border-radius: 8px; padding: 10px 12px; background: var(--accent-soft); border: 1px solid var(--accent); font-size: var(--step--1); }
+.banner.ok { background: var(--ok-soft); border-color: var(--ok); }
+.banner.bad { background: var(--bad-soft); border-color: var(--bad); }
+.score { font-family: var(--f-mono); font-size: var(--step-3); font-weight: 600; }
+
+/* ── cards */
+.card-def { font-size: var(--step-1); line-height: 1.7; }
+.signals { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
+.vs { display: grid; gap: 8px; }
+.vs div { border-left: 3px solid var(--line-strong); padding-left: 10px; }
+.vs b { display: block; font-size: var(--step--1); }
+
+/* ── tables */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: var(--step--1); }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--surface-2); font-weight: 600; white-space: nowrap; }
+td.name { font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+
+/* ── report bars */
+.bars { display: grid; gap: 6px; }
+.barrow { display: grid; grid-template-columns: minmax(96px, 150px) 1fr 64px; gap: 8px; align-items: center; font-size: var(--step--1); }
+.barrow .track { height: 10px; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.barrow .fill { height: 100%; background: var(--none); }
+.barrow .fill[data-level="low"] { background: var(--bad); }
+.barrow .fill[data-level="mid"] { background: var(--mid); }
+.barrow .fill[data-level="high"] { background: var(--ok); }
+.barrow .v { text-align: right; font-family: var(--f-mono); color: var(--muted); }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.symbol { font-family: var(--f-mono); background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; display: inline-block; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: var(--step--1); }
+.kv dt { color: var(--muted); font-weight: 600; }
+.kv dd { margin: 0; }
+.progressline { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.progressline i { display: block; height: 100%; background: var(--accent); }
+
+@media (max-width: 560px) {
+  .today { grid-template-columns: 1fr; }
+  .two { grid-template-columns: 1fr; }
+  .map-row { grid-template-columns: 1fr; gap: 4px; }
+  .map-cat { padding-top: 0; }
+  .qrow { grid-template-columns: auto 1fr; }
+  .qrow .slot { grid-column: 2; justify-self: start; }
+  .barrow { grid-template-columns: 96px 1fr 52px; }
+}
+
+</style>
+</head>
+<body>
+<header class="bar" id="bar">
+  <div class="bar-in">
+    <button class="bar-back" id="back" type="button" aria-label="홈으로" hidden>←</button>
+    <a class="brand" href="#home">논리 오류 <b>매칭</b></a>
+    <span class="bar-title" id="barTitle"></span>
+    <span class="bar-right">
+      <span class="dday" id="dday" hidden></span>
+      <span class="save" id="save" title="저장 상태"><i></i><span id="saveText">저장</span></span>
+    </span>
+  </div>
+</header>
+
+<main class="wrap" id="view" aria-live="polite">
+  <p class="loading">문제 은행을 불러오는 중…</p>
+</main>
+
+<div class="sheet" id="sheet" hidden></div>
+
+<script>
+/* 오류 분류 데이터: 범주 6, 오류 31, 헷갈림 묶음 10.
+   정의는 노트의 "(교제)" 문구를 우선 사용하고(defNote:true), 노트에 정의가 없으면 보충(defNote:false). */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+
+  FT.categories = [
+    { id: 'language', name: '언어적 오류', short: '언어', note: '언어의 명료성 평가' },
+    { id: 'premise', name: '전제 관련 오류', short: '전제', note: '전제의 수용가능성 평가' },
+    { id: 'formal', name: '형식적 오류', short: '형식', note: '노트에서는 무관성의 오류 범주에서 함께 다룸' },
+    { id: 'relevance', name: '무관성의 오류', short: '무관성', note: '전제와 결론의 연관성 평가 (= 심리적 오류)' },
+    { id: 'inductive', name: '귀납 관련 오류', short: '귀납', note: '전제가 결론을 충분히 뒷받침하는가' },
+    { id: 'etc', name: '기타 오류', short: '기타', note: '노트 부록의 기타 오류 목록' },
+  ];
+
+  FT.fallacies = [
+    // ── 언어적 오류
+    { id: 'equivocation', name: '애매어의 오류', aka: [], cat: 'language', defNote: true,
+      def: '논증에 사용된 단어나 구절의 의미가 이중적인데, 그것을 무시하고 추론함으로써 발생하는 오류.',
+      signal: ['같은 단어가 전제와 결론에서 서로 다른 뜻으로 쓰인다.', '"작은 코끼리 → 작은 동물"처럼 기준에 따라 뜻이 달라지는 단어도 포함.'],
+      example: '모든 사람은 죄인이다. 그런데 죄인은 감옥에 가거나 벌금을 내야 한다. 그러므로 모든 사람은 감옥에 가거나 벌금을 내야 한다.' },
+    { id: 'amphiboly', name: '애매문의 오류', aka: [], cat: 'language', defNote: true,
+      def: '문장의 구조상 문장이 이중적인 의미로 해석될 수 있는데, 그것을 무시하고 추론함으로써 발생하는 오류.',
+      signal: ['단어 뜻은 분명한데 문장 구조(수식 범위, 조사 "의", 대명사 "그")가 두 가지로 읽힌다.'],
+      example: '철이는 자신이 서태지의 숭배자라고 말했다. 그러나 그 말은 사실이 아닐 것이다. 서태지가 철이를 숭배할 리가 없기 때문이다.' },
+    { id: 'accent', name: '강조의 오류', aka: [], cat: 'language', defNote: true,
+      def: '문장의 특정한 부분을 강조함으로써 달리 해석될 수 있는데, 이를 토대로 자의적으로 추론함으로써 발생하는 오류.',
+      signal: ['"오늘은 ~하지 않았다"처럼 특정 부분이 강조되어, 원래 없던 함축(평소에는 그랬다)을 끌어낸다.'],
+      example: '선원이 항해일지에 "오늘 선장은 술에 취하지 않았음"이라고 썼다. 이를 읽은 선주는 선장이 항해 중 자주 술에 취해 있었다고 추론했다.' },
+    { id: 'composition', name: '합성의 오류', aka: [], cat: 'language', defNote: true,
+      def: '전체를 구성하고 있는 부분이 어떤 성질을 가지고 있기 때문에 전체도 그러한 성질을 갖는다고 추론함으로써 발생하는 오류.',
+      signal: ['부분(원소)의 성질 → 전체(집단)의 성질.'],
+      example: '손흥민은 축구를 잘한다. 그러므로 한국은 축구를 잘한다.' },
+    { id: 'division', name: '분할의 오류', aka: [], cat: 'language', defNote: true,
+      def: '전체가 어떤 성질을 가지고 있기 때문에 전체를 구성하고 있는 부분도 그러한 성질을 갖는다고 추론함으로써 발생하는 오류.',
+      signal: ['전체(집단)의 성질 → 부분(원소)의 성질.'],
+      example: '우리나라의 지난해 수출량은 크게 증가했다. 신발도 수출품 중 하나이다. 그러므로 지난해 신발의 수출량도 크게 증가했을 것이다.' },
+
+    // ── 전제 관련 오류
+    { id: 'begging', name: '선결문제 요구의 오류', aka: ['순환논증의 오류', '논점 선취의 오류'], cat: 'premise', defNote: true,
+      def: '근거가 제시되어야 할 주장을 근거로 삼는 오류. 증명해야 할 결론이 이미 전제 속에 들어가 있다.',
+      signal: ['결론을 말만 바꿔 근거로 다시 쓴다.', '근거를 따라가 보면 결론으로 되돌아온다.'],
+      example: '철구는 나를 좋아해. 철구가 그렇게 말했거든. 그리고 사람은 자기가 좋아하는 사람에게는 거짓말을 하지 않잖아.' },
+    { id: 'false-dilemma', name: '흑백사고의 오류', aka: [], cat: 'premise', defNote: true,
+      def: '반대 개념을 모순 개념으로 혼동하는 오류. 제3의 선택지(중립)가 있는데도 둘 중 하나뿐인 것처럼 다룬다.',
+      signal: ['"~가 아니면 ~다"로 중간을 지운다.', '"지지하지 않으면 반대자(혐오주의자)"'],
+      example: '너는 대기업 여성 채용 특별 우대 정책을 지지하지 않는다고? 그렇다면 너는 여성 혐오주의자구나.' },
+
+    // ── 형식적 오류
+    { id: 'deny-antecedent', name: '전건부정의 오류', aka: [], cat: 'formal', defNote: false,
+      def: '"P이면 Q이다"와 "P가 아니다"로부터 "Q가 아니다"를 이끌어 내는 부당한 추론.',
+      signal: ['P→Q, ~P ∴ ~Q', '조건문의 앞부분(전건)을 부정한다.'],
+      example: '만일 그가 로또에 당첨된다면 그는 큰 파티를 열 것이다. 그는 로또에 당첨되지 않았다. 따라서 그는 큰 파티를 열지 않을 것이다.' },
+    { id: 'affirm-consequent', name: '후건긍정의 오류', aka: [], cat: 'formal', defNote: false,
+      def: '"P이면 Q이다"와 "Q이다"로부터 "P이다"를 이끌어 내는 부당한 추론.',
+      signal: ['P→Q, Q ∴ P', '"~인 경우에만"이 나오면 화살표 방향을 먼저 바로잡는다 (P인 경우에만 Q = Q→P).'],
+      example: '식도락가라면 모두 그 음식점을 좋아한다. 그런데 돌이는 그 음식점을 좋아한다. 그러니까 돌이는 식도락가임에 분명하다.' },
+    { id: 'affirm-disjunct', name: '선언지 긍정의 오류', aka: [], cat: 'formal', defNote: false,
+      def: '"P 또는 Q"와 "P이다"로부터 "Q가 아니다"를 이끌어 내는 부당한 추론. 선언지는 둘 다 참일 수 있다.',
+      signal: ['P∨Q, P ∴ ~Q', '"또는" 문장에서 하나를 긍정해 다른 하나를 부정한다.'],
+      example: '수사학은 설득술을 가르치거나 사기술을 가르친다. 수사학은 사기술을 가르친다. 그러므로 수사학은 설득술을 가르치지 않는다.' },
+    { id: 'forgotten-assumption', name: '가정 망각의 오류', aka: [], cat: 'formal', defNote: true,
+      def: '"A라면 B이다. 그러므로 B이다."라고 추론하는 오류. 가정(A)이 성립하는지 확인하지 않고 결론을 내린다.',
+      signal: ['"만약 ~라면"이라는 가정만 있고, 그 가정이 참이라는 근거 없이 결론을 확정한다.'],
+      example: '만일 모든 존재하는 것이 유기적 관계를 갖는다면 별자리의 이동은 우리의 운명과 관계가 있을 것이다. 그러므로 점성술을 미신으로 여기는 것은 잘못이다.' },
+
+    // ── 무관성의 오류
+    { id: 'pity', name: '연민에 호소하는 오류', aka: ['동정에 호소하는 오류'], cat: 'relevance', defNote: false,
+      def: '주장의 근거를 제시하는 대신 상대방의 연민(동정심)을 불러일으켜 결론을 받아들이게 하는 오류.',
+      signal: ['불쌍한 사정을 늘어놓고 "그러니 ~해 달라".'],
+      example: '저는 지난 선거에서 낙선해 전 재산을 날렸고, 어머니는 쓰러져 병원 신세를 지고 계십니다. 저를 불쌍히 여기셔서 이번에는 꼭 밀어주십시오.' },
+    { id: 'force', name: '힘에 호소하는 오류', aka: [], cat: 'relevance', defNote: false,
+      def: '근거 대신 위협이나 힘(불이익)을 내세워 결론을 받아들이게 하는 오류.',
+      signal: ['"그렇지 않으면 ~하게 될 것이다"라는 협박·불이익 암시.'],
+      example: '이번에는 우리 회사와 거래하는 것이 좋을 것이다. 그렇지 않으면 당신 회사 제품에 대한 악소문이 돌게 할 것이다.' },
+    { id: 'crowd', name: '군중에 호소하는 오류', aka: ['대중에 호소하는 오류'], cat: 'relevance', defNote: false,
+      def: '많은 사람이 그렇게 믿거나 행동한다는 것을 근거로 결론을 받아들이게 하는 오류.',
+      signal: ['"누구나 다 그렇게 생각한다", "다들 ~한다".'],
+      example: '그 사람이 파렴치한 범죄자가 아니라고? 누구나 다 그렇게 생각하는데?' },
+    { id: 'authority', name: '권위에 호소하는 오류', aka: [], cat: 'relevance', defNote: false,
+      def: '해당 문제와 관련 없는(또는 부적절한) 권위를 근거로 주장을 받아들이게 하는 오류.',
+      signal: ['"~선생님(유명인)이 그렇게 말했다"가 유일한 근거이고, 그 사람이 그 분야의 적절한 권위가 아니다.'],
+      example: '파이가 유리수로 간주될 날이 올 것이다. 우리 수학 선생님께서 그렇게 말씀하셨다.' },
+    { id: 'ad-hominem', name: '인신공격의 오류', aka: [], cat: 'relevance', defNote: true,
+      def: '어떤 주장을 비판하기 위해서 그 주장을 한 사람의 행적이나 직업, 그리고 인종적 배경이나 학력 등을 근거로 제시하는 오류.',
+      signal: ['주장 내용 대신 말한 사람의 됨됨이·과거 행적·학력·직업을 깎아내린다.'],
+      example: '금광석 의원이 제출한 법안은 거부되어야 한다. 그는 몇 년 전 뇌물 수수로 유죄 판결을 받은 부패한 정치인이기 때문이다.' },
+    { id: 'circumstantial', name: '정황적 오류', aka: [], cat: 'relevance', defNote: true,
+      def: '어떤 사람의 주장을 그 내용과 관련된 근거를 제시하는 대신 그 사람이 처해 있는 상황이나 주변 정황을 근거로 제시할 때 발생하는 오류.',
+      signal: ['"그 사람은 그 처지(이해관계)에서 그렇게 말할 수밖에 없다."'],
+      example: '이공계 우대정책이 필수적이라는 고정민 교수의 주장은 논의할 필요도 없다. 그녀는 이 정책으로 혜택을 입게 될 공대 교수가 아니던가?' },
+    { id: 'tu-quoque', name: '피장파장의 오류', aka: [], cat: 'relevance', defNote: true,
+      def: '어떤 주장을 하는 사람도 그 주장과 비슷한 잘못을 과거에 한 적이 있다는 근거를 들어 그 주장을 비판하는 오류.',
+      signal: ['"너도 그랬잖아", "당신도 마찬가지 아니냐".'],
+      example: '네가 나를 정직하지 않다고 비난하는 것은 잘못이야. 나도 세금 신고를 허위로 했지만, 너도 지금까지 장부를 허위로 기재했잖아?' },
+    { id: 'ignorance', name: '무지에 호소하는 오류', aka: [], cat: 'relevance', defNote: true,
+      def: '어떤 주장이 참이라는 것이 증명되지 않았기 때문에 그 주장이 거짓이라고 주장하거나, 거짓이라는 것이 증명되지 않았기 때문에 참이라고 주장하는 오류.',
+      signal: ['"~라는 증거가 없다. 그러므로 ~가 아니다(맞다)."'],
+      example: '유전자 조작 기술이 위험하다고 우려하는 것은 잘못이다. 지금까지 그것이 위험하다는 것을 보여 준 어떤 증거도 없기 때문이다.' },
+    { id: 'straw-man', name: '허수아비 논증의 오류', aka: ['허수아비 공격의 오류'], cat: 'relevance', defNote: true,
+      def: '상대의 주장을 과대해석(왜곡)한 뒤 그 해석을 비판하는 오류.',
+      signal: ['상대가 하지 않은 극단적인 주장으로 바꿔 놓고 공격한다.'],
+      example: '황자연 칼럼니스트는 경제 발전이 가장 중요한 것은 아니라고 주장한다. 배울 만큼 배운 사람이 원시로 돌아가자는 무식한 주장을 하다니 개탄스럽다.' },
+    { id: 'red-herring', name: '논점 일탈의 오류', aka: [], cat: 'relevance', defNote: true,
+      def: '어떤 주장을 하기 위해서 그 주장의 근거를 직접 제시하지 않고 다른 결론을 세워 그 결론을 주장하는 오류.',
+      signal: ['원래 결론("바람직하다")과 다른 결론("필연적이다", "이미 진행 중이다")을 근거처럼 늘어놓는다.'],
+      example: '물론 사회주의가 바람직하다. 효용이 점점 정부 소유로 바뀌고 있고, 우리는 사회주의로 향하는 도상에 있으며, 사회주의의 승리는 필연적이다.' },
+    { id: 'genetic', name: '발생적 오류', aka: [], cat: 'relevance', defNote: true,
+      def: '주장의 기원(출처·발생 과정)을 문제 삼아 주장을 무시하거나 받아들이는 오류.',
+      signal: ['"그 생각은 ~에서 나온 것이니 틀렸다(옳다)" — 내용이 아니라 출신·유래를 근거로 삼는다.'],
+      example: '그 다이어트 이론은 원래 한 식품 회사의 광고 문구에서 시작되었다. 그러니 그 이론은 틀린 것이 분명하다.' },
+
+    // ── 귀납 관련 오류
+    { id: 'hasty', name: '성급한 일반화의 오류', aka: [], cat: 'inductive', defNote: false,
+      def: '충분하지 않은(너무 적은) 사례를 근거로 전체에 대한 일반적인 결론을 내리는 오류.',
+      signal: ['"내가 만나 본 몇 사람이 모두 그랬다 → 그 집단 전체가 그렇다".'],
+      example: '충청도 사람은 동작이 굼뜨다. 내가 만나 본 다섯 사람 모두 그랬다.' },
+    { id: 'biased-sample', name: '편향된 표본의 오류', aka: ['편향된 자료의 오류'], cat: 'inductive', defNote: false,
+      def: '전체를 대표하지 못하는, 한쪽으로 치우친 표본(자료)을 근거로 일반화하는 오류.',
+      signal: ['표본 수는 많아도 특정 집단에 쏠려 있다 (예: 아파트 소유자만 조사해 국민 전체를 판단).'],
+      example: '무작위로 선택된 아파트 소유자 수천 명 중 80%가 보유세 인상에 반대했다. 그러므로 보유세 인상은 대대적인 국민적 저항에 부딪힐 것이다.' },
+    { id: 'vivid', name: '오도된 생생함의 오류', aka: [], cat: 'inductive', defNote: false,
+      def: '충분한 자료(통계)가 있는데도 생생하고 인상적인 소수의 사례에 이끌려 결론을 내리는 오류.',
+      signal: ['조사한 자료와 반대로, 강렬한 뉴스·목격담 하나 때문에 판단을 바꾼다.'],
+      example: '여러 자료를 찾아보고 안전한 GM사 자동차를 사려던 차에, TV에서 GM 자동차의 안전성을 비판하는 뉴스를 보고 마음을 바꾸었다.' },
+    { id: 'false-analogy', name: '잘못된 유비의 오류', aka: ['유비의 오류'], cat: 'inductive', defNote: false,
+      def: '비교 대상들 사이의 유사성이 결론과 관련이 없거나 불충분한데도, 한쪽이 가진 성질을 다른 쪽도 가질 것이라고 추론하는 오류.',
+      signal: ['"A는 B와 같다(닮았다). A가 ~하니 B도 ~할 것이다" — 닮은 점이 결론과 무관하다.'],
+      example: '어린이를 기르는 일은 나무를 기르는 일과 같다. 가지를 쳐 주어야 나무가 곧게 자라듯, 어린이도 강한 체벌로 다스려야 한다.' },
+    { id: 'false-cause', name: '거짓 원인의 오류', aka: ['잘못된 인과의 오류'], cat: 'inductive', defNote: true,
+      def: '원인이 아닌데 원인이라 착각하는 오류. 단지 앞서 일어났거나 함께 일어났다는 이유로 인과 관계가 있다고 본다. (노트에는 "우연적 오류"라고도 적혀 있으나, 기타 오류의 "우연의 오류"와는 다른 오류다.)',
+      signal: ['"~할 때마다 ~했다 → 그것이 원인이다" (징크스, 미신).'],
+      example: '우리 축구팀이 붉은색 유니폼을 입지 않고 출전하면 꼭 지더라. 그러니까 승리하려면 붉은색 유니폼을 입고 출전해야 해.' },
+    { id: 'reversed-cause', name: '본말전도의 오류', aka: ['원인과 결과를 혼동하는 오류'], cat: 'inductive', defNote: true,
+      def: '인과성은 있지만 무엇이 원인이고 무엇이 결과인지 뒤바뀐 오류.',
+      signal: ['결과를 원인으로 착각한다 (뚱뚱해서 헬스클럽에 가는 것인데, 헬스클럽 때문에 뚱뚱해진다고 봄).'],
+      example: '우리 동네 헬스클럽에 갔더니 뚱뚱한 사람만 있었다. 따라서 헬스클럽에 다니면 나도 뚱뚱해질 것이다.' },
+    { id: 'common-cause', name: '공통 원인 무시의 오류', aka: [], cat: 'inductive', defNote: true,
+      def: '하나의 원인이 두 가지 결과를 낳을 수 있음을 무시하고, 한 결과를 다른 결과의 원인으로 보는 오류.',
+      signal: ['함께 나타나는 두 현상이 사실은 제3의 원인에서 나온 결과다 (번개와 천둥 ← 방전).'],
+      example: '언제나 번개가 번쩍하고 나면 천둥소리가 들린다. 그러므로 번개가 천둥소리의 원인이다.' },
+
+    // ── 기타
+    { id: 'accident', name: '우연의 오류', aka: ['우연 무시의 오류', '원칙 혼동의 오류'], cat: 'etc', defNote: false,
+      def: '일반적으로 옳은 원칙을, 그 원칙이 적용되지 않는 특수한(예외적) 상황에까지 그대로 적용하는 오류.',
+      signal: ['"약속은 지켜야 한다"처럼 옳은 원칙을, 예외로 봐야 할 사정(입원, 응급 상황)에도 기계적으로 적용한다.'],
+      example: '비록 아빠가 몸이 편찮으셔서 입원하셨지만, 우리와 놀이동산에 가기로 한 약속은 지켜야 합니다. 어른이 아이들과의 약속을 어기는 것은 옳지 않아요.' },
+    { id: 'intent-extension', name: '의도 확대의 오류', aka: [], cat: 'etc', defNote: true,
+      def: '행위의 부수적인 결과를 그 행위의 궁극적인 의도로 생각하여 추론하는 오류.',
+      signal: ['"~하면 결과적으로 ~가 된다 → 그러니 ~하려는 의도다".'],
+      example: '적이 식량난에 허덕이는데 군량미를 지원하라는 것은, 보다 활기차게 전쟁을 하라는 말과 같다.' },
+  ];
+
+  FT.fallacyById = {};
+  for (const f of FT.fallacies) FT.fallacyById[f.id] = f;
+
+  FT.clusters = [
+    { id: 'c1', name: '조건문', members: ['deny-antecedent', 'affirm-consequent'],
+      tip: '두 번째 전제가 전건(P)을 부정하면 전건부정, 후건(Q)을 긍정하면 후건긍정. 전건긍정식·후건부정식은 타당하다. "~인 경우에만", "~없이는"은 화살표 방향부터 바로잡는다.',
+      pairs: {
+        'affirm-consequent|deny-antecedent': '둘 다 "P이면 Q" 조건문에서 출발한다. 두 번째 전제가 "Q이다"이고 결론이 "P이다"이면 후건긍정, 두 번째 전제가 "P가 아니다"이고 결론이 "Q가 아니다"이면 전건부정이다.',
+      } },
+    { id: 'c2', name: '사람 공격', members: ['ad-hominem', 'circumstantial', 'tu-quoque', 'genetic'],
+      tip: '됨됨이·행적을 공격하면 인신공격, 처지·이해관계를 문제 삼으면 정황적, "너도 그랬잖아"면 피장파장, 주장이 생겨난 기원을 문제 삼으면 발생적 오류.',
+      pairs: {
+        'ad-hominem|circumstantial': '인신공격은 그 사람의 됨됨이·과거 행적·학력·직업처럼 "사람 자체"를 깎아내리고, 정황적 오류는 그 사람이 처한 처지·이해관계("그 입장이면 그렇게 말할 수밖에")를 문제 삼는다.',
+        'ad-hominem|genetic': '인신공격은 주장한 "사람"의 됨됨이를 공격하고, 발생적 오류는 주장이 "어디서·어떻게 생겨났는가"(기원·출처)를 문제 삼는다.',
+        'ad-hominem|tu-quoque': '인신공격은 주장한 사람의 결함을 들어 주장을 거부하고, 피장파장은 "너도 같은(비슷한) 잘못을 했다"는 점을 들어 비판을 되받아친다.',
+        'circumstantial|genetic': '정황적 오류는 주장하는 사람의 현재 처지·이해관계를, 발생적 오류는 그 주장(생각)이 생겨난 기원·유래를 문제 삼는다.',
+        'circumstantial|tu-quoque': '정황적 오류는 "네 처지에서는 그렇게 말할 수밖에 없다", 피장파장은 "너도 똑같은 잘못을 했다"이다.',
+        'genetic|tu-quoque': '발생적 오류는 주장의 기원을 문제 삼고, 피장파장은 비판하는 사람의 과거 잘못을 들어 비판을 피한다.',
+      } },
+    { id: 'c3', name: '감정·압력', members: ['pity', 'force', 'crowd', 'authority'],
+      tip: '불쌍함이면 연민, 위협이면 힘, 다수면 군중, 그 분야와 무관한 권위면 권위에 호소.',
+      pairs: {
+        'authority|crowd': '권위에 호소는 "특정 인물(선생님·유명인)이 그렇게 말했다", 군중에 호소는 "많은 사람(누구나)이 그렇게 생각한다"를 근거로 삼는다.',
+        'authority|force': '권위에 호소는 믿을 만해 보이는 사람의 말을, 힘에 호소는 "받아들이지 않으면 불이익을 주겠다"는 위협을 근거로 삼는다.',
+        'authority|pity': '권위에 호소는 누가 말했는지를, 연민에 호소는 불쌍한 사정을 근거로 삼는다.',
+        'crowd|force': '군중에 호소는 다수의 생각에 기대고, 힘에 호소는 위협·불이익에 기댄다.',
+        'crowd|pity': '군중에 호소는 "다들 그렇게 생각한다", 연민에 호소는 "불쌍히 여겨 달라"이다.',
+        'force|pity': '둘 다 감정에 호소하지만, 힘에 호소는 두려움(위협)을, 연민에 호소는 동정심을 이용한다.',
+      } },
+    { id: 'c4', name: '일반화', members: ['hasty', 'biased-sample', 'vivid', 'accident'],
+      tip: '표본이 적으면 성급한 일반화, 치우치면 편향된 표본, 생생한 사례 하나가 통계를 이기면 오도된 생생함, 일반 원칙을 예외에 적용하면 우연의 오류(방향이 반대).',
+      pairs: {
+        'accident|biased-sample': '편향된 표본은 치우친 사례로 일반 원칙을 "만드는" 오류이고, 우연의 오류는 이미 있는 일반 원칙을 예외 상황에 잘못 "적용하는" 오류다.',
+        'accident|hasty': '방향이 반대다. 성급한 일반화는 적은 사례 → 일반 원칙, 우연의 오류는 일반 원칙 → 예외적인 특수 사례.',
+        'accident|vivid': '오도된 생생함은 인상적인 사례 하나가 판단을 지배하는 것, 우연의 오류는 일반 원칙을 예외 상황에 기계적으로 적용하는 것이다.',
+        'biased-sample|hasty': '성급한 일반화는 표본의 "수"가 너무 적은 것, 편향된 표본은 수는 많아도 한쪽으로 "치우쳐" 전체를 대표하지 못하는 것이다.',
+        'biased-sample|vivid': '편향된 표본은 표본이 한쪽 집단에 쏠린 것, 오도된 생생함은 충분한 자료가 있는데도 생생한 사례 하나에 끌려 그 자료를 무시하는 것이다.',
+        'hasty|vivid': '성급한 일반화는 자료 자체가 부족한 것, 오도된 생생함은 충분한 자료(통계)가 있는데도 생생한 한두 사례가 그것을 압도하는 것이다.',
+      } },
+    { id: 'c5', name: '인과', members: ['false-cause', 'reversed-cause', 'common-cause'],
+      tip: '인과 관계가 아예 없으면 거짓 원인, 방향이 거꾸로면 본말전도, 둘 다 제3의 원인에서 나온 결과면 공통 원인 무시.',
+      pairs: {
+        'common-cause|false-cause': '거짓 원인은 실제로는 인과 관계가 없는 것(우연히 먼저·함께 일어남), 공통 원인 무시는 두 현상이 모두 제3의 원인에서 나온 결과인데 하나를 다른 것의 원인으로 보는 것이다.',
+        'common-cause|reversed-cause': '본말전도는 원인과 결과의 방향이 뒤바뀐 것, 공통 원인 무시는 둘 다 결과인데 그중 하나를 원인으로 본 것이다.',
+        'false-cause|reversed-cause': '거짓 원인은 인과 관계 자체가 없는 것, 본말전도는 인과 관계는 있지만 방향이 거꾸로인 것이다.',
+      } },
+    { id: 'c6', name: '애매성', members: ['equivocation', 'amphiboly', 'accent'],
+      tip: '단어 하나의 뜻이 바뀌면 애매어, 문장 구조가 두 가지로 읽히면 애매문, 특정 부분을 강조해 함축을 끌어내면 강조.',
+      pairs: {
+        'accent|amphiboly': '애매문은 문장 구조 때문에 두 가지로 읽히는 것, 강조는 문장의 특정 부분을 강조해서 원래 없던 함축을 끌어내는 것이다.',
+        'accent|equivocation': '애매어는 단어 하나의 의미가 바뀌는 것, 강조는 단어 뜻은 그대로인데 어느 부분을 강조하느냐에 따라 함축이 달라지는 것이다.',
+        'amphiboly|equivocation': '애매어는 "단어"의 뜻이 두 가지인 것, 애매문은 단어 뜻은 분명한데 "문장 구조"(수식 관계, 조사 "의", 대명사)가 두 가지로 해석되는 것이다.',
+      } },
+    { id: 'c7', name: '전체·부분', members: ['composition', 'division'],
+      tip: '부분 → 전체면 합성, 전체 → 부분이면 분할. 화살표 방향만 확인한다.',
+      pairs: {
+        'composition|division': '합성은 부분(원소)의 성질을 전체(집단)에 옮기고, 분할은 전체(집단)의 성질을 부분(원소)에 옮긴다.',
+      } },
+    { id: 'c8', name: '논점 비틀기', members: ['straw-man', 'red-herring', 'intent-extension'],
+      tip: '상대 주장을 과장해 공격하면 허수아비, 다른 결론으로 새면 논점 일탈, 부수적 결과를 의도로 보면 의도 확대.',
+      pairs: {
+        'intent-extension|red-herring': '의도 확대는 행위의 부수적 결과를 그 행위의 목적(의도)으로 보는 것, 논점 일탈은 원래 주장의 근거 대신 다른 결론으로 새어 나가는 것이다.',
+        'intent-extension|straw-man': '허수아비는 상대의 "주장"을 과장·왜곡해 공격하는 것, 의도 확대는 "행위"의 부수적 결과를 의도로 확대 해석하는 것이다.',
+        'red-herring|straw-man': '허수아비는 상대 주장을 비틀어 놓고 공격하는 것(상대 주장을 다루긴 함), 논점 일탈은 아예 다른 결론을 세워 원래 결론을 대신하는 것이다.',
+      } },
+    { id: 'c9', name: '전제 구조', members: ['begging', 'forgotten-assumption', 'false-dilemma', 'affirm-disjunct'],
+      tip: '결론이 전제에 이미 있으면 순환, "A라면 B" 하나로 B를 확정하면 가정 망각, 선택지를 둘로 줄이면 흑백사고, "또는"에서 하나를 긍정해 다른 하나를 부정하면 선언지 긍정.',
+      pairs: {
+        'affirm-disjunct|begging': '선언지 긍정은 "A 또는 B, A이다 ∴ B가 아니다"라는 형식의 잘못, 순환논증은 결론을 전제 속에 미리 넣어 둔 것이다.',
+        'affirm-disjunct|false-dilemma': '흑백사고는 선택지가 둘뿐이라고 잘못 전제하는 것(제3의 가능성 무시), 선언지 긍정은 두 선택지 중 하나가 참이면 다른 하나는 거짓이라고 잘못 추론하는 것(둘 다 참일 가능성 무시)이다.',
+        'affirm-disjunct|forgotten-assumption': '선언지 긍정은 "또는" 문장에서, 가정 망각은 "~라면" 문장에서 생긴다.',
+        'begging|false-dilemma': '순환논증은 결론이 전제에 이미 들어 있는 것, 흑백사고는 반대 관계를 모순 관계처럼 다뤄 선택지를 둘로 줄이는 것이다.',
+        'begging|forgotten-assumption': '순환논증은 증명할 결론을 전제로 쓰는 것, 가정 망각은 "A라면 B"라는 조건문만 있을 뿐 A가 성립한다는 근거 없이 B를 결론짓는 것이다.',
+        'false-dilemma|forgotten-assumption': '흑백사고는 선택지를 둘로 잘못 줄이는 것, 가정 망각은 가정(조건)이 충족되었는지 확인하지 않고 결론을 내리는 것이다.',
+      } },
+    { id: 'c10', name: '증거 부족', members: ['ignorance', 'hasty'],
+      tip: '증거가 "없다"는 것 자체를 근거로 삼으면 무지에 호소, 증거가 "적은데" 일반화하면 성급한 일반화.',
+      pairs: {
+        'hasty|ignorance': '무지에 호소는 "증거가 없다(증명되지 않았다)"는 것 자체를 근거로 삼는 것, 성급한 일반화는 증거(사례)가 적은데도 전체로 일반화하는 것이다.',
+      } },
+  ];
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 문제 은행 — 언어적 오류 (애매어·애매문·강조·합성·분할) */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+  FT.items = (FT.items || []).concat([
+    // ── 애매어의 오류
+    { id: 'eq-1', f: 'equivocation', src: 'note', ref: '노트: 애매어의 오류 예시', lv: 1,
+      text: '모든 사람은 죄인이다. 그런데 죄인은 응당 감옥에 가는 벌을 받거나 벌금을 내야 한다. 그러므로 모든 사람은 감옥에 가거나 벌금을 내야 한다.',
+      cue: '죄인',
+      why: '첫 전제의 ‘죄인’은 종교적·도덕적 의미(허물이 있는 사람)이고, 둘째 전제의 ‘죄인’은 법을 어긴 범죄자라는 뜻이다. 한 단어의 두 의미를 하나처럼 취급해 결론을 냈다.',
+      not: { amphiboly: '문장 구조가 두 가지로 읽히는 것이 아니라, ‘죄인’이라는 단어 하나의 뜻이 바뀌었다.' } },
+    { id: 'eq-2', f: 'equivocation', src: 'note', ref: '노트: 애매어의 오류 예시', lv: 2,
+      text: '모든 코끼리는 동물이다. 그러므로 회색 코끼리는 회색 동물이고, 작은 코끼리는 작은 동물이다.',
+      cue: '작은 코끼리는 작은 동물',
+      why: '‘작다’는 비교 기준에 따라 뜻이 달라지는 말이다. 코끼리 중에서 작은 것이 동물 전체를 기준으로도 작은 것은 아니다.',
+      not: { composition: '부분의 성질을 전체로 옮긴 것이 아니라, ‘작은’이라는 단어의 기준(코끼리 기준/동물 기준)이 바뀌었다.' } },
+    { id: 'eq-3', f: 'equivocation', src: 'var', lv: 1,
+      text: '모든 별은 밤하늘에서 빛난다. 그 배우는 요즘 가장 인기 있는 별이다. 그러므로 그 배우는 밤하늘에서 빛난다.',
+      cue: '가장 인기 있는 별',
+      why: '첫 전제의 ‘별’은 천체이고, 둘째 전제의 ‘별’은 인기 스타라는 뜻이다. 서로 다른 두 의미를 같은 것처럼 연결했다.',
+      not: { 'false-analogy': '두 대상의 닮은 점을 근거로 성질을 옮기는 유비가 아니라, ‘별’이라는 한 단어를 두 뜻으로 썼다.' } },
+    { id: 'eq-4', f: 'equivocation', src: 'new', lv: 2,
+      text: '법은 반드시 지켜야 한다. 중력의 법칙도 법이다. 그러므로 중력의 법칙도 우리가 반드시 지켜야 하는 것이다.',
+      cue: '중력의 법칙도 법이다',
+      why: '앞의 ‘법’은 사회가 정한 규범(법률)이고, 뒤의 ‘법’은 자연에서 성립하는 법칙이다. 지켜야 할 대상인 법과 저절로 성립하는 법칙을 혼동했다.',
+      not: { amphiboly: '문장 구조의 문제가 아니라 ‘법’이라는 단어가 두 의미로 쓰였다.' } },
+    { id: 'eq-5', f: 'equivocation', src: 'new', lv: 2,
+      text: '모든 사람에게는 자유가 있다. 그러므로 감옥에 갇힌 사람도 원하면 자유롭게 감옥 밖으로 나갈 수 있다.',
+      cue: '자유롭게 감옥 밖으로',
+      why: '전제의 ‘자유’는 인간이 누려야 할 권리라는 뜻이고, 결론의 ‘자유’는 몸을 마음대로 움직일 수 있는 상태라는 뜻이다.',
+      not: { division: '전체의 성질을 부분에 옮긴 것이 아니라, ‘자유’의 뜻이 권리에서 신체적 자유로 바뀌었다.' } },
+    { id: 'eq-6', f: 'equivocation', src: 'new', lv: 1,
+      text: '우리 학교 수학 선생님은 문제를 정말 잘 내신다. 그런데 문제를 일으키는 사람은 징계를 받아야 한다. 그러므로 수학 선생님은 징계를 받아야 한다.',
+      cue: '문제',
+      why: '앞의 ‘문제’는 시험 문제이고, 뒤의 ‘문제’는 말썽이나 사고라는 뜻이다. 같은 단어의 다른 의미를 하나로 묶었다.',
+      not: { accent: '특정 부분을 강조해 함축을 끌어낸 것이 아니라, ‘문제’라는 단어 자체가 두 뜻으로 쓰였다.' } },
+
+    // ── 애매문의 오류
+    { id: 'am-1', f: 'amphiboly', src: 'note', ref: '노트: 애매문의 오류 예시', lv: 1,
+      text: '철이는 자신이 서태지의 숭배자라고 말했다. 그러나 철이의 그 말은 사실이 아닐 것이다. 왜냐하면 서태지가 철이를 숭배할 리가 없기 때문이다.',
+      cue: '서태지의 숭배자',
+      why: '‘서태지의 숭배자’는 ‘서태지를 숭배하는 사람’으로도, ‘서태지가 숭배하는 사람’으로도 읽힌다(조사 ‘의’). 철이의 말을 뒤의 뜻으로 해석해 반박했다.',
+      not: { equivocation: '‘숭배자’라는 단어의 뜻이 바뀐 것이 아니라, ‘~의’로 이어진 문장 구조가 두 가지로 해석된다.' } },
+    { id: 'am-2', f: 'amphiboly', src: 'note', ref: '노트: 애매문의 오류 예시', lv: 3,
+      text: '그 선생님은 그가 전에 자신의 학생이었다는 것이 그에게 큰 기쁨이라고 말했다. 그러니까 그 선생님은 그 학생이 더 이상 그의 학생이 아니라는 사실에 안도하고 있다.',
+      cue: '그가 전에 자신의 학생이었다는 것이 그에게 큰 기쁨',
+      why: '이 문장은 ‘그가 내 학생이었던 사실이 자랑스럽고 기쁘다’로도, ‘이제는 내 학생이 아니라서 기쁘다’로도 읽힐 수 있다. 문장 구조의 이중성을 무시하고 뒤의 뜻으로 단정했다.',
+      not: { accent: '단어 하나를 강조해 함축을 끌어낸 것이 아니라, 문장 전체의 구조가 두 가지로 읽힌다.' } },
+    { id: 'am-3', f: 'amphiboly', src: 'var', lv: 1,
+      text: '철수는 예쁜 가방 공장을 운영한다. 그러므로 철수의 공장 건물은 분명 예쁘게 꾸며져 있을 것이다.',
+      cue: '예쁜 가방 공장',
+      why: '‘예쁜’이 ‘가방’을 꾸미는지(예쁜 가방을 만드는 공장), ‘공장’을 꾸미는지(예쁜 공장) 두 가지로 읽힌다. 한쪽 해석만 골라 결론을 냈다.',
+      not: { equivocation: '‘예쁘다’의 뜻이 바뀐 것이 아니라, 그 말이 어느 단어를 꾸미는지가 두 가지로 읽힌다.' } },
+    { id: 'am-4', f: 'amphiboly', src: 'new', lv: 2,
+      text: '어머니는 아버지보다 나를 더 사랑한다고 말씀하셨다. 그러니까 어머니는 아버지를 별로 사랑하지 않는 것이다.',
+      cue: '아버지보다 나를 더 사랑한다',
+      why: '‘아버지가 나를 사랑하는 것보다 어머니가 나를 더 사랑한다’로도, ‘어머니가 아버지를 사랑하는 것보다 나를 더 사랑한다’로도 읽힌다. 뒤의 해석만 택해 결론을 냈다.',
+      not: { accent: '특정 단어를 강조한 것이 아니라, 비교 구문의 구조가 두 가지로 해석된다.' } },
+    { id: 'am-5', f: 'amphiboly', src: 'new', lv: 1,
+      text: '어제 SNS에서 본 친구의 사진은 정말 멋졌어. 그러니 내 친구는 사진을 아주 잘 찍는 사람이야.',
+      cue: '친구의 사진',
+      why: '‘친구의 사진’은 친구가 찍은 사진, 친구를 찍은 사진, 친구가 가진 사진 등 여러 뜻으로 읽힌다. ‘친구가 찍은 사진’으로만 해석해 결론을 냈다.',
+      not: { equivocation: '‘사진’의 뜻이 바뀐 것이 아니라, 조사 ‘의’로 이어진 구조가 여러 가지로 읽힌다.' } },
+    { id: 'am-6', f: 'amphiboly', src: 'new', lv: 2,
+      text: '신문에 ‘용감한 소방관의 아들이 상을 받았다’는 기사가 실렸다. 그러므로 상을 받은 그 아들은 용감한 사람이다.',
+      cue: '용감한 소방관의 아들',
+      why: '‘용감한’이 소방관을 꾸미는지 아들을 꾸미는지 두 가지로 읽힌다. 수식 범위가 애매한데 ‘아들이 용감하다’는 해석으로만 결론을 냈다.',
+      not: { division: '전체의 성질을 부분에 옮긴 것이 아니라, 수식어가 어디에 걸리는지가 애매하다.' } },
+
+    // ── 강조의 오류
+    { id: 'ac-1', f: 'accent', src: 'note', ref: '노트: 강조의 오류 예시', lv: 1,
+      text: '선장으로부터 술을 마신다고 핀잔을 받은 선원이 항해일지에 일상 사항을 다 적고 난 후 ‘오늘 선장은 술에 취하지 않았음’이라고 썼다. 이 항해일지를 읽은 선주는 선장이 항해 중 자주 술에 취해 있었다고 추론하였다.',
+      cue: '오늘 선장은 술에 취하지 않았음',
+      why: '‘오늘’을 강조해 읽으면 ‘다른 날에는 취했다’는 함축이 생긴다. 문장에 없는 이 함축을 근거로 자의적으로 결론을 냈다.',
+      not: { amphiboly: '문장 구조가 두 가지로 읽히는 것이 아니라, 특정 부분(오늘)에 강조를 두어 숨은 의미를 끌어냈다.' } },
+    { id: 'ac-2', f: 'accent', src: 'new', lv: 1,
+      text: '‘우리 반 학생들은 거짓말을 해서는 안 된다’는 담임 선생님의 말씀을 듣고, 민호는 ‘그럼 다른 반 학생들은 거짓말을 해도 된다는 뜻이군’이라고 말했다.',
+      cue: '우리 반 학생들은 거짓말을 해서는 안 된다',
+      why: '‘우리 반’을 강조해 ‘다른 반은 괜찮다’는, 원래 말에 없던 함축을 만들어 냈다.',
+      not: { equivocation: '단어의 뜻이 바뀐 것이 아니라, ‘우리 반’에 강조를 두어 의미를 비틀었다.' } },
+    { id: 'ac-3', f: 'accent', src: 'new', lv: 2,
+      text: '‘친구를 험담하지 말라’는 말을 듣고, 그는 ‘친구가 아닌 사람은 험담해도 된다는 말이구나’라고 생각했다.',
+      cue: '친구를 험담하지 말라',
+      why: '‘친구를’을 강조해 친구가 아닌 사람은 괜찮다는 함축을 끌어냈다. 원래 말은 험담 자체를 하지 말라는 뜻이다.',
+      not: { amphiboly: '문장이 구조적으로 두 가지로 읽히는 것이 아니라, 한 부분을 강조해 의미를 바꾸었다.' } },
+    { id: 'ac-4', f: 'accent', src: 'new', lv: 1,
+      text: '회사 게시판에 ‘이번 주 금요일에는 지각하지 맙시다’라는 공지가 붙었다. 그러자 한 직원이 ‘그러면 다른 요일에는 지각해도 된다는 말이네요’라고 했다.',
+      cue: '이번 주 금요일에는 지각하지 맙시다',
+      why: '‘금요일에는’을 강조해 다른 요일은 괜찮다는 함축을 만들어 냈다.',
+      not: { equivocation: '‘지각’의 뜻이 바뀐 것이 아니라, 특정 부분에 강조를 두어 함축을 끌어냈다.' } },
+    { id: 'ac-5', f: 'accent', src: 'new', lv: 2,
+      text: '마트 입구에 ‘오늘 하루, 모든 우유 50% 할인!’이 큰 글씨로 걸려 있고, 그 아래 작은 글씨로 ‘2리터 제품 제외’라고 적혀 있었다. 큰 글씨만 본 손님은 2리터 우유도 반값에 살 수 있다고 결론 내렸다.',
+      cue: '큰 글씨만 본 손님은',
+      why: '강조된(크게 쓰인) 부분만 근거로 삼고 전체 문장의 의미(2리터 제품 제외)를 무시해 결론을 냈다.',
+      not: { amphiboly: '문장 구조가 애매한 것이 아니라, 강조된 일부만 떼어 읽어 다르게 해석했다.' } },
+
+    // ── 합성의 오류
+    { id: 'co-1', f: 'composition', src: 'note', ref: '노트: 합성의 오류 예시', lv: 1,
+      text: '손흥민은 축구를 잘한다. 그러므로 한국은 축구를 잘한다.',
+      cue: '그러므로 한국은 축구를 잘한다',
+      why: '한 선수(부분)의 성질을 나라 전체(전체)의 성질로 옮겼다.',
+      not: { division: '방향을 보자. 전체 → 부분이 아니라 부분(손흥민) → 전체(한국)이다.' } },
+    { id: 'co-2', f: 'composition', src: 'note', ref: '노트: 합성의 오류 예시', lv: 2,
+      text: '눈과 손과 발과 다른 모든 신체의 기관이 어떤 기능을 가지고 있다는 것을 생각할 때, 마찬가지로 인간 전체는 이러한 특별한 기능들 이외에 이것들을 넘어서는 기능을 가졌음에 틀림없다고 보아야 하지 않을까?',
+      cue: '인간 전체는',
+      why: '각 기관(부분)이 고유한 기능을 갖는다는 것으로부터, 인간(전체)도 그런 고유한 기능을 가져야 한다고 추론했다.',
+      not: { 'false-analogy': '서로 다른 두 대상을 비교한 것이 아니라, 부분(신체 기관)과 그것으로 이루어진 전체(인간)의 관계다.' } },
+    { id: 'co-3', f: 'composition', src: 'note', ref: '노트: 합성의 오류 예시', lv: 3,
+      text: '만약 모두가 온다면 우리의 음식은 너무 적을 것이고, 아무도 오지 않는다면 우리의 음식은 너무 많을 것이다. 각 사람은 오거나 오지 않을 것이고, 그래서 모두가 오거나 아무도 오지 않을 것이다. 그러므로 우리 음식은 너무 적거나 너무 많다.',
+      cue: '그래서 모두가 오거나 아무도 오지 않을 것이다',
+      why: '‘각 사람은 오거나 오지 않는다’는 개인(부분)에 대한 사실을 ‘모두가 오거나 아무도 오지 않는다’는 전체에 대한 사실로 옮겼다.',
+      not: { 'false-dilemma': '선택지를 둘로 줄인 것처럼 보이지만, 핵심은 각 사람(부분)에게 참인 것을 모든 사람(전체)에게 옮긴 데 있다.' } },
+    { id: 'co-4', f: 'composition', src: 'new', lv: 1,
+      text: '이 자동차의 부품은 하나하나가 모두 아주 가볍다. 그러므로 이 자동차도 아주 가벼울 것이다.',
+      cue: '부품은 하나하나가 모두 아주 가볍다',
+      why: '부품(부분)이 가볍다고 해서 그것을 모은 자동차(전체)도 가벼운 것은 아니다.',
+      not: { division: '전체 → 부분이 아니라 부분(부품) → 전체(자동차) 방향이다.' } },
+    { id: 'co-5', f: 'composition', src: 'new', lv: 2,
+      text: '우리 합창단 단원들은 모두 실력이 뛰어난 독창자다. 그러므로 우리 합창단의 합창도 틀림없이 훌륭할 것이다.',
+      cue: '모두 실력이 뛰어난 독창자',
+      why: '단원 개개인(부분)의 실력이 뛰어나다는 것에서 합창(전체)도 훌륭하다고 추론했다. 합창은 화음과 조화라는 전체의 성질이 따로 있다.',
+      not: { hasty: '몇몇 사례로 일반화한 것이 아니라, 구성원(부분)의 성질을 집단(전체)의 성질로 옮겼다.' } },
+    { id: 'co-6', f: 'composition', src: 'new', lv: 1,
+      text: '벽돌 하나는 손으로 들 수 있을 만큼 가볍다. 그러므로 이 벽돌로 쌓은 담장 전체도 손으로 들 수 있을 만큼 가볍다.',
+      cue: '벽돌 하나는 손으로 들 수 있을 만큼 가볍다',
+      why: '벽돌 하나(부분)의 성질을 그 벽돌들로 이루어진 담장(전체)의 성질로 옮겼다.',
+      not: { division: '부분(벽돌) → 전체(담장) 방향이므로 분할이 아니라 합성이다.' } },
+    { id: 'co-7', f: 'composition', src: 'new', lv: 1, pair: 'p06',
+      text: '이 축구팀의 선수들은 한 명 한 명이 모두 리그 최고 수준이다. 그러므로 이 팀은 리그 최고의 팀이다.',
+      cue: '한 명 한 명이 모두 리그 최고 수준이다',
+      why: '선수 개개인(부분)이 최고라는 것에서 팀(전체)도 최고라고 추론했다. 팀의 실력에는 조직력 같은 전체의 성질이 따로 있다.',
+      not: { division: '방향을 보자. 선수(부분) → 팀(전체)이므로 합성이다.' } },
+
+    // ── 분할의 오류
+    { id: 'di-1', f: 'division', src: 'note', ref: '노트: 분할의 오류 예시', lv: 1,
+      text: '우리나라의 지난해 수출량은 크게 증가했다. 그런데 신발도 우리나라의 수출품 중 하나이다. 그러므로 지난해 신발의 수출량도 크게 증가했을 것이다.',
+      cue: '신발의 수출량도 크게 증가했을 것이다',
+      why: '전체 수출량(전체)이 늘었다고 해서 수출품 하나하나(부분)의 수출량도 늘어난 것은 아니다.',
+      not: { composition: '부분 → 전체가 아니라 전체(수출량 전체) → 부분(신발) 방향이다.' } },
+    { id: 'di-2', f: 'division', src: 'note', ref: '노트: 분할의 오류 예시', lv: 2,
+      text: '수소는 전기를 띠고 있지 않다. 그런데 수소는 전자와 양성자로 구성되어 있다. 그러므로 전자와 양성자도 전기를 띠고 있지 않을 것이다.',
+      cue: '전자와 양성자도 전기를 띠고 있지 않을 것이다',
+      why: '수소 원자(전체)가 전기적으로 중성이라고 해서 그 구성 요소(부분)인 전자(-)와 양성자(+)도 중성인 것은 아니다.',
+      not: { composition: '전체(수소) → 부분(전자·양성자) 방향이므로 분할이다.' } },
+    { id: 'di-3', f: 'division', src: 'new', lv: 2,
+      text: '우리 학교는 전국에서 손꼽히는 명문 학교다. 민수는 우리 학교 학생이다. 그러므로 민수는 틀림없이 우수한 학생일 것이다.',
+      cue: '전국에서 손꼽히는 명문 학교다',
+      why: '학교(전체)가 명문이라는 성질을 그 학교의 학생 한 명(부분)에게 그대로 옮겼다.',
+      not: { hasty: '적은 사례로 일반화한 것이 아니라, 집단(학교)의 성질을 구성원(민수)에게 옮겼다.' } },
+    { id: 'di-4', f: 'division', src: 'new', lv: 1,
+      text: '이 오케스트라는 세계 최고 수준이다. 그러므로 이 오케스트라의 트라이앵글 연주자도 세계 최고 수준의 연주자다.',
+      cue: '트라이앵글 연주자도 세계 최고 수준의 연주자다',
+      why: '오케스트라(전체)의 수준을 단원 한 명(부분)에게 그대로 옮겼다.',
+      not: { composition: '부분 → 전체가 아니라 전체(오케스트라) → 부분(연주자) 방향이다.' } },
+    { id: 'di-5', f: 'division', src: 'new', lv: 2,
+      text: '물은 불을 끄는 데 쓰인다. 물은 수소와 산소로 이루어져 있다. 그러므로 수소와 산소도 불을 끄는 데 쓰일 것이다.',
+      cue: '수소와 산소도 불을 끄는 데 쓰일 것이다',
+      why: '물(전체)의 성질을 구성 요소(부분)에 옮겼다. 실제로 수소는 잘 타고 산소는 불이 타는 것을 돕는다.',
+      not: { equivocation: '단어의 뜻이 바뀐 것이 아니라, 전체(물)의 성질을 부분(수소·산소)에 옮겼다.' } },
+    { id: 'di-6', f: 'division', src: 'new', lv: 1,
+      text: '그 회사는 해마다 엄청난 이익을 내는 부자 회사다. 그러므로 그 회사의 신입 사원들도 모두 부자일 것이다.',
+      cue: '신입 사원들도 모두 부자일 것이다',
+      why: '회사(전체)가 부유하다는 성질을 구성원(부분)인 사원 개개인에게 옮겼다.',
+      not: { composition: '전체(회사) → 부분(사원) 방향이므로 분할이다.' } },
+    { id: 'di-7', f: 'division', src: 'new', lv: 1, pair: 'p06',
+      text: '이 축구팀은 리그 최고의 팀이다. 그러므로 이 팀의 선수들도 한 명 한 명이 모두 리그 최고 수준이다.',
+      cue: '선수들도 한 명 한 명이 모두 리그 최고 수준이다',
+      why: '팀(전체)이 최고라는 성질을 선수 개개인(부분)에게 그대로 옮겼다.',
+      not: { composition: '방향을 보자. 팀(전체) → 선수(부분)이므로 분할이다.' } },
+  ]);
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 문제 은행 — 전제 관련 오류 (선결문제 요구·흑백사고) */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+  FT.items = (FT.items || []).concat([
+    // ── 선결문제 요구의 오류 (순환논증)
+    { id: 'bq-1', f: 'begging', src: 'note', ref: '노트: 선결문제 요구의 오류 예시', lv: 2,
+      text: '(정수) 철구는 나를 좋아해. (영희) 그걸 어떻게 아니? (정수) 철구가 그렇게 말했거든. 그리고 사람은 자기가 좋아하는 사람에게는 거짓말을 하는 법이 없잖아.',
+      cue: '자기가 좋아하는 사람에게는 거짓말을 하는 법이 없잖아',
+      why: '철구의 말이 참이라는 근거로 ‘좋아하는 사람에게는 거짓말을 안 한다’를 들었다. 그런데 이 근거가 통하려면 ‘철구가 정수를 좋아한다’는 결론이 이미 참이어야 한다. 증명할 결론이 전제에 들어가 있다.',
+      not: { 'forgotten-assumption': '조건문의 가정을 확인하지 않은 것이 아니라, 증명해야 할 결론(철구가 나를 좋아한다)을 근거 속에 미리 넣어 두었다.' } },
+    { id: 'bq-2', f: 'begging', src: 'note', ref: '노트: 순환논증의 오류 예시', lv: 3,
+      text: '나의 한 친구는 영혼이 없다고 하는데, 그 말은 옳을 수 없다. 만약 그의 주장이 옳다면 그 친구도 영혼이 없을 것이고 따라서 그는 죽어 있는 것이다. 그러나 만약 그가 죽었다면 그의 진술은 무의미한 잡음에 지나지 않을 것이며 참일 수도 없다. 따라서 영혼이 없다는 그의 주장은 틀렸다.',
+      cue: '영혼이 없을 것이고 따라서 그는 죽어 있는 것이다',
+      why: '‘영혼이 없으면 죽은 것’이라는 전제는 ‘살아 있는 사람에게는 영혼이 있다’는 것, 곧 논쟁 중인 결론을 이미 받아들이고 있다.',
+      not: { 'forgotten-assumption': '‘만약 ~라면’이 나오지만, 문제는 가정을 확인하지 않은 것이 아니라 그 가정 자체가 증명해야 할 결론(영혼이 있다)을 담고 있다는 점이다.' } },
+    { id: 'bq-3', f: 'begging', src: 'note', ref: '노트: 순환논증의 오류 예시', lv: 2,
+      text: '모든 사람에게 의사 표현의 자유를 무제한 허용하는 것은 언제나 국가에 이익이 된다. 왜냐하면 개인이 자신의 생각이나 감정을 표현할 자유를 완전히 누리는 것은 공동체의 이익을 조장하기 때문이다.',
+      cue: '공동체의 이익을 조장하기 때문이다',
+      why: '결론(무제한 표현의 자유는 국가에 이익)과 근거(표현의 자유를 완전히 누리는 것은 공동체의 이익)는 같은 말을 바꿔 쓴 것이다. 근거가 결론을 다시 말할 뿐이다.',
+      not: { 'red-herring': '다른 결론으로 새어 나간 것이 아니라, 결론과 같은 내용을 말만 바꿔 근거로 삼았다.' } },
+    { id: 'bq-4', f: 'begging', src: 'new', lv: 1,
+      text: '이 책에 쓰인 내용은 모두 진실이다. 왜냐하면 이 책의 서문에 ‘이 책에는 거짓이 하나도 없다’고 적혀 있기 때문이다.',
+      cue: '서문에 ‘이 책에는 거짓이 하나도 없다’고 적혀 있기 때문이다',
+      why: '책의 내용이 참이라는 것을, 참인지 증명해야 할 바로 그 책의 내용으로 증명하려 했다.',
+      not: { authority: '외부의 권위자를 근거로 든 것이 아니라, 증명해야 할 그 책 자체를 근거로 삼았다.' } },
+    { id: 'bq-5', f: 'begging', src: 'new', lv: 1,
+      text: '김 부장은 믿을 만한 사람이다. 내가 그 사람을 믿는 이유는 그가 신뢰할 수 있는 사람이기 때문이다.',
+      cue: '그가 신뢰할 수 있는 사람이기 때문이다',
+      why: '‘믿을 만하다’는 결론을 ‘신뢰할 수 있다’는, 같은 뜻의 말로 뒷받침했다. 새로운 근거가 없다.',
+      not: { 'false-dilemma': '선택지를 줄인 것이 아니라, 결론을 다른 말로 반복했을 뿐이다.' } },
+    { id: 'bq-6', f: 'begging', src: 'new', lv: 1,
+      text: '흡연은 건강에 해롭다. 왜냐하면 담배를 피우는 것은 몸에 좋지 않기 때문이다.',
+      cue: '몸에 좋지 않기 때문이다',
+      why: '‘건강에 해롭다’와 ‘몸에 좋지 않다’는 같은 말이다. 결론을 근거로 다시 썼다. (결론이 참이라도 논증으로서는 순환이다.)',
+      not: { authority: '누군가의 말을 근거로 든 것이 아니라, 결론을 바꿔 말해 근거로 삼았다.' } },
+
+    // ── 흑백사고의 오류
+    { id: 'fd-1', f: 'false-dilemma', src: 'note', ref: '노트: 흑백사고의 오류 예시', lv: 1,
+      text: '(정수) 너는 대기업 여성 채용 특별 우대 정책을 어떻게 생각하니? (영희) 아니, 나는 그 정책을 지지하지 않아. (정수) 그렇다면 너는 여성 혐오주의자구나.',
+      cue: '그렇다면 너는 여성 혐오주의자구나',
+      why: '정책을 지지하지 않는 것과 여성을 혐오하는 것 사이에는 많은 입장이 있다(반대 관계). 이를 모순 관계처럼 다뤄 둘 중 하나로 몰았다.',
+      not: { 'straw-man': '상대 주장을 과장해 공격한 것으로도 보이지만, 핵심은 ‘지지 아니면 혐오’라는 두 선택지만 있다고 본 데 있다.' } },
+    { id: 'fd-2', f: 'false-dilemma', src: 'note', ref: '노트: 흑백 사고의 오류 예시', lv: 2,
+      text: '‘성의 상품화’ 운운해 봐야 트집 잡기 위한 억지에 불과하다. 여고생을 등장시켰다고 이상한 눈으로 본다면 그 시각부터 문제가 있다. 제품의 성격으로 보아 지극히 당연하지 않은가. 수요가 있는 곳에 공급이 있게 마련이다. 주 고객층이 청소년인데 아줌마나 할머니를 내세워 광고할 수야 없지 않은가?',
+      cue: '아줌마나 할머니를 내세워 광고할 수야 없지 않은가',
+      why: '여고생을 내세운 지금의 광고와 아줌마·할머니 모델 광고 말고도 다른 방식이 얼마든지 있는데, 두 가지뿐인 것처럼 몰았다.',
+      not: { 'red-herring': '다른 결론으로 빠진 것이 아니라, 선택지를 두 개로 줄여 상대 비판을 무력화했다.' } },
+    { id: 'fd-3', f: 'false-dilemma', src: 'new', lv: 1,
+      text: '우리 동아리의 이번 결정에 찬성하지 않는다면, 너는 우리 동아리가 망하기를 바라는 사람이야.',
+      cue: '찬성하지 않는다면',
+      why: '찬성하지 않는 것과 망하기를 바라는 것 사이에는 반대, 보류, 다른 대안 제시 등 여러 입장이 있다.',
+      not: { force: '위협으로 따르게 하는 것이 아니라, ‘찬성 아니면 배신’이라는 두 선택지만 있는 것처럼 말했다.' } },
+    { id: 'fd-4', f: 'false-dilemma', src: 'new', lv: 1,
+      text: '1등을 할 만큼 공부하지 않을 거라면 차라리 아예 안 하는 게 낫다. 1등을 못 하면 꼴찌나 마찬가지니까.',
+      cue: '1등을 못 하면 꼴찌나 마찬가지니까',
+      why: '1등과 꼴찌 사이에는 수많은 등수가 있다. 반대 관계(1등-꼴찌)를 모순 관계(1등-1등 아님)처럼 다뤘다.',
+      not: { 'affirm-disjunct': '‘또는’ 문장에서 하나를 긍정해 다른 하나를 부정한 것이 아니라, 중간 선택지를 지워 버렸다.' } },
+    { id: 'fd-5', f: 'false-dilemma', src: 'new', lv: 1,
+      text: '이 법안 표결에서 기권하셨다고요? 결국 범죄자들 편에 서겠다는 거군요. 우리 편이 아니면 범죄자 편입니다.',
+      cue: '우리 편이 아니면 범죄자 편입니다',
+      why: '기권하거나 다른 이유로 반대하는 등 제3의 입장이 있는데, ‘우리 편 아니면 범죄자 편’ 둘뿐인 것처럼 말했다.',
+      not: { 'straw-man': '상대 주장을 왜곡했다기보다, 선택지를 두 개로 줄였다는 점이 핵심이다.' } },
+  ]);
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 문제 은행 — 형식적 오류 (전건부정·후건긍정·선언지 긍정·가정 망각) */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+  FT.items = (FT.items || []).concat([
+    // ── 전건부정의 오류
+    { id: 'da-1', f: 'deny-antecedent', src: 'note', ref: '노트: 조건문 추론 — 전건부정의 오류', lv: 1,
+      text: '만일 그가 로또에 당첨된다면 그는 큰 파티를 열 것이다. 그는 로또에 당첨되지 않았다. 따라서 그는 큰 파티를 열지 않을 것이다.',
+      cue: '그는 로또에 당첨되지 않았다',
+      why: '당첨(P) → 파티(Q), ~P ∴ ~Q. 로또에 당첨되지 않아도 생일이나 승진 같은 다른 이유로 파티를 열 수 있다.',
+      not: { 'affirm-consequent': '두 번째 전제가 후건(파티를 열었다)을 긍정한 것이 아니라 전건(당첨)을 부정했다.' } },
+    { id: 'da-2', f: 'deny-antecedent', src: 'note', ref: '노트: 조건문 추론 — 전건부정의 오류', lv: 2,
+      text: '진화론이 옳다면 물론 인간은 다른 종보다 특별히 존엄하지 않을 것이다. 그런데 진화론은 여러 가지로 비판을 받는 옳지 않은 이론이다. 그러니까 인간은 다른 종보다 특별히 더 존엄하다고 할 수 있다.',
+      cue: '진화론은 여러 가지로 비판을 받는 옳지 않은 이론이다',
+      why: '진화론이 옳음(P) → 인간이 특별히 존엄하지 않음(Q), ~P ∴ ~Q. 진화론이 틀렸다고 해서 인간이 특별히 존엄하다는 결론이 따라 나오지는 않는다.',
+      not: { 'affirm-consequent': '두 번째 전제는 후건(존엄하지 않다)을 긍정한 것이 아니라 전건(진화론이 옳다)을 부정했다.' } },
+    { id: 'da-3', f: 'deny-antecedent', src: 'var', lv: 1,
+      text: '만약 비가 온다면 운동장이 젖을 것이다. 오늘은 비가 오지 않았다. 그러므로 운동장은 젖지 않았을 것이다.',
+      cue: '오늘은 비가 오지 않았다',
+      why: '비(P) → 젖음(Q), ~P ∴ ~Q. 비가 오지 않아도 스프링클러나 청소 때문에 운동장이 젖을 수 있다.',
+      not: { 'affirm-consequent': '두 번째 전제가 ‘운동장이 젖었다’(후건 긍정)가 아니라 ‘비가 오지 않았다’(전건 부정)이다.' } },
+    { id: 'da-4', f: 'deny-antecedent', src: 'var', lv: 2,
+      text: '논리학 과목에서 총 강의시간의 1/4 이상 결석한 학생은 모두 F학점을 받는다. D군은 이번 학기에 결석을 한 번도 하지 않았다. 그러므로 D군은 F학점을 받지 않을 것이다.',
+      cue: 'D군은 이번 학기에 결석을 한 번도 하지 않았다',
+      why: '1/4 이상 결석(P) → F(Q), ~P ∴ ~Q. 결석하지 않았어도 시험 점수가 나쁘면 F를 받을 수 있다.',
+      not: { 'affirm-consequent': '같은 소재의 노트 예문(F를 받았다 → 결석했다)은 후건긍정이지만, 여기서는 전건(결석)을 부정했다.' } },
+    { id: 'da-5', f: 'deny-antecedent', src: 'new', lv: 1,
+      text: '열심히 공부하면 시험에 합격한다. 영수는 열심히 공부하지 않았다. 그러므로 영수는 시험에 합격하지 못할 것이다.',
+      cue: '영수는 열심히 공부하지 않았다',
+      why: '공부(P) → 합격(Q), ~P ∴ ~Q. 열심히 공부하지 않아도 원래 실력이나 운으로 합격할 수 있다.',
+      not: { 'affirm-consequent': '두 번째 전제가 후건(합격)을 다루지 않고 전건(공부)을 부정했다.' } },
+    { id: 'da-6', f: 'deny-antecedent', src: 'new', lv: 1,
+      text: '어떤 사람이 의사라면 그는 의학을 공부한 사람이다. 지영이는 의사가 아니다. 따라서 지영이는 의학을 공부하지 않았다.',
+      cue: '지영이는 의사가 아니다',
+      why: '의사(P) → 의학 공부(Q), ~P ∴ ~Q. 의사가 아니어도 간호사, 약사, 의대생처럼 의학을 공부한 사람은 많다.',
+      not: { 'affirm-consequent': '두 번째 전제가 ‘의학을 공부했다’(후건 긍정)가 아니라 ‘의사가 아니다’(전건 부정)이다.' } },
+    { id: 'da-7', f: 'deny-antecedent', src: 'new', lv: 1,
+      text: '만약 그 식당이 미슐랭 별을 받았다면 음식이 맛있을 것이다. 그 식당은 미슐랭 별을 받지 못했다. 그러니 그 식당 음식은 맛이 없을 것이다.',
+      cue: '그 식당은 미슐랭 별을 받지 못했다',
+      why: '별을 받음(P) → 맛있음(Q), ~P ∴ ~Q. 별을 받지 못한 맛집도 많다.',
+      not: { 'affirm-consequent': '두 번째 전제가 전건(별을 받았다)을 부정했으므로 전건부정이다.' } },
+    { id: 'da-8', f: 'deny-antecedent', src: 'new', lv: 3,
+      text: '키가 140cm 이상인 경우에만 이 놀이기구를 탈 수 있다. 민지는 오늘 이 놀이기구를 타지 않았다. 그러므로 민지는 키가 140cm가 안 될 것이다.',
+      cue: '민지는 오늘 이 놀이기구를 타지 않았다',
+      why: '‘140cm 이상인 경우에만 탈 수 있다’는 ‘탄다면 140cm 이상이다’(탄다 → 140 이상)이다. 전건(탄다)을 부정해 후건(140 이상)을 부정했으므로 전건부정이다. 키가 커도 타지 않을 수 있다.',
+      not: { 'affirm-consequent': '‘~인 경우에만’을 풀면 화살표가 ‘탄다 → 140cm 이상’이 된다. 두 번째 전제는 이 전건을 부정한 것이다.' } },
+    { id: 'da-9', f: 'deny-antecedent', src: 'new', lv: 1, pair: 'p07',
+      text: '만약 그가 감기에 걸렸다면 기침을 할 것이다. 그는 감기에 걸리지 않았다. 그러므로 그는 기침을 하지 않을 것이다.',
+      cue: '그는 감기에 걸리지 않았다',
+      why: '감기(P) → 기침(Q), ~P ∴ ~Q. 감기가 아니어도 알레르기나 먼지 때문에 기침을 할 수 있다.',
+      not: { 'affirm-consequent': '두 번째 전제가 ‘기침을 한다’(후건 긍정)가 아니라 ‘감기에 걸리지 않았다’(전건 부정)이다.' } },
+
+    // ── 후건긍정의 오류
+    { id: 'afc-1', f: 'affirm-consequent', src: 'note', ref: '노트: 조건문 추론 — 후건긍정의 오류', lv: 1,
+      text: '만일 그가 로또에 당첨된다면 그는 큰 파티를 열 것이다. 그는 큰 파티를 열었다. 그러므로 그는 로또에 당첨된 것이다.',
+      cue: '그는 큰 파티를 열었다',
+      why: '당첨(P) → 파티(Q), Q ∴ P. 생일이나 승진처럼 다른 이유로도 파티를 열 수 있다.',
+      not: { 'deny-antecedent': '두 번째 전제가 전건(당첨)을 부정한 것이 아니라 후건(파티)을 긍정했다.' } },
+    { id: 'afc-2', f: 'affirm-consequent', src: 'note', ref: '노트: 조건문 추론 — 후건긍정의 오류', lv: 3,
+      text: '축구대회에 참가한 모든 팀은 조별리그에서 최소 1승을 한 경우에만 본선 2라운드에 진출할 수 있다. B팀은 조별리그에서 1승을 했다. 따라서 B팀은 본선 2라운드에 진출하였다.',
+      cue: 'B팀은 조별리그에서 1승을 했다',
+      why: '‘1승을 한 경우에만 진출’은 ‘진출했다면 1승을 했다’(진출 → 1승)이다. 후건(1승)을 긍정해 전건(진출)을 결론지었다. 1승을 해도 승점이 모자라 탈락할 수 있다.',
+      not: { 'deny-antecedent': '‘~인 경우에만’을 풀면 ‘진출 → 1승’이 된다. 두 번째 전제(1승을 했다)는 이 후건을 긍정한 것이다.' } },
+    { id: 'afc-3', f: 'affirm-consequent', src: 'note', ref: '노트: 조건문 추론 — 후건긍정의 오류', lv: 2,
+      text: '논리학 과목에서 총 강의시간의 1/4 이상 결석한 학생은 모두 그 과목에서 F학점을 받는다. C군은 지난 학기 논리학 과목에서 F학점을 받았다. 그는 지난 학기 그 과목에서 1/4 이상 결석했음에 틀림없다.',
+      cue: 'C군은 지난 학기 논리학 과목에서 F학점을 받았다',
+      why: '결석(P) → F(Q), Q ∴ P. 결석하지 않아도 시험 점수가 나빠 F를 받을 수 있다.',
+      not: { 'deny-antecedent': '두 번째 전제가 ‘결석하지 않았다’(전건 부정)가 아니라 ‘F를 받았다’(후건 긍정)이다.' } },
+    { id: 'afc-4', f: 'affirm-consequent', src: 'note', ref: '노트: 조건문 추론 — 후건긍정의 오류', lv: 1,
+      text: '식도락가라면 모두 그 음식점을 좋아한다. 그런데 돌이는 그 음식점을 좋아한다. 그러니까 돌이는 식도락가임에 분명하다.',
+      cue: '돌이는 그 음식점을 좋아한다',
+      why: '식도락가(P) → 그 음식점을 좋아함(Q), Q ∴ P. 식도락가가 아닌 사람도 그 음식점을 좋아할 수 있다.',
+      not: { 'deny-antecedent': '두 번째 전제가 후건(좋아한다)을 긍정했으므로 후건긍정이다.' } },
+    { id: 'afc-5', f: 'affirm-consequent', src: 'var', lv: 1,
+      text: '만약 비가 왔다면 운동장이 젖어 있을 것이다. 지금 운동장이 젖어 있다. 그러므로 비가 왔음에 틀림없다.',
+      cue: '지금 운동장이 젖어 있다',
+      why: '비(P) → 젖음(Q), Q ∴ P. 스프링클러 때문에 젖었을 수도 있다.',
+      not: { 'deny-antecedent': '두 번째 전제가 ‘비가 오지 않았다’(전건 부정)가 아니라 ‘젖어 있다’(후건 긍정)이다.' } },
+    { id: 'afc-6', f: 'affirm-consequent', src: 'new', lv: 1,
+      text: '그가 범인이라면 사건 당일 현장 근처에 있었을 것이다. CCTV를 확인해 보니 그는 사건 당일 현장 근처에 있었다. 그러므로 그가 범인이다.',
+      cue: '그는 사건 당일 현장 근처에 있었다',
+      why: '범인(P) → 현장 근처(Q), Q ∴ P. 현장 근처에 있었던 사람은 범인 말고도 많다.',
+      not: { 'deny-antecedent': '두 번째 전제가 후건(현장 근처에 있었다)을 긍정했다.' } },
+    { id: 'afc-7', f: 'affirm-consequent', src: 'new', lv: 1,
+      text: '독감에 걸리면 열이 난다. 지금 나는 열이 난다. 그러니 나는 독감에 걸린 것이 분명하다.',
+      cue: '지금 나는 열이 난다',
+      why: '독감(P) → 열(Q), Q ∴ P. 열은 다른 병 때문에도 난다.',
+      not: { 'deny-antecedent': '두 번째 전제가 ‘열이 난다’(후건 긍정)이므로 후건긍정이다.' } },
+    { id: 'afc-8', f: 'affirm-consequent', src: 'new', lv: 3,
+      text: '충분한 수면 없이는 집중력이 떨어지기 마련이다. 오늘 수업 시간에 나는 집중력이 크게 떨어졌다. 그러므로 어젯밤 나는 충분히 자지 못한 것이 분명하다.',
+      cue: '오늘 수업 시간에 나는 집중력이 크게 떨어졌다',
+      why: '‘충분한 수면 없이는 집중력이 떨어진다’ = ‘충분히 자지 않으면 → 집중력 저하’. 후건(집중력 저하)을 긍정해 전건(수면 부족)을 결론지었다. 배가 고프거나 수업이 지루해서일 수도 있다.',
+      not: { 'deny-antecedent': '‘~없이는’을 풀면 ‘잠이 부족 → 집중력 저하’다. 두 번째 전제는 이 후건을 긍정했다.' } },
+    { id: 'afc-9', f: 'affirm-consequent', src: 'new', lv: 1, pair: 'p07',
+      text: '만약 그가 감기에 걸렸다면 기침을 할 것이다. 그는 기침을 한다. 그러므로 그는 감기에 걸렸다.',
+      cue: '그는 기침을 한다',
+      why: '감기(P) → 기침(Q), Q ∴ P. 알레르기나 먼지 때문에 기침을 할 수도 있다.',
+      not: { 'deny-antecedent': '두 번째 전제가 ‘감기에 걸리지 않았다’(전건 부정)가 아니라 ‘기침을 한다’(후건 긍정)이다.' } },
+
+    // ── 선언지 긍정의 오류
+    { id: 'ad-1', f: 'affirm-disjunct', src: 'note', ref: '노트: 선언문 추론 — 선언지 긍정의 오류', lv: 1,
+      text: '수사학은 설득술을 가르치거나 사기술을 가르친다. 수사학은 사기술을 가르친다. 그러므로 수사학은 설득술을 가르치지 않는다.',
+      cue: '수사학은 사기술을 가르친다',
+      why: 'P ∨ Q, Q ∴ ~P. ‘또는’으로 이어진 두 선언지는 둘 다 참일 수 있다. 사기술을 가르친다고 해서 설득술을 가르치지 않는다는 보장은 없다.',
+      not: { 'false-dilemma': '선택지를 둘로 줄인 것이 아니라, 두 선택지가 동시에 참일 수 있다는 것을 무시했다.' } },
+    { id: 'ad-2', f: 'affirm-disjunct', src: 'note', ref: '노트: 선언문 추론 — 선언지 긍정의 오류', lv: 1,
+      text: '모든 동물은 공중을 날거나 물속에서 헤엄을 칠 수 있다. 그런데 이 동물은 물속에서 헤엄을 치고 있다. 그러므로 이 동물은 공중을 날 수 없다.',
+      cue: '그러므로 이 동물은 공중을 날 수 없다',
+      why: 'P ∨ Q, Q ∴ ~P. 오리처럼 날 수도 있고 헤엄칠 수도 있는 동물이 있다. 선언지는 둘 다 참일 수 있다.',
+      not: { 'false-dilemma': '첫 전제가 의심스러울 수는 있지만, 오류의 핵심은 한 선언지를 긍정해 다른 선언지를 부정한 형식에 있다.' } },
+    { id: 'ad-3', f: 'affirm-disjunct', src: 'new', lv: 1,
+      text: '민지는 피아노를 치거나 바이올린을 켠다. 민지는 피아노를 친다. 그러므로 민지는 바이올린을 켜지 않는다.',
+      cue: '민지는 피아노를 친다',
+      why: 'P ∨ Q, P ∴ ~Q. 민지가 두 악기를 모두 다룰 수도 있다.',
+      not: { 'false-dilemma': '두 선택지만 있다고 본 것이 아니라, 둘 다 참일 가능성을 무시했다.' } },
+    { id: 'ad-4', f: 'affirm-disjunct', src: 'new', lv: 2,
+      text: '이번 실패의 원인은 준비 부족이거나 운이 나빴던 것이다. 분명 준비가 부족했다. 그러므로 운은 전혀 상관이 없다.',
+      cue: '그러므로 운은 전혀 상관이 없다',
+      why: 'P ∨ Q, P ∴ ~Q. 준비도 부족했고 운도 나빴을 수 있다.',
+      not: { 'false-cause': '원인을 잘못 짚은 것이 아니라, ‘또는’ 문장에서 한쪽을 긍정해 다른 쪽을 부정한 형식이 잘못되었다.' } },
+    { id: 'ad-5', f: 'affirm-disjunct', src: 'new', lv: 1,
+      text: '그 후보는 경제 전문가이거나 교육 전문가이다. 그는 경제 전문가로 널리 알려져 있다. 따라서 그는 교육 전문가가 아니다.',
+      cue: '따라서 그는 교육 전문가가 아니다',
+      why: 'P ∨ Q, P ∴ ~Q. 두 분야 모두의 전문가일 수 있다.',
+      not: { 'false-dilemma': '선택지를 둘로 줄인 것이 아니라, 두 선언지가 함께 참일 수 있음을 무시했다.' } },
+
+    // ── 가정 망각의 오류
+    { id: 'fa-1', f: 'forgotten-assumption', src: 'note', ref: '노트: 가정 망각의 오류 예시', lv: 2,
+      text: '만일 모든 존재하는 것이 유기적 관계를 갖는다면 별자리의 이동은 우리의 운명과 관계를 가지고 있을 것이다. 그러므로 점성술을 미신적인 것으로 여기는 것은 잘못이다.',
+      cue: '만일 모든 존재하는 것이 유기적 관계를 갖는다면',
+      why: '‘모든 존재하는 것이 유기적 관계를 갖는다’는 가정이 참인지 보이지 않은 채, 그 가정 아래에서만 성립하는 결론을 확정했다. ‘A라면 B, 그러므로 B’ 꼴이다.',
+      not: { begging: '결론을 전제에 미리 넣은 것이 아니라, 가정(A)이 성립하는지 확인하지 않고 B를 확정했다.' } },
+    { id: 'fa-2', f: 'forgotten-assumption', src: 'note', ref: '노트: 가정 망각의 오류 예시', lv: 3,
+      text: '이해나 감정 등을 비롯한 인간의 모든 정신 현상이 일종의 입력된 정보에 대한 계산적 처리 과정이라고 주장한 계산 기능주의자들의 주장이 옳다면, 인간의 모든 정신 현상은 기계적으로 실현될 수 있다. 그런데 인공지능이란, 인간처럼 느끼고 이해할 뿐만 아니라 자율적으로 판단하고 행동할 수 있는 인공물을 말한다. 그러므로 결국 머지않아 인공지능이 우리 눈앞에 현실로 등장하게 될 것이다.',
+      cue: '계산 기능주의자들의 주장이 옳다면',
+      why: '계산 기능주의가 옳다는 가정이 성립하는지 보이지 않고, 그 가정 아래의 결과(정신 현상의 기계적 실현)를 현실의 결론으로 확정했다.',
+      not: { 'affirm-consequent': '후건을 긍정해 전건을 결론지은 것이 아니라, 전건(가정)이 참이라는 근거 없이 후건을 확정했다.' } },
+    { id: 'fa-3', f: 'forgotten-assumption', src: 'new', lv: 1,
+      text: '만약 외계인이 존재한다면 그들은 우리보다 훨씬 발달한 기술을 가지고 있을 것이다. 그러므로 우리는 지금 당장 외계인의 침략에 대비해야 한다.',
+      cue: '만약 외계인이 존재한다면',
+      why: '외계인이 존재한다는 가정이 참인지 확인하지 않은 채, 그 가정 아래에서의 결론을 사실처럼 받아들였다.',
+      not: { ignorance: '증거가 없다는 것을 근거로 삼은 것이 아니라, ‘~라면’이라는 가정을 잊고 결론을 확정했다.' } },
+    { id: 'fa-4', f: 'forgotten-assumption', src: 'new', lv: 1,
+      text: '모든 학생이 매일 두 시간씩 복습한다면 이번 시험의 평균 점수는 크게 오를 것이다. 따라서 이번 시험의 평균 점수는 크게 오를 것이 확실하다.',
+      cue: '모든 학생이 매일 두 시간씩 복습한다면',
+      why: '‘모든 학생이 매일 복습한다면’이라는 조건이 충족되는지 확인하지 않고 결론을 확정했다.',
+      not: { 'affirm-consequent': '두 번째 전제로 후건을 긍정한 것이 아니라, 아예 두 번째 전제 없이 가정의 결과를 확정했다.' } },
+    { id: 'fa-5', f: 'forgotten-assumption', src: 'new', lv: 2,
+      text: '만일 이 신약이 모든 사람에게 아무런 부작용이 없다면, 이 약은 최고의 감기약이 될 것이다. 그러니 이 약을 최고의 감기약으로 홍보해도 된다.',
+      cue: '만일 이 신약이 모든 사람에게 아무런 부작용이 없다면',
+      why: '부작용이 없다는 가정이 확인되지 않았는데, 그 가정 아래에서만 성립하는 결론(최고의 감기약)을 확정했다.',
+      not: { begging: '결론을 근거로 쓴 순환이 아니라, 가정이 성립하는지 확인하지 않은 것이 문제다.' } },
+  ]);
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 문제 은행 — 무관성의 오류 (연민·힘·군중·권위·인신공격·정황적·피장파장·무지·허수아비·논점 일탈·발생적) */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+  FT.items = (FT.items || []).concat([
+    // ── 연민에 호소
+    { id: 'pi-1', f: 'pity', src: 'note', ref: '노트: 연민에 호소 예시', lv: 1,
+      text: '저는 지난번 지방자치단체장 선거에 나와서 낙선한 바 있습니다. 그 때문에 저는 전 재산을 날렸고, 그 충격으로 저희 어머니는 쓰러져서 지금까지 병원 신세를 지고 있으며, 제 가족은 단칸방에서 어렵게 살고 있습니다. 저를 불쌍히 여기셔서 이번 선거에서는 꼭 저를 밀어주십시오.',
+      cue: '저를 불쌍히 여기셔서',
+      why: '단체장으로서의 자질이나 공약이라는 근거 대신, 개인의 불행한 사정에 대한 동정심으로 표를 호소했다.',
+      not: { force: '위협이나 불이익을 내세운 것이 아니라 동정심을 이용했다.' } },
+    { id: 'pi-2', f: 'pity', src: 'new', lv: 1,
+      text: '교수님, 제가 이번 학기에 F를 받으면 장학금이 끊기고 부모님께 큰 실망을 드리게 됩니다. 그러니 제 답안을 정답으로 인정해 주세요.',
+      cue: '장학금이 끊기고 부모님께 큰 실망을',
+      why: '답안이 정답인지는 답안의 내용으로 판단해야 하는데, 딱한 사정을 근거로 들었다.',
+      not: { force: '교수에게 불이익을 주겠다는 위협이 아니라, 자신의 처지에 대한 동정을 구했다.' } },
+    { id: 'pi-3', f: 'pity', src: 'new', lv: 2,
+      text: '피고인은 어린 시절 부모를 잃고 힘겹게 자랐습니다. 이렇게 불쌍한 사람이 사기를 쳤을 리가 없습니다.',
+      cue: '이렇게 불쌍한 사람이',
+      why: '사기를 쳤는지는 증거로 판단해야 하는데, 피고인의 불우한 성장 환경에 대한 동정심을 근거로 무죄를 주장했다.',
+      not: { circumstantial: '주장한 사람의 처지를 들어 그 주장을 무시한 것이 아니라, 동정심을 불러일으켜 결론을 받아들이게 했다.' } },
+    { id: 'pi-4', f: 'pity', src: 'new', lv: 2,
+      text: '저희 회사 사료를 꼭 사 주세요. 저희가 망하면 직원 50명과 그 가족들이 길거리에 나앉게 됩니다. 그러니 저희 사료가 가장 좋은 사료입니다.',
+      cue: '길거리에 나앉게 됩니다',
+      why: '사료의 품질에 대한 근거 대신, 회사가 망하면 직원들이 어려워진다는 동정심을 근거로 ‘가장 좋은 사료’라는 결론을 냈다.',
+      not: { crowd: '많은 사람이 산다는 것을 근거로 든 것이 아니라, 직원들의 딱한 처지를 내세웠다.' } },
+    { id: 'pi-5', f: 'pity', src: 'new', lv: 1,
+      text: '선생님, 저 어제 밤새 아파서 숙제를 제대로 못 했어요. 정말 너무 힘들었어요. 그러니까 이번 숙제는 만점으로 처리해 주셔야 해요.',
+      cue: '정말 너무 힘들었어요',
+      why: '숙제를 못 한 사정은 기한 연장의 이유는 될 수 있어도, 만점을 받을 근거는 되지 못한다. 동정심에 기대어 결론을 받아들이게 했다.',
+      not: { accident: '원칙을 예외 상황에 적용한 것이 아니라, 동정심을 근거로 결론을 요구했다.' } },
+
+    // ── 힘에 호소
+    { id: 'fo-1', f: 'force', src: 'note', ref: '노트: 힘에 호소 예시', lv: 1,
+      text: '이번에는 우리 회사와 거래하는 것이 좋을 것이다. 그렇지 않으면 우리 아이들을 풀어서 당신 회사 제품에 대한 악소문이 돌게 할 것이다.',
+      cue: '악소문이 돌게 할 것이다',
+      why: '거래해야 할 이유(가격·품질) 대신, 거래하지 않으면 피해를 주겠다는 위협을 근거로 내세웠다.',
+      not: { pity: '동정심을 구한 것이 아니라 두려움(위협)을 이용했다.' } },
+    { id: 'fo-2', f: 'force', src: 'note', ref: '노트: 힘에 호소 예시', lv: 2,
+      text: '이 기사를 보도하는 것은 귀 신문사의 자유이지만, 우리가 당신의 회사에 얼마만큼의 광고비를 지불할 것인가를 결정하는 것도 우리의 자유입니다.',
+      cue: '광고비를 지불할 것인가를 결정하는 것도 우리의 자유',
+      why: '기사를 보도하면 광고비를 끊겠다는 불이익을 은근히 내세워, 보도하지 말라는 결론을 받아들이게 했다.',
+      not: { 'tu-quoque': '‘너도 마찬가지’라고 되받아친 것이 아니라, 광고비라는 경제적 힘으로 위협했다.' } },
+    { id: 'fo-3', f: 'force', src: 'new', lv: 1,
+      text: '제 의견에 반대하셔도 좋습니다. 다만 다음 인사 평가는 제가 한다는 것을 잊지 마십시오.',
+      cue: '다음 인사 평가는 제가 한다는 것을',
+      why: '자기 의견이 옳다는 근거 대신, 인사 평가로 불이익을 줄 수 있다는 힘을 암시했다.',
+      not: { authority: '상사의 전문성을 근거로 든 것이 아니라, 불이익을 줄 수 있는 힘을 내세웠다.' } },
+    { id: 'fo-4', f: 'force', src: 'new', lv: 1,
+      text: '이 서명 운동에 동참하지 않는 학생은 이번 학기 동아리 활동에서 빠지게 될 거야. 그러니까 이 서명 운동은 옳은 일이야.',
+      cue: '동아리 활동에서 빠지게 될 거야',
+      why: '서명 운동이 옳은 이유 대신, 동참하지 않으면 불이익을 받는다는 위협을 근거로 삼았다.',
+      not: { crowd: '많은 사람이 참여한다는 것을 근거로 든 것이 아니라, 불이익을 내세워 압박했다.' } },
+    { id: 'fo-5', f: 'force', src: 'new', lv: 1,
+      text: '우리나라의 요구를 받아들이는 것이 좋을 겁니다. 우리 군대가 귀국 국경 바로 앞에 배치되어 있다는 사실을 기억하십시오.',
+      cue: '군대가 귀국 국경 바로 앞에 배치되어',
+      why: '요구가 정당한 이유 대신 군사적 위협을 근거로 요구를 받아들이게 했다.',
+      not: { pity: '동정이 아니라 두려움을 이용했다.' } },
+
+    // ── 군중에 호소
+    { id: 'cr-1', f: 'crowd', src: 'note', ref: '노트: 군중에 호소 예시', lv: 1,
+      text: '그 사람이 파렴치한 범죄자가 아니라고? 누구나 다 그렇게 생각하는데?',
+      cue: '누구나 다 그렇게 생각하는데',
+      why: '많은 사람이 그렇게 생각한다는 사실은 그가 범죄자라는 증거가 되지 못한다.',
+      not: { authority: '특정 권위자가 아니라 ‘누구나’, 곧 다수의 생각을 근거로 삼았다.' } },
+    { id: 'cr-2', f: 'crowd', src: 'new', lv: 1,
+      text: '이 스마트폰은 출시 한 달 만에 100만 대가 팔렸다. 그러니 이 스마트폰이 가장 좋은 제품임에 틀림없다.',
+      cue: '100만 대가 팔렸다',
+      why: '많이 팔렸다는 것(다수가 선택했다는 것)은 가장 좋은 제품이라는 근거가 되지 못한다. 광고나 가격 때문일 수도 있다.',
+      not: { hasty: '적은 사례로 일반화한 것이 아니라, 다수가 선택했다는 사실을 품질의 근거로 삼았다.' } },
+    { id: 'cr-3', f: 'crowd', src: 'new', lv: 1,
+      text: '엄마, 우리 반 애들 전부 다 그 게임을 해요. 그러니까 그 게임은 해도 괜찮은 거예요.',
+      cue: '우리 반 애들 전부 다 그 게임을 해요',
+      why: '모두가 한다는 사실은 그것이 괜찮다는 근거가 아니다.',
+      not: { 'tu-quoque': '상대방도 같은 잘못을 했다는 것이 아니라, 다수가 한다는 것을 근거로 삼았다.' } },
+    { id: 'cr-4', f: 'crowd', src: 'new', lv: 2,
+      text: '국민의 70%가 사형 제도 존치를 원한다. 따라서 사형 제도는 범죄를 줄이는 데 효과가 있다.',
+      cue: '국민의 70%가 사형 제도 존치를 원한다',
+      why: '다수가 원한다는 것은 사형 제도의 범죄 억제 효과에 대한 증거가 되지 못한다. 효과는 통계와 연구로 확인해야 한다.',
+      not: { 'biased-sample': '표본이 치우친 조사의 문제가 아니라, 다수의 선호를 효과의 근거로 삼은 것이 문제다.' } },
+    { id: 'cr-5', f: 'crowd', src: 'new', lv: 2,
+      text: '중세 시대 사람들은 대부분 지구가 우주의 중심이라고 믿었다. 그렇게 많은 사람이 믿었다면 거기에는 분명 진리가 있었을 것이다.',
+      cue: '그렇게 많은 사람이 믿었다면',
+      why: '많은 사람이 믿었다는 사실은 그 믿음이 참이라는 근거가 되지 못한다.',
+      not: { authority: '특정 권위자의 말이 아니라 다수의 믿음을 근거로 삼았다.' } },
+
+    // ── 권위에 호소
+    { id: 'au-1', f: 'authority', src: 'note', ref: '노트: 권위에 호소 예시', lv: 2,
+      text: '조만간에 파이의 궁극적인 값이 알려져서 파이가 유리수로 간주되게 될 날이 올 것이다. 우리 수학 선생님께서 앞으로 슈퍼컴퓨터가 발전하여 파이의 궁극적인 값이 알려질 것이라고 말했다.',
+      cue: '우리 수학 선생님께서',
+      why: '파이는 무리수임이 수학적으로 증명되어 있다. 선생님이 말했다는 사실만으로는 이 증명을 뒤집을 근거가 되지 못한다.',
+      not: { crowd: '다수의 생각이 아니라 특정 인물(선생님)의 말을 근거로 삼았다.' } },
+    { id: 'au-2', f: 'authority', src: 'note', ref: '노트: 논증·귀납 예문 (아리스토텔레스) → 권위에 호소', lv: 1,
+      text: '1킬로그램의 물체와 100그램의 물체를 동시에 떨어뜨리면, 1킬로그램의 물체가 먼저 땅에 떨어진다. 왜냐하면 아리스토텔레스가 자유낙하하는 물체의 속도는 그 물체의 무게에 비례한다고 말했기 때문이다.',
+      cue: '아리스토텔레스가',
+      why: '실험이나 관찰 대신 유명한 철학자가 그렇게 말했다는 사실만을 근거로 삼았다. 물리 법칙은 실험으로 검증해야 하고, 실제로 이 주장은 틀렸다.',
+      not: { crowd: '많은 사람의 믿음이 아니라 한 사람의 권위를 근거로 삼았다.' } },
+    { id: 'au-3', f: 'authority', src: 'new', lv: 1,
+      text: '인기 배우 김 씨가 방송에서 이 영양제를 먹으면 암이 예방된다고 말했어. 그러니 이 영양제는 암 예방 효과가 있어.',
+      cue: '인기 배우 김 씨가',
+      why: '배우는 의학의 적절한 권위가 아니다. 그 분야와 관련 없는 유명인의 말을 근거로 삼았다.',
+      not: { crowd: '많은 사람이 믿는다는 것이 아니라, 유명인 한 사람의 말을 근거로 삼았다.' } },
+    { id: 'au-4', f: 'authority', src: 'new', lv: 2,
+      text: '노벨 물리학상을 받은 박 교수는 이번 부동산 정책이 반드시 실패할 것이라고 말했다. 그러므로 이 정책은 실패할 것이다.',
+      cue: '노벨 물리학상을 받은 박 교수는',
+      why: '물리학의 권위자라도 부동산 정책에 대해서는 전문가가 아니다. 다른 분야의 권위를 근거로 삼았다.',
+      not: { 'ad-hominem': '사람을 깎아내려 주장을 거부한 것이 아니라, 반대로 그 사람의 (관련 없는) 권위를 근거로 주장을 받아들였다.' } },
+    { id: 'au-5', f: 'authority', src: 'new', lv: 1,
+      text: '우리 담임선생님이 이 컴퓨터 게임은 머리를 나쁘게 만든다고 하셨어. 선생님 말씀이니까 틀림없어.',
+      cue: '선생님 말씀이니까 틀림없어',
+      why: '게임이 머리를 나쁘게 하는지는 연구로 확인할 문제인데, 선생님이 말했다는 사실만을 근거로 삼았다.',
+      not: { crowd: '다수가 아니라 한 사람의 권위에 기댔다.' } },
+
+    // ── 인신공격의 오류
+    { id: 'ah-1', f: 'ad-hominem', src: 'note', ref: '노트: 인신공격의 오류 예시', lv: 1,
+      text: '금광석 국회의원이 ‘학교 앞 차량 통행’에 관해 제출한 법안은 거부되어야 한다. 왜냐하면 그는 몇 년 전에 뇌물 수수 혐의로 유죄 판결을 받은 적이 있는 부패한 정치인이기 때문이다.',
+      cue: '뇌물 수수 혐의로 유죄 판결을 받은 적이 있는 부패한 정치인',
+      why: '법안의 내용 대신 제출한 사람의 과거 행적을 근거로 법안을 거부했다.',
+      not: { circumstantial: '그가 이 법안으로 이익을 보는 처지라서가 아니라, 그의 됨됨이(부패 전력)를 공격했다.' } },
+    { id: 'ah-2', f: 'ad-hominem', src: 'note', ref: '노트: 인신공격의 오류 예시', lv: 2,
+      text: '김씨는 보지 않고 만져 보기만 해도 사물의 색깔을 식별해 내는 사람들이 있다고 말했다. 그러나 그것은 사실이 아닐 것이다. 왜냐하면 그는 과학자로서의 경력을 전혀 가지지 않았으며, 다만 조그만 식당의 주방장에 불과하기 때문이다.',
+      cue: '조그만 식당의 주방장에 불과하기 때문이다',
+      why: '주장의 참거짓을 내용이 아니라 말한 사람의 직업과 경력으로 판단했다.',
+      not: { authority: '권위자의 말을 근거로 받아들인 것이 아니라, 말한 사람의 직업을 깎아내려 주장을 거부했다.' } },
+    { id: 'ah-3', f: 'ad-hominem', src: 'note', ref: '노트: 인신공격의 오류 예시', lv: 1,
+      text: '배아복제에 대한 새로운 기술 개발에 성공했다고 발표한 H씨는 논문 표절 혐의로 징계를 받은 적이 있다. 우리는 그렇게 부도덕한 사람의 주장에 관심을 가질 필요가 없다.',
+      cue: '그렇게 부도덕한 사람의 주장에',
+      why: '기술 개발 성공이라는 주장의 사실 여부를 따지지 않고, 그 사람의 과거 행적(표절)을 들어 주장을 무시했다.',
+      not: { genetic: '주장이 생겨난 기원을 문제 삼은 것이 아니라, 주장한 사람의 도덕성을 공격했다.' } },
+    { id: 'ah-4', f: 'ad-hominem', src: 'new', lv: 1,
+      text: '고등학교도 제대로 졸업하지 못한 사람이 무슨 경제 정책을 논하는가? 그의 세금 개편안은 들어 볼 가치도 없다.',
+      cue: '고등학교도 제대로 졸업하지 못한 사람이',
+      why: '세금 개편안의 내용 대신 제안한 사람의 학력을 근거로 주장을 거부했다.',
+      not: { circumstantial: '그의 이해관계(처지)가 아니라 학력이라는 개인적 배경을 공격했다.' } },
+    { id: 'ah-5', f: 'ad-hominem', src: 'new', lv: 1,
+      text: '그 환경 운동가는 이혼을 두 번이나 한 사람이다. 그런 사람이 주장하는 탄소 감축 정책을 어떻게 믿을 수 있겠는가?',
+      cue: '이혼을 두 번이나 한 사람이다',
+      why: '탄소 감축 정책과 전혀 관계없는 사생활을 들어 주장을 믿을 수 없다고 했다.',
+      not: { 'tu-quoque': '‘너도 같은 잘못을 했다’는 것이 아니라, 주장과 무관한 사생활로 사람을 깎아내렸다.' } },
+    { id: 'ah-6', f: 'ad-hominem', src: 'new', lv: 1,
+      text: '민수가 학급 회의에서 급식 개선안을 냈지만, 민수는 평소에 지각을 자주 하는 게으른 학생이니까 그 안은 볼 필요도 없어.',
+      cue: '평소에 지각을 자주 하는 게으른 학생',
+      why: '급식 개선안의 내용 대신 제안한 학생의 평소 행실을 근거로 안을 거부했다.',
+      not: { circumstantial: '민수가 그 안으로 이익을 보는 처지라는 것이 아니라, 민수의 됨됨이를 공격했다.' } },
+    { id: 'ah-7', f: 'ad-hominem', src: 'new', lv: 1,
+      text: '그 평론가는 젊었을 때 사기죄로 처벌받은 적이 있다. 그러니 이 영화가 걸작이라는 그의 평론은 틀렸다.',
+      cue: '사기죄로 처벌받은 적이 있다',
+      why: '영화에 대한 평가의 타당성 대신, 평론가의 과거 범죄 경력을 근거로 평론을 거부했다.',
+      not: { genetic: '평론이라는 주장이 생겨난 기원이 아니라, 평론가 개인의 과거 행적을 공격했다.' } },
+    { id: 'ah-8', f: 'ad-hominem', src: 'new', lv: 1, pair: 'p01',
+      text: '최 의원이 낸 전기차 보조금 확대 법안은 검토할 가치가 없다. 그는 과거에 음주 운전으로 처벌받은 적이 있는 사람이다.',
+      cue: '음주 운전으로 처벌받은 적이 있는 사람이다',
+      why: '법안의 내용 대신 법안을 낸 사람의 과거 행적(음주 운전)을 근거로 거부했다.',
+      not: { circumstantial: '같은 의원을 다룬 짝 문항과 비교해 보자. 여기서는 이해관계(처지)가 아니라 그의 과거 잘못, 곧 됨됨이를 공격했다.' } },
+    { id: 'ah-9', f: 'ad-hominem', src: 'new', lv: 1, pair: 'p02',
+      text: '흡연이 해롭다는 김 박사의 강연은 들을 필요가 없어. 김 박사는 학위를 돈으로 샀다는 소문이 도는 사람이잖아.',
+      cue: '학위를 돈으로 샀다는 소문이 도는 사람이잖아',
+      why: '강연 내용(흡연의 해로움)이 아니라 김 박사의 도덕성에 대한 소문을 근거로 주장을 거부했다.',
+      not: { 'tu-quoque': '짝 문항과 비교해 보자. ‘김 박사도 담배를 피운다’(같은 잘못)가 아니라, 주장과 무관한 됨됨이를 공격했다.' } },
+
+    // ── 정황적 오류
+    { id: 'ci-1', f: 'circumstantial', src: 'note', ref: '노트: 정황적 오류 예시', lv: 1,
+      text: '이공계 우대정책이 국가 경쟁력 제고에 필수적이라는 고정민 교수의 주장은 논의할 필요도 없다. 왜냐하면 그녀는 이 정책으로 혜택을 입게 될 공대 교수가 아니던가?',
+      cue: '혜택을 입게 될 공대 교수가 아니던가',
+      why: '주장의 근거를 따지지 않고, 그 교수가 정책의 혜택을 받는 처지라는 정황을 들어 주장을 무시했다.',
+      not: { 'ad-hominem': '교수의 됨됨이(부패·학력)가 아니라 이해관계·처지를 문제 삼았다.' } },
+    { id: 'ci-2', f: 'circumstantial', src: 'note', ref: '노트: 정황적 오류 예시', lv: 2,
+      text: '정치가 A씨는 무신론자이고 자유사상가이다. 그러므로 우리는 정부의 종교 정책에 대해서 그가 하는 주장은 무시해도 될 것이다.',
+      cue: '무신론자이고 자유사상가이다',
+      why: '종교 정책에 대한 주장의 내용 대신, 종교 문제에 대해 그가 처한 입장(무신론자)을 근거로 주장을 무시했다.',
+      not: { 'ad-hominem': '그의 도덕성이나 학력을 깎아내린 것이 아니라, 이 사안에 대해 그가 놓인 처지를 문제 삼았다.' } },
+    { id: 'ci-3', f: 'circumstantial', src: 'new', lv: 2,
+      text: '담배 회사 연구소가 ‘흡연과 폐암의 관련성은 과장되었다’는 보고서를 냈다. 담배 회사에서 월급을 받는 연구원들이니 그 보고서는 볼 것도 없이 틀렸다.',
+      cue: '담배 회사에서 월급을 받는 연구원들이니',
+      why: '이해관계가 있다는 정황은 보고서를 꼼꼼히 따져 볼 이유는 될 수 있지만, 보고서가 틀렸다는 근거는 아니다. 내용 대신 처지를 근거로 결론을 냈다.',
+      not: { genetic: '보고서라는 생각이 생겨난 유래를 문제 삼았다기보다, 연구원들이 처한 이해관계를 문제 삼았다.' } },
+    { id: 'ci-4', f: 'circumstantial', src: 'new', lv: 1,
+      text: '최저임금을 올려야 한다는 그의 주장은 무시해도 된다. 그는 최저임금을 받는 아르바이트생이니 당연히 그렇게 말하겠지.',
+      cue: '최저임금을 받는 아르바이트생이니',
+      why: '주장의 근거 대신, 그가 주장으로 이익을 보는 처지라는 정황을 들어 주장을 무시했다.',
+      not: { 'ad-hominem': '아르바이트생이라는 직업을 깎아내린 것이 아니라, 그 처지 때문에 그렇게 말할 수밖에 없다고 몰았다.' } },
+    { id: 'ci-5', f: 'circumstantial', src: 'new', lv: 1,
+      text: '출산 장려금을 늘리자는 김 의원의 주장은 들을 필요가 없다. 그는 아이가 셋이라 장려금을 가장 많이 받을 사람이다.',
+      cue: '아이가 셋이라 장려금을 가장 많이 받을 사람',
+      why: '주장의 타당성 대신, 그가 정책의 수혜자라는 처지를 근거로 주장을 무시했다.',
+      not: { 'ad-hominem': '김 의원의 인격을 공격한 것이 아니라 이해관계를 문제 삼았다.' } },
+    { id: 'ci-6', f: 'circumstantial', src: 'new', lv: 1,
+      text: '그 변호사가 피고인이 무죄라고 열심히 주장하지만, 피고인에게서 수임료를 받는 사람이니 그 말은 믿을 필요가 없어.',
+      cue: '수임료를 받는 사람이니',
+      why: '변호사가 내놓은 근거를 따지지 않고, 변호사가 처한 입장(수임료를 받는 처지)만으로 주장을 거부했다.',
+      not: { 'ad-hominem': '변호사의 됨됨이가 아니라 그가 놓인 처지를 문제 삼았다.' } },
+    { id: 'ci-7', f: 'circumstantial', src: 'new', lv: 1,
+      text: '부동산 중개사가 지금이 집을 살 적기라고 말했다. 하지만 집이 팔려야 수수료를 받는 사람이니 그 말은 틀린 게 분명해.',
+      cue: '집이 팔려야 수수료를 받는 사람이니',
+      why: '중개사의 이해관계라는 정황을 근거로 주장이 틀렸다고 단정했다. 그런 처지라는 것은 의심할 이유일 뿐 틀렸다는 증거는 아니다.',
+      not: { 'ad-hominem': '중개사 개인의 인격이 아니라 그가 처한 이해관계를 문제 삼았다.' } },
+    { id: 'ci-8', f: 'circumstantial', src: 'new', lv: 1, pair: 'p01',
+      text: '최 의원이 낸 전기차 보조금 확대 법안은 검토할 가치가 없다. 그는 전기차 회사의 대주주라서 이 법안으로 큰돈을 벌 사람이다.',
+      cue: '전기차 회사의 대주주라서',
+      why: '법안의 내용 대신, 최 의원이 법안으로 이익을 보는 처지라는 정황을 근거로 거부했다.',
+      not: { 'ad-hominem': '같은 의원을 다룬 짝 문항과 비교해 보자. 여기서는 과거 잘못(됨됨이)이 아니라 이해관계(처지)를 문제 삼았다.' } },
+
+    // ── 피장파장의 오류
+    { id: 'tq-1', f: 'tu-quoque', src: 'note', ref: '노트: 피장파장의 오류 예시', lv: 1,
+      text: '네가 나를 정직하지 않다고 비난하는 것은 잘못이야. 나도 세금 신고를 허위로 했지만, 너도 지금까지 장부를 허위로 기재했잖아?',
+      cue: '너도 지금까지 장부를 허위로 기재했잖아',
+      why: '상대도 비슷한 잘못을 했다는 것은 내 잘못을 정당화하지 못한다. 비판의 내용은 그대로 남는다.',
+      not: { 'ad-hominem': '상대의 됨됨이 일반을 공격한 것이 아니라, ‘너도 같은 잘못을 했다’며 비판을 되받아쳤다.' } },
+    { id: 'tq-2', f: 'tu-quoque', src: 'note', ref: '노트: 피장파장의 오류 예시', lv: 1,
+      text: '당신은 내가 세금 신고를 약간 허위로 했다고 비난하는데 그래서는 안 된다. 왜냐하면 당신도 언제나 장부의 지출란을 거짓으로 기재하여 허위 보고를 하고 있기 때문이다.',
+      cue: '당신도 언제나 장부의 지출란을 거짓으로 기재하여',
+      why: '비판한 사람도 비슷한 잘못을 저지른다는 이유로 비판을 거부했다.',
+      not: { 'ad-hominem': '‘당신도 그렇다’는 같은 종류의 잘못을 근거로 삼은 점이 피장파장의 특징이다.' } },
+    { id: 'tq-3', f: 'tu-quoque', src: 'new', lv: 1,
+      text: '아빠가 저한테 게임 좀 그만하라고 하시는데, 아빠도 매일 밤늦게까지 휴대폰 보시잖아요. 그러니까 저도 게임해도 돼요.',
+      cue: '아빠도 매일 밤늦게까지 휴대폰 보시잖아요',
+      why: '아빠도 비슷한 행동을 한다는 것이 게임을 오래 해도 된다는 근거가 되지 못한다.',
+      not: { crowd: '다수가 그렇게 한다는 것이 아니라, 비판한 사람도 같은 잘못을 한다는 것을 근거로 삼았다.' } },
+    { id: 'tq-4', f: 'tu-quoque', src: 'new', lv: 2,
+      text: '우리나라의 탄소 배출을 비판하다니요? 귀국도 산업화 과정에서 엄청난 탄소를 배출하지 않았습니까? 그러니 우리를 비판할 자격이 없습니다.',
+      cue: '귀국도 산업화 과정에서 엄청난 탄소를 배출하지 않았습니까',
+      why: '상대국도 과거에 같은 잘못을 했다는 사실로 비판을 피하려 했다. 탄소 배출이 문제라는 점은 그대로다.',
+      not: { circumstantial: '상대국의 현재 이해관계(처지)가 아니라, 과거에 같은 잘못을 했다는 점을 근거로 삼았다.' } },
+    { id: 'tq-5', f: 'tu-quoque', src: 'new', lv: 1,
+      text: '제가 회의에 늦었다고 지적하시는데, 팀장님도 지난주에 30분이나 늦으셨잖아요.',
+      cue: '팀장님도 지난주에 30분이나 늦으셨잖아요',
+      why: '지적한 사람도 같은 잘못을 했다는 것은 내가 늦었다는 사실이나 그것이 잘못이라는 점을 바꾸지 못한다.',
+      not: { 'ad-hominem': '팀장의 됨됨이 전반이 아니라, 같은 종류의 잘못(지각)을 되받아쳤다.' } },
+    { id: 'tq-6', f: 'tu-quoque', src: 'new', lv: 1,
+      text: '야당은 우리 당의 예산 낭비를 비판할 자격이 없다. 그들이 집권했을 때도 똑같이 예산을 낭비했기 때문이다.',
+      cue: '그들이 집권했을 때도 똑같이',
+      why: '비판하는 쪽도 과거에 같은 잘못을 했다는 이유로 비판을 피하려 했다. 지금의 예산 낭비가 문제라는 점은 그대로다.',
+      not: { 'red-herring': '다른 결론으로 새어 나간 것처럼 보이지만, ‘너희도 똑같이 했다’는 전형적인 피장파장이다.' } },
+    { id: 'tq-7', f: 'tu-quoque', src: 'new', lv: 1,
+      text: '의사 선생님이 저보고 술을 끊으라고 하시는데, 선생님도 회식 때마다 술을 드시잖아요. 그러니 술이 그렇게 해롭지는 않은 거죠.',
+      cue: '선생님도 회식 때마다 술을 드시잖아요',
+      why: '조언한 사람도 같은 행동을 한다는 것은 술이 해롭지 않다는 근거가 아니다.',
+      not: { authority: '의사의 권위를 근거로 든 것이 아니라, 의사도 같은 행동을 한다는 점을 들어 조언을 거부했다.' } },
+    { id: 'tq-8', f: 'tu-quoque', src: 'new', lv: 1, pair: 'p02',
+      text: '흡연이 해롭다는 김 박사의 강연은 들을 필요가 없어. 김 박사도 하루에 담배를 한 갑씩 피우잖아.',
+      cue: '김 박사도 하루에 담배를 한 갑씩 피우잖아',
+      why: '주장하는 사람도 같은 행동(흡연)을 한다는 이유로 주장을 거부했다. 김 박사가 담배를 피워도 흡연은 해롭다.',
+      not: { 'ad-hominem': '짝 문항과 비교해 보자. 주장과 무관한 됨됨이가 아니라, 주장과 같은 종류의 행동(흡연)을 근거로 삼았다.' } },
+
+    // ── 무지에 호소
+    { id: 'ig-1', f: 'ignorance', src: 'note', ref: '노트: 무지에 호소하는 논증 예시', lv: 1,
+      text: '많은 사람들은 유전자 조작 기술이 인간 복제에 사용되는 경우 엄청난 재앙이 일어날 것이라고 우려한다. 그러나 이러한 태도는 잘못이다. 지금까지 유전자 조작 기술이 위험하다는 것을 보여 준 그 어떤 증거도 없기 때문이다.',
+      cue: '그 어떤 증거도 없기 때문이다',
+      why: '위험하다는 증거가 없다는 것이 안전하다는 증거는 아니다. 증명되지 않았다는 사실을 반대 주장의 근거로 삼았다.',
+      not: { hasty: '적은 사례로 일반화한 것이 아니라, 증거가 ‘없다’는 것 자체를 근거로 삼았다.' } },
+    { id: 'ig-2', f: 'ignorance', src: 'new', lv: 1,
+      text: '지금까지 아무도 귀신이 존재하지 않는다는 것을 증명하지 못했다. 그러므로 귀신은 존재한다.',
+      cue: '증명하지 못했다',
+      why: '거짓임이 증명되지 않았다는 것을 참이라는 근거로 삼았다.',
+      not: { crowd: '많은 사람이 믿는다는 것이 아니라, 반증이 없다는 것을 근거로 삼았다.' } },
+    { id: 'ig-3', f: 'ignorance', src: 'new', lv: 1,
+      text: '그 피의자가 범인이 아니라는 확실한 증거가 나오지 않았다. 따라서 그는 범인이다.',
+      cue: '범인이 아니라는 확실한 증거가 나오지 않았다',
+      why: '무죄라는 증거가 없다는 것이 유죄의 증거가 되지는 않는다.',
+      not: { 'false-dilemma': '선택지를 줄인 것이 아니라, 증거가 없다는 사실을 반대 결론의 근거로 삼았다.' } },
+    { id: 'ig-4', f: 'ignorance', src: 'new', lv: 2,
+      text: '외계 생명체가 있다는 증거는 아직 하나도 발견되지 않았다. 그러므로 우주에는 지구 말고는 생명체가 없다.',
+      cue: '증거는 아직 하나도 발견되지 않았다',
+      why: '있다는 증거가 아직 없다는 것이 없다는 증거는 아니다.',
+      not: { hasty: '관찰한 사례로 일반화한 것이 아니라, 증거가 ‘없음’을 근거로 단정했다.' } },
+    { id: 'ig-5', f: 'ignorance', src: 'new', lv: 1,
+      text: '이 건강식품이 효과가 없다는 연구 결과는 아직 없습니다. 그러니 안심하고 드셔도 효과를 보실 겁니다.',
+      cue: '효과가 없다는 연구 결과는 아직 없습니다',
+      why: '효과가 없다는 것이 증명되지 않았다는 사실을, 효과가 있다는 근거로 삼았다.',
+      not: { authority: '권위자의 말이 아니라, 반대 증거가 없다는 것을 근거로 삼았다.' } },
+
+    // ── 허수아비 논증
+    { id: 'sm-1', f: 'straw-man', src: 'note', ref: '노트: 허수아비 논증 예시', lv: 1,
+      text: '황자연 칼럼니스트는 경제 발전이 인간 삶에 있어서 가장 중요한 것은 아니라고 주장한다. 배울 만큼 배운 작자가 원시로 돌아가자는 그런 무식한 주장을 하다니, 개탄스럽기 그지없다.',
+      cue: '원시로 돌아가자는 그런 무식한 주장',
+      why: '‘경제 발전이 가장 중요한 것은 아니다’를 ‘원시로 돌아가자’로 과장·왜곡한 뒤 그것을 비판했다.',
+      not: { 'red-herring': '아예 다른 이야기를 한 것이 아니라, 상대 주장을 비틀어 놓고 공격했다.' } },
+    { id: 'sm-2', f: 'straw-man', src: 'new', lv: 1,
+      text: '학교 급식에 채식 메뉴를 일주일에 한 번 넣자는 의견이 나왔다. 결국 학생들에게 고기를 먹지 말라는 건데, 성장기 아이들에게 고기를 금지하다니 말도 안 된다.',
+      cue: '결국 학생들에게 고기를 먹지 말라는 건데',
+      why: '‘일주일에 한 번 채식 메뉴’를 ‘고기 금지’로 과장한 뒤 비판했다.',
+      not: { 'false-dilemma': '선택지를 둘로 줄였다기보다, 상대 주장을 극단적으로 바꿔 놓고 공격했다.' } },
+    { id: 'sm-3', f: 'straw-man', src: 'new', lv: 1,
+      text: '청소년의 게임 시간을 조금 줄이자는 제안에 대해, 그는 ‘게임 산업을 말살하고 청소년의 여가를 빼앗자는 독재적 발상’이라고 비난했다.',
+      cue: '게임 산업을 말살하고',
+      why: '‘게임 시간을 조금 줄이자’를 ‘게임 산업 말살, 여가 박탈’로 과장해 비난했다.',
+      not: { 'intent-extension': '행위의 부수적 결과를 의도로 본 것이라기보다, 상대의 주장 자체를 부풀려 공격했다.' } },
+    { id: 'sm-4', f: 'straw-man', src: 'new', lv: 1,
+      text: '환경 단체는 일회용 컵 사용을 줄이자고 한다. 그렇다면 그들은 카페 문을 다 닫고 커피를 마시지 말라는 것인가? 그런 극단적인 주장은 받아들일 수 없다.',
+      cue: '카페 문을 다 닫고 커피를 마시지 말라는 것인가',
+      why: '‘일회용 컵 사용을 줄이자’를 ‘카페를 닫고 커피를 마시지 말라’로 왜곡한 뒤 비판했다.',
+      not: { 'red-herring': '상대 주장을 다루긴 하지만, 그것을 극단적으로 비틀었다는 점에서 허수아비다.' } },
+    { id: 'sm-5', f: 'straw-man', src: 'new', lv: 1,
+      text: '동생이 ‘오늘은 좀 쉬고 싶어’라고 하자, 형은 ‘평생 놀고먹겠다는 거냐? 그렇게 게으르게 살면 안 돼’라고 꾸짖었다.',
+      cue: '평생 놀고먹겠다는 거냐',
+      why: '‘오늘 좀 쉬고 싶다’를 ‘평생 놀고먹겠다’로 과장한 뒤 비판했다.',
+      not: { 'false-dilemma': '중간을 지웠다기보다, 동생의 말을 극단적인 주장으로 바꿔 공격했다.' } },
+    { id: 'sm-6', f: 'straw-man', src: 'new', lv: 1, pair: 'p03',
+      text: '도서관 운영 시간을 밤 10시까지 늘리자는 제안에 대해, 학생회장은 ‘결국 학생들을 밤새 학교에 가둬 놓고 공부시키겠다는 것이냐’며 반대했다.',
+      cue: '밤새 학교에 가둬 놓고 공부시키겠다는 것이냐',
+      why: '‘운영 시간을 밤 10시까지 늘리자’를 ‘밤새 가둬 놓고 공부시키자’로 과장한 뒤 반대했다.',
+      not: { 'red-herring': '짝 문항과 비교해 보자. 여기서는 제안 자체를 비틀어 공격했고, 다른 화제로 빠지지는 않았다.' } },
+
+    // ── 논점 일탈
+    { id: 'rh-1', f: 'red-herring', src: 'note', ref: '노트: 논점 일탈의 오류 예시', lv: 2,
+      text: '물론 사회주의가 바람직하다. 한때는 모든 효용이 개인의 소유였으나 이제는 점점 더 정부의 소유로 바뀌고 있다. 사회보장법이란 것은 사회주의자들이 언제나 주장해 오던 여러 주장들을 구현하고 있다. 우리는 사회주의로 향하는 도상에 있다. 그리고 사회주의의 승리는 필연적인 것이다.',
+      cue: '사회주의의 승리는 필연적인 것이다',
+      why: '‘사회주의가 바람직하다’는 결론을 위해 그 근거를 대지 않고, ‘이미 진행 중이다·승리는 필연적이다’라는 다른 결론을 내세웠다. 필연적인 것이 곧 바람직한 것은 아니다.',
+      not: { 'straw-man': '상대 주장을 왜곡한 것이 아니라, 원래 결론(바람직함) 대신 다른 결론(필연성)을 주장했다.' } },
+    { id: 'rh-2', f: 'red-herring', src: 'new', lv: 1,
+      text: '그 정치인의 비리 의혹에 대해 기자가 묻자, 대변인은 ‘지금 우리 경제가 얼마나 어려운지 아십니까? 경제를 살리는 데 집중해야 할 때입니다’라고 답했다.',
+      cue: '경제를 살리는 데 집중해야 할 때입니다',
+      why: '비리 의혹이라는 원래 논점에 대해 답하지 않고, 경제 문제라는 다른 결론으로 화제를 돌렸다.',
+      not: { 'tu-quoque': '‘너도 그랬다’고 되받아친 것이 아니라, 아예 다른 화제로 논점을 옮겼다.' } },
+    { id: 'rh-3', f: 'red-herring', src: 'new', lv: 2,
+      text: '원자력 발전소가 안전한지 묻는 질문에, 그는 ‘원자력은 인류가 발견한 가장 위대한 에너지이며, 원자력 덕분에 우리나라는 경제 성장을 이루었다’고 답했다.',
+      cue: '원자력 덕분에 우리나라는 경제 성장을 이루었다',
+      why: '안전성(원래 논점)에 대한 근거 대신, 원자력이 위대하고 경제에 기여했다는 다른 결론을 내세웠다.',
+      not: { authority: '권위자의 말을 근거로 든 것이 아니라, 원래 물음과 다른 결론으로 대답을 대신했다.' } },
+    { id: 'rh-4', f: 'red-herring', src: 'new', lv: 2,
+      text: '이번 수학여행 장소는 반드시 제주도로 정해야 합니다. 요즘 학생들은 스트레스가 너무 많고 입시 경쟁이 지나치게 치열합니다. 학생들의 정신 건강이 무엇보다 중요합니다.',
+      cue: '학생들의 정신 건강이 무엇보다 중요합니다',
+      why: '‘왜 제주도여야 하는가’에 대한 근거는 대지 않고, ‘학생들의 정신 건강이 중요하다’는 다른 결론을 늘어놓았다.',
+      not: { pity: '학생들의 어려움을 말하지만, 핵심은 동정을 구하는 것이 아니라 원래 결론(제주도)과 다른 결론을 내세운 데 있다.' } },
+    { id: 'rh-5', f: 'red-herring', src: 'new', lv: 2,
+      text: '동물 실험을 금지해야 한다는 주장에 대해, 한 연구자는 ‘인류의 평균 수명은 지난 100년간 30년 이상 늘었다. 의학의 발전은 인류의 가장 큰 업적이다’라고 말했다.',
+      cue: '의학의 발전은 인류의 가장 큰 업적이다',
+      why: '동물 실험을 금지해야 하는지라는 논점에 대해 답하지 않고, ‘의학의 발전은 위대하다’는 다른 결론을 내세웠다.',
+      not: { 'straw-man': '상대 주장을 비틀어 공격한 것이 아니라, 다른 결론으로 논점을 옮겼다.' } },
+    { id: 'rh-6', f: 'red-herring', src: 'new', lv: 2, pair: 'p03',
+      text: '도서관 운영 시간을 밤 10시까지 늘리자는 제안에 대해, 학생회장은 ‘우리 학교 도서관은 장서 수가 전국 최고 수준이고, 이것은 우리 학교의 큰 자랑이다’라고만 답했다.',
+      cue: '장서 수가 전국 최고 수준이고',
+      why: '운영 시간을 늘릴지라는 논점에는 답하지 않고, ‘장서 수가 자랑이다’라는 다른 이야기로 결론을 대신했다.',
+      not: { 'straw-man': '짝 문항과 비교해 보자. 여기서는 제안을 비틀지 않고, 아예 다른 화제로 빠졌다.' } },
+
+    // ── 발생적 오류
+    { id: 'ge-1', f: 'genetic', src: 'new', lv: 1,
+      text: '그 다이어트 이론은 원래 한 식품 회사의 광고 문구에서 시작되었다. 그러니 그 이론은 틀린 것이 분명하다.',
+      cue: '광고 문구에서 시작되었다',
+      why: '이론이 맞는지는 내용과 증거로 판단해야 하는데, 이론이 생겨난 기원(광고 문구)만을 근거로 틀렸다고 단정했다.',
+      not: { circumstantial: '지금 그 이론을 주장하는 사람의 처지를 문제 삼은 것이 아니라, 이론이 어디서 시작되었는지를 문제 삼았다.' } },
+    { id: 'ge-2', f: 'genetic', src: 'new', lv: 1,
+      text: '폭죽은 원래 중국에서 악귀를 쫓기 위한 미신에서 시작되었다. 그러므로 오늘날 축제에서 불꽃놀이를 하는 것도 미신적인 행위다.',
+      cue: '미신에서 시작되었다',
+      why: '어떤 풍습의 기원이 미신이었다고 해서 오늘날의 불꽃놀이도 미신적인 행위인 것은 아니다. 기원을 근거로 현재의 성격을 판단했다.',
+      not: { 'ad-hominem': '사람을 공격한 것이 아니라, 풍습의 기원을 문제 삼았다.' } },
+    { id: 'ge-3', f: 'genetic', src: 'new', lv: 2,
+      text: '결혼반지를 주고받는 풍습은 고대에 신부를 소유물로 묶어 두던 관습에서 유래했다. 그러니 오늘날 결혼반지를 주고받는 것은 여성을 소유물로 여기는 행위다.',
+      cue: '관습에서 유래했다',
+      why: '풍습이 생겨난 유래를 근거로, 그 풍습의 오늘날 의미까지 단정했다.',
+      not: { 'intent-extension': '행위의 부수적 결과를 의도로 본 것이 아니라, 풍습의 기원을 근거로 현재의 의미를 판단했다.' } },
+    { id: 'ge-4', f: 'genetic', src: 'new', lv: 2,
+      text: '그 화학 이론은 한 과학자가 꿈속에서 떠올린 아이디어에서 나온 것이다. 꿈에서 나온 생각이 과학적일 리 없으니, 그 이론은 틀렸다.',
+      cue: '꿈속에서 떠올린 아이디어에서 나온 것이다',
+      why: '이론이 맞는지는 실험과 증거로 판단해야 한다. 아이디어가 어떻게 떠올랐는지(기원)는 이론의 참거짓과 상관이 없다.',
+      not: { 'ad-hominem': '과학자의 됨됨이를 공격한 것이 아니라, 이론이 생겨난 과정을 문제 삼았다.' } },
+    { id: 'ge-5', f: 'genetic', src: 'new', lv: 2,
+      text: '인터넷은 원래 군사적 목적으로 개발되었다. 그러므로 인터넷은 본질적으로 전쟁을 위한 도구이며, 교육에 쓰기에 적합하지 않다.',
+      cue: '원래 군사적 목적으로 개발되었다',
+      why: '처음 개발된 목적(기원)을 근거로 오늘날의 쓰임새까지 판단했다.',
+      not: { 'intent-extension': '지금 인터넷을 쓰는 사람의 의도를 확대한 것이 아니라, 기술이 생겨난 기원을 근거로 삼았다.' } },
+    { id: 'ge-6', f: 'genetic', src: 'new', lv: 1,
+      text: '그 속담은 옛날 양반들이 백성을 다스리려고 퍼뜨린 말이다. 그러니 그 속담에 담긴 교훈은 모두 잘못된 것이다.',
+      cue: '양반들이 백성을 다스리려고 퍼뜨린 말이다',
+      why: '속담이 생겨난 배경(기원)만으로 그 교훈의 옳고 그름을 판단했다.',
+      not: { circumstantial: '지금 그 속담을 말하는 사람의 처지가 아니라, 속담이 처음 생겨난 배경을 문제 삼았다.' } },
+    { id: 'ge-7', f: 'genetic', src: 'new', lv: 2,
+      text: '민주주의라는 말은 노예제를 유지하던 고대 아테네에서 나왔다. 그러므로 민주주의는 노예제를 옹호하는 사상이다.',
+      cue: '노예제를 유지하던 고대 아테네에서 나왔다',
+      why: '사상이 처음 생겨난 사회의 성격(기원)을 근거로 사상 자체의 내용을 단정했다.',
+      not: { division: '아테네(전체)의 성질을 부분에 옮긴 것이 아니라, 사상이 태어난 기원을 문제 삼았다.' } },
+  ]);
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 문제 은행 — 귀납 관련 오류 (성급한 일반화·편향된 표본·오도된 생생함·잘못된 유비·거짓 원인·본말전도·공통 원인 무시) */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+  FT.items = (FT.items || []).concat([
+    // ── 성급한 일반화
+    { id: 'ha-1', f: 'hasty', src: 'note', ref: '노트: 성급한 일반화 예시', lv: 1,
+      text: '충청도 사람은 동작이 굼뜨다. 내가 만나 본 다섯 사람 모두 그랬다.',
+      cue: '내가 만나 본 다섯 사람 모두 그랬다',
+      why: '다섯 명이라는 너무 적은 사례로 충청도 사람 전체를 일반화했다.',
+      not: { 'biased-sample': '표본이 한쪽에 치우쳤다기보다, 다섯 명이라는 표본의 수 자체가 너무 적다.' } },
+    { id: 'ha-2', f: 'hasty', src: 'note', ref: '노트: 일반화 예시', lv: 1,
+      text: '대학생 a도 커피를 좋아하고, b도 커피를 좋아하고, c도 커피를 좋아한다. 그러므로 대학생은 대부분 커피 마시기를 좋아한다.',
+      cue: '대학생 a도 커피를 좋아하고',
+      why: '세 명의 사례만으로 대학생 대부분에 대한 결론을 냈다.',
+      not: { 'biased-sample': '특정 집단만 골라 조사했다는 정보는 없다. 문제는 세 명이라는 표본의 수다.' } },
+    { id: 'ha-3', f: 'hasty', src: 'note', ref: '노트: 성급한 일반화 묶음 (흑점)', lv: 3,
+      text: '경기 침체가 있기 전에 지금까지 항상 태양의 많은 흑점이 발견되었다. 그러므로 다음 경기 침체기에도 많은 흑점이 발견될 것이다.',
+      cue: '지금까지 항상 태양의 많은 흑점이 발견되었다',
+      why: '몇 번의 경기 침체에서 관찰된 일치만으로 ‘항상 그렇다’는 일반 법칙을 세우고 다음에도 그럴 것이라고 결론지었다.',
+      not: { 'false-cause': '흑점이 경기 침체의 원인이라고 주장하지는 않았다. 제한된 관찰로 일반 법칙을 끌어낸 점이 문제다.' } },
+    { id: 'ha-4', f: 'hasty', src: 'note', ref: '노트: 귀납 예문 (쌍둥이) → 성급한 일반화', lv: 2,
+      text: '뉴욕에서 태어난 베스와 에이미라는 여자 쌍둥이를 조사했다. 둘은 전혀 다른 환경의 가정에 입양되었지만, 20년 후 다시 만났을 때 성격이 아주 비슷했다. 따라서 인간의 정신과 성격을 결정하는 것은 환경보다 생물학적인 요소인 본능이라는 생물학적 결정론이 옳다.',
+      cue: '베스와 에이미라는 여자 쌍둥이',
+      why: '쌍둥이 한 쌍이라는 단 하나의 사례로 인간 전체에 대한 이론을 확정했다.',
+      not: { 'vivid': '충분한 자료를 무시하고 인상적인 사례를 택한 것이 아니라, 처음부터 사례가 하나뿐이다.' } },
+    { id: 'ha-5', f: 'hasty', src: 'new', lv: 1,
+      text: '지난번에 산 그 회사 제품이 일주일 만에 고장 났다. 그 회사 제품은 다 엉터리다.',
+      cue: '지난번에 산 그 회사 제품이 일주일 만에 고장 났다',
+      why: '제품 하나의 고장으로 그 회사 제품 전체를 판단했다.',
+      not: { 'vivid': '조사한 통계를 무시한 것이 아니라, 자료가 단 하나뿐인 상태에서 일반화했다.' } },
+    { id: 'ha-6', f: 'hasty', src: 'new', lv: 1,
+      text: '프랑스 여행 중에 들른 식당 종업원 두 명이 불친절했다. 프랑스 사람들은 원래 불친절하다.',
+      cue: '식당 종업원 두 명이 불친절했다',
+      why: '두 사람의 사례로 프랑스 사람 전체를 일반화했다.',
+      not: { 'biased-sample': '표본이 치우쳤다기보다 두 명이라는 수가 너무 적다.' } },
+    { id: 'ha-7', f: 'hasty', src: 'new', lv: 1,
+      text: '새로 온 전학생이 첫날 수학 문제를 하나 틀렸다. 그 학생은 수학을 못하는 학생이다.',
+      cue: '첫날 수학 문제를 하나 틀렸다',
+      why: '문제 하나를 틀린 것으로 그 학생의 수학 실력 전체를 판단했다.',
+      not: { accident: '일반 원칙을 예외에 적용한 것이 아니라, 한 번의 사례로 일반적인 결론을 냈다.' } },
+    { id: 'ha-8', f: 'hasty', src: 'new', lv: 2, pair: 'p05',
+      text: '우리 학교에서 무작위로 뽑은 학생 세 명이 모두 아침을 거른다고 했다. 그러므로 우리 학교 학생 대부분은 아침을 거른다.',
+      cue: '무작위로 뽑은 학생 세 명이',
+      why: '무작위로 뽑았더라도 세 명은 너무 적은 표본이다. 표본의 수가 부족한 상태에서 전체를 일반화했다.',
+      not: { 'biased-sample': '짝 문항과 비교해 보자. 여기서는 무작위로 뽑아 치우침은 없지만, 표본이 세 명뿐이다.' } },
+
+    // ── 편향된 표본
+    { id: 'bs-1', f: 'biased-sample', src: 'note', ref: '노트: 편향된 자료 예시', lv: 1,
+      text: '무작위로 선택된 수천 명의 아파트 소유자에게 여론 조사를 실시했더니 무려 80%가 보유세 인상에 반대하였다. 그러므로 정부의 보유세 인상 정책은 대대적인 국민적 저항에 부딪힐 것이다.',
+      cue: '아파트 소유자에게 여론 조사를',
+      why: '보유세 인상으로 직접 부담이 늘어나는 아파트 소유자만 조사했으므로, 국민 전체를 대표하지 못한다.',
+      not: { hasty: '수천 명이면 표본 수는 적지 않다. 문제는 그 표본이 한쪽(아파트 소유자)에 치우쳐 있다는 것이다.' } },
+    { id: 'bs-2', f: 'biased-sample', src: 'note', ref: '노트: 편향된 자료 예시', lv: 2,
+      text: '우리나라 국가대표 축구선수 30명 중 24명이 초등학교 때 축구를 시작했다. 그리고 국가대표 농구선수 20명 중 초등학교 때 농구를 시작한 사람은 15명이다. 그러므로 우리나라 구기 종목 국가대표 선수의 70% 이상은 초등학교 때부터 관련 종목의 선수로 활동했다.',
+      cue: '축구선수 30명 중 24명',
+      why: '축구와 농구 두 종목만 조사해, 배구·야구·핸드볼 등을 포함한 구기 종목 전체로 일반화했다.',
+      not: { hasty: '50명이라는 수보다, 두 종목에만 쏠린 표본이 구기 종목 전체를 대표하지 못한다는 점이 핵심이다.' } },
+    { id: 'bs-3', f: 'biased-sample', src: 'note', ref: '노트: 편향된 자료 예시', lv: 2,
+      text: '이번 7월 한 달 동안 인천 공항을 통해 해외 어학연수를 떠난 ‘나 홀로’ 초등학생만 5천 명에 달한다고 한다. 또 경기도 Y시 교육청이 Y시의 중학교 입학생 300명을 조사했더니, 그중 60명이 초등학교 시절 해외 어학연수 경험이 있다고 답했다. 결국 우리나라 도시의 현재 중학생 중 20% 정도가 초등학교 시절 해외 어학연수 경험이 있는 셈이다.',
+      cue: 'Y시의 중학교 입학생 300명을',
+      why: '한 도시의 신입생만 조사한 결과를 전국 도시의 중학생 전체로 일반화했다. Y시의 특성(소득 수준 등)이 반영되었을 수 있다.',
+      not: { hasty: '300명이 적어서가 아니라, 한 도시에 쏠린 표본이라 전국을 대표하지 못한다.' } },
+    { id: 'bs-4', f: 'biased-sample', src: 'new', lv: 1,
+      text: '우리 학교 도서관을 이용하는 학생 200명에게 물었더니 90%가 ‘독서를 좋아한다’고 답했다. 그러므로 우리 학교 학생들은 대부분 독서를 좋아한다.',
+      cue: '도서관을 이용하는 학생 200명에게',
+      why: '도서관 이용자는 원래 독서를 좋아할 가능성이 높다. 치우친 표본으로 학교 전체를 일반화했다.',
+      not: { hasty: '200명은 적지 않은 수다. 문제는 도서관 이용자라는 한쪽 집단만 조사했다는 점이다.' } },
+    { id: 'bs-5', f: 'biased-sample', src: 'new', lv: 1,
+      text: '한 헬스 잡지가 구독자 1만 명을 대상으로 조사했더니 85%가 일주일에 세 번 이상 운동한다고 답했다. 따라서 한국인의 대부분은 규칙적으로 운동한다.',
+      cue: '헬스 잡지가 구독자 1만 명을',
+      why: '헬스 잡지 구독자는 운동에 관심이 많은 사람들이다. 이들만 조사해 한국인 전체로 일반화했다.',
+      not: { hasty: '1만 명이면 수는 충분하다. 표본이 운동 애호가 쪽으로 치우친 것이 문제다.' } },
+    { id: 'bs-6', f: 'biased-sample', src: 'new', lv: 2,
+      text: '평일 오전 10시에 집 전화로 설문을 했더니 응답자의 70%가 낮 시간대 TV 프로그램을 즐겨 본다고 답했다. 따라서 국민의 70%는 낮 시간대 TV 프로그램을 즐겨 본다.',
+      cue: '평일 오전 10시에 집 전화로',
+      why: '평일 오전에 집에서 전화를 받는 사람은 낮에 집에 있는 사람들이라, 낮 TV를 볼 가능성이 원래 높다. 치우친 표본이다.',
+      not: { hasty: '응답자 수가 아니라, 낮에 집에 있는 사람들만 조사된 구조가 문제다.' } },
+    { id: 'bs-7', f: 'biased-sample', src: 'new', lv: 1,
+      text: '어느 대학 축제에 온 학생 500명에게 물었더니 대부분이 ‘대학 생활이 즐겁다’고 답했다. 그러므로 우리나라 대학생 대부분은 대학 생활에 만족한다.',
+      cue: '축제에 온 학생 500명에게',
+      why: '축제에 온 학생들은 대학 생활을 즐기는 쪽에 치우쳐 있다. 이들로 전국 대학생 전체를 판단했다.',
+      not: { hasty: '500명은 적지 않다. 축제 참가자라는 치우친 집단이 문제다.' } },
+    { id: 'bs-8', f: 'biased-sample', src: 'new', lv: 2, pair: 'p05',
+      text: '우리 학교에서 지각한 학생 50명에게 물었더니 대부분이 아침을 거른다고 했다. 그러므로 우리 학교 학생 대부분은 아침을 거른다.',
+      cue: '지각한 학생 50명에게',
+      why: '지각한 학생들은 아침을 거를 가능성이 높은 집단이다. 치우친 표본으로 학교 전체를 일반화했다.',
+      not: { hasty: '짝 문항과 비교해 보자. 여기서는 50명으로 수는 적지 않지만, 지각생이라는 한쪽 집단에 쏠려 있다.' } },
+
+    // ── 오도된 생생함
+    { id: 'vi-1', f: 'vivid', src: 'note', ref: '노트: 오도된 생생함 예시', lv: 1,
+      text: '안전한 자동차를 구입하려고 여러 자료를 찾아보았고, 그래서 GM사 자동차를 구입하려던 차에, TV에서 GM 자동차의 안전성을 비판하는 뉴스가 나와서 마음을 바꾸었다.',
+      cue: 'TV에서 GM 자동차의 안전성을 비판하는 뉴스가 나와서',
+      why: '여러 자료를 검토해 내린 판단을, 인상적인 뉴스 하나 때문에 뒤집었다.',
+      not: { hasty: '자료가 부족했던 것이 아니라, 충분한 자료가 있었는데도 생생한 뉴스 하나에 끌렸다.' } },
+    { id: 'vi-2', f: 'vivid', src: 'new', lv: 1,
+      text: '통계상 비행기는 자동차보다 훨씬 안전한 교통수단이다. 그래도 어제 본 비행기 추락 사고 영상이 너무 끔찍해서, 이번 여행은 비행기 대신 자동차로 가기로 했다.',
+      cue: '비행기 추락 사고 영상이 너무 끔찍해서',
+      why: '안전성을 보여 주는 통계가 있는데도, 끔찍하고 생생한 사고 영상 하나에 이끌려 판단했다.',
+      not: { hasty: '사례가 적어서 일반화한 것이 아니라, 충분한 통계를 생생한 사례가 압도했다.' } },
+    { id: 'vi-3', f: 'vivid', src: 'new', lv: 1,
+      text: '소비자 평가 1,000건을 보니 이 세탁기는 고장률이 가장 낮았다. 그런데 이웃집 아주머니가 같은 세탁기가 첫 주에 고장 나서 고생했다고 열을 내며 이야기하는 것을 듣고, 다른 세탁기를 사기로 했다.',
+      cue: '이웃집 아주머니가 같은 세탁기가 첫 주에 고장 나서',
+      why: '1,000건의 평가라는 충분한 자료보다, 이웃의 생생한 경험담 하나를 더 무겁게 여겼다.',
+      not: { hasty: '한 사례로 일반화한 것처럼 보이지만, 핵심은 충분한 자료가 있었는데 그것을 무시했다는 점이다.' } },
+    { id: 'vi-4', f: 'vivid', src: 'new', lv: 2,
+      text: '이 지역의 범죄율은 10년째 전국 최저 수준이다. 하지만 지난주 뉴스에서 이 동네 강도 사건이 생생하게 보도된 뒤로, 그는 이 동네가 위험하다며 이사를 결심했다.',
+      cue: '뉴스에서 이 동네 강도 사건이 생생하게 보도된',
+      why: '10년간의 범죄율 통계를 무시하고, 생생하게 보도된 사건 하나로 판단을 바꿨다.',
+      not: { hasty: '자료가 부족한 상황이 아니다. 충분한 통계를 생생한 사건 하나가 이겼다.' } },
+    { id: 'vi-5', f: 'vivid', src: 'new', lv: 2,
+      text: '대규모 연구에 따르면 흡연자는 비흡연자보다 폐암에 걸릴 위험이 훨씬 높다. 하지만 우리 할아버지는 평생 담배를 피우시고도 아흔 살까지 건강하게 사셨으니, 담배는 그렇게 해롭지 않다.',
+      cue: '우리 할아버지는 평생 담배를 피우시고도',
+      why: '대규모 연구라는 충분한 자료를, 가족의 인상적인 사례 하나로 뒤집었다.',
+      not: { hasty: '자료가 없어 한 사례로 일반화한 것이 아니라, 대규모 연구 결과를 생생한 한 사례로 무시했다.' } },
+    { id: 'vi-6', f: 'vivid', src: 'new', lv: 1,
+      text: '이 학원의 합격률은 다른 학원과 비슷하다는 조사 결과가 있다. 하지만 학원 홍보 영상에서 눈물을 흘리며 합격 소감을 말하는 선배를 보고, 이 학원에 다니면 합격할 것이라고 확신하게 되었다.',
+      cue: '눈물을 흘리며 합격 소감을 말하는 선배를 보고',
+      why: '합격률이 비슷하다는 조사 결과보다, 감동적인 합격 수기 하나에 이끌려 결론을 냈다.',
+      not: { authority: '선배의 권위가 아니라, 그 사례가 주는 생생한 인상에 끌린 것이 문제다.' } },
+    { id: 'vi-7', f: 'vivid', src: 'new', lv: 1,
+      text: '여러 연구가 이 백신이 안전하다고 결론 내렸다. 그런데 인터넷에서 백신을 맞고 크게 아팠다는 한 사람의 생생한 후기를 읽은 엄마는 아이에게 백신을 맞히지 않기로 했다.',
+      cue: '백신을 맞고 크게 아팠다는 한 사람의 생생한 후기',
+      why: '여러 연구라는 충분한 근거보다, 생생한 후기 하나를 더 믿고 결정했다.',
+      not: { hasty: '연구 자료가 충분히 있었다는 점에서, 단순히 사례가 적은 성급한 일반화와 다르다.' } },
+
+    // ── 잘못된 유비
+    { id: 'an-1', f: 'false-analogy', src: 'note', ref: '노트: 유비의 오류 예시', lv: 1,
+      text: '어린이를 양육하는 일은 마치 나무를 기르는 일과 같다. 때때로 가지를 쳐 주는 것과 같은 강력한 물리적 자극이 나무를 곧게 자라게 하는 것처럼, 어린이도 올바르게 키우려면 강한 체벌로 다스리지 않으면 안 된다.',
+      cue: '어린이를 양육하는 일은 마치 나무를 기르는 일과 같다',
+      why: '나무와 어린이는 ‘자란다’는 점에서만 비슷할 뿐, 체벌의 효과와 관련된 점(감정, 인격, 상처)에서는 전혀 다르다.',
+      not: { equivocation: '단어의 뜻이 바뀐 것이 아니라, 두 대상(나무와 어린이)을 비교해 한쪽의 성질을 다른 쪽에 옮겼다.' } },
+    { id: 'an-2', f: 'false-analogy', src: 'note', ref: '노트: 유비 논증 예시 (성욕·식욕) → 잘못된 유비', lv: 2,
+      text: '성욕에 도착이 있다고 말하는 사람들이 있다. 그러나 이는 옳지 않다. 식욕에 도착이 있는가? 성욕에 도착이 있다고 말하는 사람들도 식욕에 도착이 있다고 하지는 않을 것이다. 그런데 성욕은 식욕과 마찬가지로 인간 모두에게 자연스러운 욕구이며, 누가 가르쳐 주지 않아도 갖고 있는 선천적인 것이다.',
+      cue: '식욕에 도착이 있는가',
+      why: '성욕과 식욕은 ‘자연스럽고 선천적인 욕구’라는 점에서 닮았을 뿐, 도착이 생기는지와 관련된 점은 보여 주지 못했다. 게다가 식욕에도 거식증·이식증 같은 도착이 있다.',
+      not: { equivocation: '‘도착’의 뜻이 바뀐 것이 아니라, 두 욕구의 닮은 점을 근거로 성질을 옮긴 유비가 약하다.' } },
+    { id: 'an-3', f: 'false-analogy', src: 'note', ref: '노트: 유비 논증 예시 (악마·전기) → 잘못된 유비', lv: 3,
+      text: '사탄의 존재와 악령의 실재성을 거부하는 것은 적의 존재를 받아들이지 않고 적지를 정찰하는 군인보다 더 어리석은 일이다. 전기 또한 신비한 것이지만, 우리는 그것의 존재나 그것의 힘을 문제 삼지 않는다. 전기가 행하는 것을 보거나 느낄 수 있기 때문이다. 그러나 고통, 증오, 전쟁, 의심, 인종차별, 그리고 다른 악들에 악마의 힘이 나타난 것이라면, 현대 세계에서 악마의 실재성에 대한 증거가 없다고 누가 말할 수 있는가?',
+      cue: '전기 또한 신비한 것이지만',
+      why: '전기는 측정과 실험으로 존재와 작용이 확인되지만, 악의 현상이 악마의 힘이라는 것은 확인된 바 없다. ‘보이지 않지만 결과로 드러난다’는 겉보기 유사성만으로 악마의 실재를 끌어냈다.',
+      not: { ignorance: '마지막 문장이 ‘증거가 없다고 누가 말할 수 있는가’라고 묻지만, 논증의 중심은 전기와 악마를 비교한 유비다.' } },
+    { id: 'an-4', f: 'false-analogy', src: 'note', ref: '노트: 유비 논증 예시 (나연·정연) → 잘못된 유비', lv: 1,
+      text: '나연이와 정연이는 같은 아파트에 살고, 같은 학교를 다니며, 애용하는 카페와 편의점도 같다. 나연이는 오늘 저녁에 남자 친구를 만난다. 그러므로 정연이도 오늘 저녁에 남자 친구를 만날 것이다.',
+      cue: '애용하는 카페와 편의점도 같다',
+      why: '두 사람의 닮은 점(사는 곳, 학교, 카페)이 결론(오늘 저녁 남자 친구를 만남)과 아무 관련이 없다.',
+      not: { hasty: '여러 사례로 일반화한 것이 아니라, 한 대상(나연)의 성질을 닮은 다른 대상(정연)에 옮겼다.' } },
+    { id: 'an-5', f: 'false-analogy', src: 'new', lv: 2,
+      text: '국가 경영은 회사 경영과 같다. 회사는 이익이 나지 않는 부서를 없앤다. 그러므로 국가도 이익이 나지 않는 복지 정책을 없애야 한다.',
+      cue: '국가 경영은 회사 경영과 같다',
+      why: '국가와 회사는 조직을 운영한다는 점에서 닮았지만, 목적(이윤 추구 vs 국민 전체의 삶)이 달라 그 유사성이 결론을 뒷받침하지 못한다.',
+      not: { composition: '부분과 전체의 관계가 아니라, 서로 다른 두 대상(국가와 회사)을 비교했다.' } },
+    { id: 'an-6', f: 'false-analogy', src: 'new', lv: 1,
+      text: '사람의 몸은 기계와 같다. 기계는 오래 쓰면 부품을 새것으로 바꿔 끼우면 된다. 그러므로 사람도 늙으면 장기를 바꿔 끼우기만 하면 영원히 살 수 있다.',
+      cue: '사람의 몸은 기계와 같다',
+      why: '몸과 기계는 부분이 모여 작동한다는 점에서만 닮았을 뿐, 생명·노화라는 결론과 관련된 점에서는 다르다.',
+      not: { composition: '부분의 성질을 전체로 옮긴 것이 아니라, 몸과 기계라는 두 대상을 비교했다.' } },
+
+    // ── 거짓 원인
+    { id: 'fc-1', f: 'false-cause', src: 'note', ref: '노트: 거짓 원인의 오류 예시', lv: 1,
+      text: '지금까지 내가 경험한 바로는 우리나라 축구팀이 붉은색 유니폼을 입지 않고 출전을 하면 꼭 경기에서 지더라. 그러니까 우리 축구팀이 승리하려면 붉은색 유니폼을 입고 출전해야 해.',
+      cue: '붉은색 유니폼을 입지 않고 출전을 하면 꼭 경기에서 지더라',
+      why: '유니폼 색깔과 승패가 몇 번 함께 일어났을 뿐, 유니폼 색이 승패의 원인은 아니다.',
+      not: { 'common-cause': '두 현상을 함께 일으키는 제3의 원인이 있는 것이 아니라, 애초에 인과 관계가 없다.' } },
+    { id: 'fc-2', f: 'false-cause', src: 'note', ref: '노트: 거짓 원인의 오류 예시', lv: 1,
+      text: '내가 축구 국가대표팀을 응원할 때마다 우리 팀이 패배했다. 이번 월드컵에서도 내가 응원하면 우리 팀이 질 것이다.',
+      cue: '내가 축구 국가대표팀을 응원할 때마다 우리 팀이 패배했다',
+      why: '나의 응원과 팀의 패배는 우연히 함께 일어났을 뿐, 원인과 결과의 관계가 아니다.',
+      not: { hasty: '몇 번의 사례로 일반화한 것처럼 보이지만, 핵심은 ‘내 응원’을 패배의 원인으로 본 데 있다.' } },
+    { id: 'fc-3', f: 'false-cause', src: 'note', ref: '노트: 성급한 일반화 묶음 (응원) → 거짓 원인', lv: 2,
+      text: '내가 우리 팀을 응원하러 올 때마다 항상 우리 팀은 승리했어. 그러므로 오늘 내가 우리 팀을 응원하러 왔으니까 오늘도 우리 팀이 승리할 거야.',
+      cue: '내가 우리 팀을 응원하러 올 때마다 항상 우리 팀은 승리했어',
+      why: '‘내가 응원하러 왔으니 이긴다’는 것은 나의 응원을 승리의 원인으로 보는 추론이다. 둘은 우연히 함께 일어났을 뿐이다.',
+      not: { hasty: '노트에서는 일반화 예문들과 함께 나오지만, 응원과 승리 사이에 인과가 있다고 본 것이 핵심이다.' } },
+    { id: 'fc-4', f: 'false-cause', src: 'new', lv: 1,
+      text: '시험 날 아침에 미역국을 먹었더니 시험을 망쳤다. 미역국이 시험을 망치게 한 것이다.',
+      cue: '미역국을 먹었더니 시험을 망쳤다',
+      why: '미역국을 먹은 것이 시험보다 먼저 일어났다는 이유만으로 원인이라고 보았다.',
+      not: { 'reversed-cause': '원인과 결과가 뒤바뀐 것이 아니라, 둘 사이에 인과 관계 자체가 없다.' } },
+    { id: 'fc-5', f: 'false-cause', src: 'new', lv: 2,
+      text: '새 교장 선생님이 부임한 뒤로 우리 학교 축구부 성적이 좋아졌다. 그러므로 교장 선생님이 축구부 성적을 올린 것이다.',
+      cue: '새 교장 선생님이 부임한 뒤로',
+      why: '부임이 먼저 일어났다는 시간적 순서만으로 원인이라고 단정했다. 새 감독, 신입 선수 등 다른 이유가 있을 수 있다.',
+      not: { 'common-cause': '둘을 함께 일으킨 제3의 원인을 지적할 수 있는 상황이 아니라, 시간적 선후를 인과로 착각했다.' } },
+    { id: 'fc-6', f: 'false-cause', src: 'new', lv: 1,
+      text: '까마귀가 울고 나서 할머니가 넘어지셨다. 까마귀 울음소리는 불길한 일을 불러온다.',
+      cue: '까마귀가 울고 나서',
+      why: '까마귀 울음이 먼저 있었다는 이유만으로 그것을 사고의 원인으로 보았다.',
+      not: { 'reversed-cause': '방향이 뒤바뀐 것이 아니라 인과 관계가 아예 없다.' } },
+    { id: 'fc-7', f: 'false-cause', src: 'new', lv: 1,
+      text: '행운의 펜으로 문제를 풀었더니 모의고사 점수가 올랐다. 수능 때도 이 펜을 써야 점수가 잘 나온다.',
+      cue: '행운의 펜으로 문제를 풀었더니',
+      why: '펜과 점수 향상이 함께 일어났을 뿐, 펜이 점수를 올린 원인은 아니다.',
+      not: { hasty: '핵심은 표본의 수가 아니라, 펜을 점수의 원인으로 본 데 있다.' } },
+    { id: 'fc-8', f: 'false-cause', src: 'new', lv: 1, pair: 'p04',
+      text: '내가 새 운동화를 신은 날마다 비가 왔다. 그러므로 새 운동화를 신으면 비가 온다.',
+      cue: '새 운동화를 신은 날마다 비가 왔다',
+      why: '운동화를 신은 것과 비가 온 것은 우연히 겹쳤을 뿐 인과 관계가 없다.',
+      not: { 'reversed-cause': '짝 문항(장화)과 비교해 보자. 장화는 비 때문에 신지만, 새 운동화와 비 사이에는 어느 방향으로도 인과가 없다.' } },
+
+    // ── 본말전도
+    { id: 'rc-1', f: 'reversed-cause', src: 'note', ref: '노트: 본말전도의 오류 예시', lv: 1,
+      text: '우리 동네 헬스클럽에 갔더니 뚱뚱한 사람만 있었다. 따라서 헬스클럽에 다니면 나도 뚱뚱해질 것이다.',
+      cue: '헬스클럽에 다니면 나도 뚱뚱해질 것이다',
+      why: '뚱뚱한 사람이 살을 빼려고 헬스클럽에 다니는 것(뚱뚱함이 원인)인데, 헬스클럽이 뚱뚱함의 원인이라고 거꾸로 보았다.',
+      not: { 'false-cause': '둘 사이에 인과 관계가 없는 것이 아니라, 원인과 결과의 방향이 뒤바뀌었다.' } },
+    { id: 'rc-2', f: 'reversed-cause', src: 'note', ref: '노트: 본말전도의 오류 예시', lv: 2,
+      text: '모두 A학점을 받는 학생은 열심히 공부하는 학생임에 틀림없습니다. 그러니 선생님, 만일 선생님께서 제가 열심히 공부하기를 바라신다면 제일 좋은 방법은 저에게 A를 주시는 것입니다.',
+      cue: '제일 좋은 방법은 저에게 A를 주시는 것입니다',
+      why: '열심히 공부한 결과로 A를 받는 것인데, A를 받으면 열심히 공부하게 된다고 원인과 결과를 뒤집었다.',
+      not: { 'false-cause': 'A학점과 공부 사이에는 실제 인과 관계가 있다. 문제는 그 방향을 거꾸로 본 것이다.' } },
+    { id: 'rc-3', f: 'reversed-cause', src: 'new', lv: 1,
+      text: '병원에는 언제 가 봐도 아픈 사람이 많다. 그러므로 병원에 다니면 병에 걸린다.',
+      cue: '병원에 다니면 병에 걸린다',
+      why: '아파서 병원에 가는 것(병이 원인)인데, 병원이 병의 원인이라고 거꾸로 보았다.',
+      not: { 'false-cause': '병원과 아픈 사람 사이에는 실제 인과가 있다. 방향이 뒤바뀌었을 뿐이다.' } },
+    { id: 'rc-4', f: 'reversed-cause', src: 'new', lv: 1,
+      text: '부자들은 대부분 비싼 시계를 차고 다닌다. 그러니 비싼 시계를 차면 부자가 될 수 있다.',
+      cue: '비싼 시계를 차면 부자가 될 수 있다',
+      why: '부자이기 때문에 비싼 시계를 차는 것인데, 비싼 시계가 부자가 되는 원인이라고 거꾸로 보았다.',
+      not: { 'common-cause': '두 현상을 함께 일으키는 제3의 원인이 아니라, 부유함이 시계의 원인인데 그 방향을 뒤집었다.' } },
+    { id: 'rc-5', f: 'reversed-cause', src: 'new', lv: 1,
+      text: '우산을 쓴 사람이 많은 날에는 꼭 비가 온다. 그러므로 사람들이 우산을 쓰면 비가 온다.',
+      cue: '사람들이 우산을 쓰면 비가 온다',
+      why: '비가 오기 때문에 우산을 쓰는 것인데, 우산이 비의 원인이라고 거꾸로 보았다.',
+      not: { 'false-cause': '우산과 비 사이에는 실제 인과가 있다. 방향이 뒤집혔다.' } },
+    { id: 'rc-6', f: 'reversed-cause', src: 'new', lv: 2,
+      text: '인기 있는 맛집 앞에는 항상 긴 줄이 서 있다. 그러니 우리 식당 앞에 사람들을 줄 세워 두기만 하면 맛집이 된다.',
+      cue: '줄 세워 두기만 하면 맛집이 된다',
+      why: '음식이 맛있어서(원인) 줄이 생기는 것(결과)인데, 줄이 맛집을 만든다고 원인과 결과를 뒤집었다.',
+      not: { 'false-cause': '맛집과 긴 줄 사이에는 실제 인과가 있다. 그 방향을 거꾸로 보았다.' } },
+    { id: 'rc-7', f: 'reversed-cause', src: 'new', lv: 1,
+      text: '감기에 걸린 사람들은 대부분 기침약을 먹는다. 그러므로 기침약이 감기를 일으킨다.',
+      cue: '기침약이 감기를 일으킨다',
+      why: '감기에 걸렸기 때문에 기침약을 먹는 것인데, 기침약이 감기의 원인이라고 거꾸로 보았다.',
+      not: { 'common-cause': '제3의 원인이 둘을 일으킨 것이 아니라, 감기가 기침약 복용의 원인인데 방향을 뒤집었다.' } },
+    { id: 'rc-8', f: 'reversed-cause', src: 'new', lv: 1, pair: 'p04',
+      text: '비가 오는 날마다 사람들이 장화를 신는다. 그러므로 사람들이 장화를 신으면 비가 온다.',
+      cue: '사람들이 장화를 신으면 비가 온다',
+      why: '비가 오기 때문에 장화를 신는 것인데, 장화가 비의 원인이라고 거꾸로 보았다.',
+      not: { 'false-cause': '짝 문항(새 운동화)과 비교해 보자. 장화와 비 사이에는 실제 인과가 있고, 그 방향만 뒤집혔다.' } },
+
+    // ── 공통 원인 무시
+    { id: 'cc-1', f: 'common-cause', src: 'note', ref: '노트: 공통 원인 무시의 오류 예시', lv: 1,
+      text: '언제나 번개가 번쩍하고 나면 천둥소리가 들린다. 그러므로 번개가 천둥소리의 원인이다.',
+      cue: '번개가 천둥소리의 원인이다',
+      why: '번쩍이는 빛(번개)과 소리(천둥)는 모두 구름 속 방전이라는 하나의 원인에서 나온 두 결과다. 빛이 소리보다 빨리 도착해 먼저 보일 뿐이다.',
+      not: { 'false-cause': '둘이 우연히 함께 일어난 것이 아니라, 실제로 하나의 공통 원인(방전)이 있다.' } },
+    { id: 'cc-2', f: 'common-cause', src: 'new', lv: 1,
+      text: '아이스크림 판매량이 늘어나는 시기에는 물놀이 사고도 늘어난다. 그러므로 아이스크림을 먹으면 물놀이 사고가 날 위험이 커진다.',
+      cue: '아이스크림 판매량이 늘어나는 시기에는',
+      why: '더운 날씨(여름)라는 공통 원인이 아이스크림 판매와 물놀이 사고를 모두 늘린다.',
+      not: { 'false-cause': '둘이 우연히 겹친 것이 아니라, 둘을 함께 일으키는 제3의 원인(더위)이 있다.' } },
+    { id: 'cc-3', f: 'common-cause', src: 'new', lv: 1,
+      text: '열이 나는 아이들은 대개 기침도 한다. 그러므로 기침이 열을 나게 하는 원인이다.',
+      cue: '기침이 열을 나게 하는 원인이다',
+      why: '감기 같은 감염이라는 공통 원인이 열과 기침을 모두 일으킨다.',
+      not: { 'reversed-cause': '방향이 뒤바뀐 것이 아니라, 둘 다 감염의 결과다.' } },
+    { id: 'cc-4', f: 'common-cause', src: 'new', lv: 1,
+      text: '흰머리가 많은 사람일수록 노안이 심하다. 그러므로 흰머리를 염색하면 노안을 막을 수 있다.',
+      cue: '흰머리가 많은 사람일수록',
+      why: '나이가 드는 것이라는 공통 원인이 흰머리와 노안을 모두 가져온다.',
+      not: { 'false-cause': '흰머리와 노안은 우연히 함께 나타나는 것이 아니라, 둘 다 노화의 결과다.' } },
+    { id: 'cc-5', f: 'common-cause', src: 'new', lv: 2,
+      text: '소방차가 많이 출동한 화재일수록 피해 규모가 크다. 그러므로 소방차가 화재 피해를 키운다.',
+      cue: '소방차가 화재 피해를 키운다',
+      why: '화재의 규모라는 공통 원인이, 출동한 소방차 수와 피해 규모를 모두 크게 만든다.',
+      not: { 'reversed-cause': '피해가 소방차를 부른 것이 아니라, 큰 불이라는 제3의 원인이 둘 모두를 키웠다.' } },
+    { id: 'cc-6', f: 'common-cause', src: 'new', lv: 2,
+      text: '어린이들을 조사해 보니 손이 큰 아이일수록 어휘력이 좋았다. 그러므로 손을 크게 만드는 운동을 시키면 어휘력이 좋아질 것이다.',
+      cue: '손이 큰 아이일수록 어휘력이 좋았다',
+      why: '나이(성장)라는 공통 원인이 손의 크기와 어휘력을 모두 키운다.',
+      not: { 'false-cause': '우연한 일치가 아니라, 나이라는 공통 원인이 있다.' } },
+    { id: 'cc-7', f: 'common-cause', src: 'new', lv: 2,
+      text: '교회가 많은 도시일수록 범죄 건수도 많다. 그러므로 교회가 범죄를 늘린다.',
+      cue: '교회가 많은 도시일수록 범죄 건수도 많다',
+      why: '도시의 인구 규모라는 공통 원인이 교회 수와 범죄 건수를 모두 늘린다.',
+      not: { 'reversed-cause': '범죄가 교회를 늘리는 것도 아니다. 인구라는 제3의 원인이 둘 다를 키웠다.' } },
+    { id: 'cc-8', f: 'common-cause', src: 'new', lv: 1,
+      text: '할머니 무릎이 쑤시고 나면 꼭 비가 온다. 그러므로 할머니의 무릎 통증이 비를 부른다.',
+      cue: '할머니의 무릎 통증이 비를 부른다',
+      why: '기압이 낮아지는 것이라는 공통 원인이 무릎 통증과 비를 모두 일으킨다.',
+      not: { 'false-cause': '우연히 겹친 것이 아니라, 저기압이라는 공통 원인이 있다.' } },
+  ]);
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 문제 은행 — 기타 오류 (우연의 오류·의도 확대의 오류) */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+  FT.items = (FT.items || []).concat([
+    // ── 우연의 오류 (원칙 혼동)
+    { id: 'acc-1', f: 'accident', src: 'note', ref: '노트: 거짓 원인 칸에 있던 예문 → 우연의 오류로 정정', lv: 2,
+      text: '비록 아빠가 몸이 편찮으셔서 입원을 하셨지만, 우리와 놀이동산에 가기로 한 약속은 지켜야 합니다. 어른이 아이들에게 한 약속을 어기는 것은 옳지 않아요.',
+      cue: '약속은 지켜야 합니다',
+      why: '‘약속은 지켜야 한다’는 옳은 원칙이지만, 아빠의 입원이라는 예외적 상황에까지 기계적으로 적용했다.',
+      not: { 'false-cause': '노트에는 거짓 원인 칸에 있었지만, 원인과 결과에 관한 추론이 아니라 일반 원칙을 예외 상황에 적용한 것이다.',
+             hasty: '적은 사례로 원칙을 만든 것이 아니라, 이미 있는 원칙을 예외 상황에 잘못 적용했다(방향이 반대).' } },
+    { id: 'acc-2', f: 'accident', src: 'new', lv: 1,
+      text: '칼로 사람의 몸을 베는 것은 범죄다. 외과 의사는 수술할 때 칼로 환자의 몸을 가른다. 그러므로 외과 의사는 범죄자다.',
+      cue: '외과 의사는 수술할 때',
+      why: '‘칼로 사람을 베는 것은 범죄’라는 일반 원칙을, 치료라는 예외적 상황(수술)에까지 그대로 적용했다.',
+      not: { hasty: '사례를 모아 원칙을 만든 것이 아니라, 원칙을 예외에 잘못 적용했다.' } },
+    { id: 'acc-3', f: 'accident', src: 'new', lv: 2,
+      text: '빌린 물건은 주인이 달라고 하면 돌려주어야 한다. 그러니 술에 취해 사람을 해치겠다며 맡겨 둔 칼을 돌려달라는 친구에게도 칼을 돌려주어야 한다.',
+      cue: '칼을 돌려달라는 친구에게도',
+      why: '‘빌린 물건은 돌려주어야 한다’는 원칙을, 남을 해칠 위험이 있는 예외적 상황에까지 적용했다.',
+      not: { 'false-dilemma': '선택지를 줄인 것이 아니라, 옳은 원칙을 예외 상황에 기계적으로 적용했다.' } },
+    { id: 'acc-4', f: 'accident', src: 'new', lv: 1,
+      text: '도로에서는 제한 속도를 지켜야 한다. 그러므로 위독한 환자를 태우고 병원으로 달리는 구급차도 제한 속도를 지켜야 한다.',
+      cue: '구급차도 제한 속도를 지켜야 한다',
+      why: '‘제한 속도를 지켜야 한다’는 원칙을, 생명이 걸린 응급 상황이라는 예외에까지 그대로 적용했다.',
+      not: { division: '전체의 성질을 부분에 옮긴 것이 아니라, 일반 원칙을 예외 상황에 적용했다.' } },
+    { id: 'acc-5', f: 'accident', src: 'new', lv: 1,
+      text: '남의 집에 허락 없이 들어가는 것은 불법이다. 그러므로 불이 난 집에 들어가 아이를 구한 소방관도 처벌받아야 한다.',
+      cue: '불이 난 집에 들어가 아이를 구한 소방관도',
+      why: '‘허락 없이 남의 집에 들어가면 안 된다’는 원칙을, 인명 구조라는 예외적 상황에까지 적용했다.',
+      not: { hasty: '몇 가지 사례로 일반화한 것이 아니라, 일반 원칙 → 예외 사례 방향의 오류다.' } },
+    { id: 'acc-6', f: 'accident', src: 'new', lv: 1,
+      text: '운동은 건강에 좋다. 그러니 다리가 부러져 깁스를 한 환자도 매일 달리기를 해야 한다.',
+      cue: '다리가 부러져 깁스를 한 환자도',
+      why: '‘운동은 건강에 좋다’는 일반 원칙을, 부상이라는 예외적 상황에까지 적용했다.',
+      not: { 'biased-sample': '치우친 표본으로 원칙을 만든 것이 아니라, 있는 원칙을 예외에 잘못 적용했다.' } },
+    { id: 'acc-7', f: 'accident', src: 'new', lv: 1,
+      text: '도서관에서는 조용히 해야 한다. 그러므로 도서관에 불이 났을 때도 ‘불이야!’라고 소리쳐서는 안 된다.',
+      cue: '‘불이야!’라고 소리쳐서는 안 된다',
+      why: '‘도서관에서는 조용히’라는 원칙을, 화재라는 비상 상황에까지 기계적으로 적용했다.',
+      not: { vivid: '인상적인 사례에 끌린 것이 아니라, 일반 원칙을 예외 상황에 그대로 적용했다.' } },
+
+    // ── 의도 확대의 오류
+    { id: 'ie-1', f: 'intent-extension', src: 'note', ref: '노트: 의도 확대의 오류 예시', lv: 2,
+      text: '혼동하지 말라. 남과 북은 엄연히 휴전 상태에 있다. 말 그대로 전쟁을 당분간 중지하고 있다는 의미이다. 수틀리면 언제라도 전쟁이 터질 수 있는 상황이다. 같은 민족이기에 앞서 적이다. 세상의 어느 병법서에 쓰여 있는가. 적이 식량난에 허덕이면 군량미를 지원하라고. 그래서 보다 활기차게 전쟁을 하라고 말이다.',
+      cue: '그래서 보다 활기차게 전쟁을 하라고 말이다',
+      why: '식량 지원의 부수적 결과(군대도 그 식량을 먹을 수 있다)를 지원의 궁극적 의도(전쟁을 활기차게 하라)로 확대 해석했다.',
+      not: { 'straw-man': '상대 주장(식량 지원)을 과장한 것처럼 보이지만, 핵심은 행위의 부수적 결과를 그 행위의 의도로 본 데 있다.' } },
+    { id: 'ie-2', f: 'intent-extension', src: 'note', ref: '노트: 의도 확대의 오류 예시', lv: 3,
+      text: '철이는 숲에서 만나서 자신을 모욕한 남자를 죽이려고 계획했다. 그런데 철이가 숲에서 만난 그 남자는 사실 철이의 숙부이다. 그러므로 철이는 자신의 숙부를 죽이려고 계획한 것이다.',
+      cue: '그러므로 철이는 자신의 숙부를 죽이려고 계획한 것이다',
+      why: '철이의 의도는 ‘자신을 모욕한 남자’를 죽이는 것이었다. 그 남자가 숙부라는 것은 철이가 알지 못한 사실인데, 이를 철이의 의도에 포함시켰다.',
+      not: { equivocation: '단어의 뜻이 바뀐 것이 아니라, 철이가 의도하지 않은 내용을 의도로 확대했다.' } },
+    { id: 'ie-3', f: 'intent-extension', src: 'new', lv: 1,
+      text: '그는 담배를 피운다. 담배를 피우면 수명이 줄어든다. 그러므로 그는 일찍 죽으려고 담배를 피우는 것이다.',
+      cue: '일찍 죽으려고',
+      why: '흡연의 부수적 결과(수명 단축)를 흡연의 의도로 확대 해석했다.',
+      not: { 'reversed-cause': '원인과 결과를 뒤집은 것이 아니라, 결과를 행위의 목적(의도)으로 보았다.' } },
+    { id: 'ie-4', f: 'intent-extension', src: 'new', lv: 2,
+      text: '정부가 고속도로를 새로 놓으면 그 주변의 땅값이 오른다. 그러므로 정부는 땅 투기꾼들을 부자로 만들어 주려고 고속도로를 놓는 것이다.',
+      cue: '땅 투기꾼들을 부자로 만들어 주려고',
+      why: '고속도로 건설의 부수적 결과(땅값 상승)를 건설의 목적으로 확대 해석했다.',
+      not: { circumstantial: '누군가의 처지를 근거로 주장을 무시한 것이 아니라, 행위의 결과를 의도로 보았다.' } },
+    { id: 'ie-5', f: 'intent-extension', src: 'new', lv: 1,
+      text: '엄마가 동생에게 새 옷을 사 주셨다. 그 바람에 나는 이번 달 용돈을 받지 못하게 되었다. 엄마는 나를 골탕 먹이려고 동생 옷을 산 것이다.',
+      cue: '나를 골탕 먹이려고',
+      why: '옷을 산 결과로 용돈이 줄어든 것(부수적 결과)을, 엄마가 옷을 산 의도로 확대 해석했다.',
+      not: { 'false-cause': '인과를 잘못 짚은 것이 아니라(옷을 사서 용돈이 준 것은 사실), 그 결과를 엄마의 의도로 본 것이 문제다.' } },
+    { id: 'ie-6', f: 'intent-extension', src: 'new', lv: 1,
+      text: '자동차를 운전하면 배기가스가 나와 공기가 오염된다. 그러므로 출근길에 운전하는 사람들은 공기를 오염시키려고 운전하는 것이다.',
+      cue: '공기를 오염시키려고 운전하는',
+      why: '운전의 부수적 결과(공기 오염)를 운전하는 목적으로 확대 해석했다.',
+      not: { 'straw-man': '누군가의 주장을 과장한 것이 아니라, 행위의 결과를 의도로 확대했다.' } },
+  ]);
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 부가 데이터: 형식 오류 훈련, 노트 검증 챌린지, 바탕 개념 퀴즈 */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+
+  FT.forms = {
+    MP: { name: '전건긍정식', valid: true, shape: 'P → Q, P ∴ Q' },
+    MT: { name: '후건부정식', valid: true, shape: 'P → Q, ~Q ∴ ~P' },
+    DS: { name: '선언지 부정식', valid: true, shape: 'P ∨ Q, ~P ∴ Q' },
+    AC: { name: '후건긍정의 오류', valid: false, shape: 'P → Q, Q ∴ P' },
+    DA: { name: '전건부정의 오류', valid: false, shape: 'P → Q, ~P ∴ ~Q' },
+    AD: { name: '선언지 긍정의 오류', valid: false, shape: 'P ∨ Q, P ∴ ~Q' },
+  };
+
+  FT.formalDrills = [
+    { id: 'fx-1', form: 'MP', valid: true, text: '만일 그가 로또에 당첨된다면 그는 큰 파티를 열 것이다. 그는 로또에 당첨되었다. 그러므로 그는 큰 파티를 열 것이다.',
+      p: '그가 로또에 당첨된다', q: '그는 큰 파티를 연다', symbol: 'P → Q,  P  ∴ Q', why: '전건(P)을 긍정해 후건(Q)을 이끌어 냈다. 항상 타당하다.' },
+    { id: 'fx-2', form: 'MT', valid: true, text: '만일 그가 로또에 당첨된다면 그는 큰 파티를 열 것이다. 그는 큰 파티를 열지 않았다. 따라서 그는 로또에 당첨되지 않은 것이다.',
+      p: '그가 로또에 당첨된다', q: '그는 큰 파티를 연다', symbol: 'P → Q,  ~Q  ∴ ~P', why: '후건(Q)을 부정해 전건(P)을 부정했다. 항상 타당하다.' },
+    { id: 'fx-3', form: 'AC', valid: false, text: '만일 그가 로또에 당첨된다면 그는 큰 파티를 열 것이다. 그는 큰 파티를 열었다. 그러므로 그는 로또에 당첨된 것이다.',
+      p: '그가 로또에 당첨된다', q: '그는 큰 파티를 연다', symbol: 'P → Q,  Q  ∴ P', why: '후건(Q)을 긍정해 전건(P)을 결론지었다. 다른 이유로도 파티를 열 수 있으므로 부당하다.' },
+    { id: 'fx-4', form: 'DA', valid: false, text: '만일 그가 로또에 당첨된다면 그는 큰 파티를 열 것이다. 그는 로또에 당첨되지 않았다. 따라서 그는 큰 파티를 열지 않을 것이다.',
+      p: '그가 로또에 당첨된다', q: '그는 큰 파티를 연다', symbol: 'P → Q,  ~P  ∴ ~Q', why: '전건(P)을 부정해 후건(Q)을 부정했다. 부당하다.' },
+    { id: 'fx-5', form: 'MT', valid: true, trick: true, text: '여당 지도부의 지지 없이는 새로운 증세안은 국무회의에서 기각될 것이다. 그러나 국무회의에서 새로운 증세안이 통과되었으므로 여당 지도부는 증세안을 지지했음에 틀림없다.',
+      p: '여당 지도부가 지지하지 않는다', q: '증세안이 기각된다', symbol: 'P → Q,  ~Q(통과)  ∴ ~P(지지했다)',
+      why: '‘~없이는’은 ‘~하지 않으면’이다. 후건(기각)을 부정해 전건(지지하지 않음)을 부정했으므로 후건부정식, 타당하다. 노트에서는 후건긍정 칸에도 들어가 있지만 실제로는 타당한 형식이다.' },
+    { id: 'fx-6', form: 'MT', valid: true, text: 'A교수가 국립대학 교수라면 그는 대통령에 의해 임용되었을 것이다. 그러나 그는 대통령에 의해 임용되지 않았다. 따라서 A교수는 국립대학 교수가 아니다.',
+      p: 'A교수가 국립대학 교수다', q: '대통령에 의해 임용되었다', symbol: 'P → Q,  ~Q  ∴ ~P', why: '후건을 부정해 전건을 부정했으므로 후건부정식, 타당하다.' },
+    { id: 'fx-7', form: 'AC', valid: false, trick: true, text: '축구대회에 참가한 모든 팀은 조별리그에서 최소 1승을 한 경우에만 본선 2라운드에 진출할 수 있다. B팀은 조별리그에서 1승을 했다. 따라서 B팀은 본선 2라운드에 진출하였다.',
+      p: '본선 2라운드에 진출한다', q: '조별리그에서 1승을 했다', symbol: 'P → Q,  Q  ∴ P',
+      why: '‘Q인 경우에만 P’는 ‘P → Q’이다. 진출 → 1승. 두 번째 전제는 후건(1승)을 긍정했으므로 후건긍정의 오류다.' },
+    { id: 'fx-8', form: 'DA', valid: false, trick: true, text: '키가 140cm 이상인 경우에만 이 놀이기구를 탈 수 있다. 민지는 오늘 이 놀이기구를 타지 않았다. 그러므로 민지는 키가 140cm가 안 될 것이다.',
+      p: '놀이기구를 탄다', q: '키가 140cm 이상이다', symbol: 'P → Q,  ~P  ∴ ~Q',
+      why: '‘140cm 이상인 경우에만 탄다’ = ‘탄다 → 140cm 이상’. 전건(탄다)을 부정했으므로 전건부정의 오류다.' },
+    { id: 'fx-9', form: 'MP', valid: true, trick: true, text: '키가 140cm 이상인 경우에만 이 놀이기구를 탈 수 있다. 민지는 오늘 이 놀이기구를 탔다. 그러므로 민지는 키가 140cm 이상이다.',
+      p: '놀이기구를 탄다', q: '키가 140cm 이상이다', symbol: 'P → Q,  P  ∴ Q',
+      why: '‘탄다 → 140cm 이상’에서 전건(탄다)을 긍정했으므로 전건긍정식, 타당하다. 문장 순서만 보고 후건긍정으로 착각하기 쉽다.' },
+    { id: 'fx-10', form: 'MT', valid: true, trick: true, text: '충분한 수면 없이는 집중력이 떨어지기 마련이다. 오늘 나는 집중력이 전혀 떨어지지 않았다. 그러므로 어젯밤 나는 충분히 잤다.',
+      p: '충분히 자지 않는다', q: '집중력이 떨어진다', symbol: 'P → Q,  ~Q  ∴ ~P',
+      why: '‘~없이는’ = ‘~하지 않으면’. 후건(집중력 저하)을 부정해 전건(잠 부족)을 부정했으므로 후건부정식, 타당하다.' },
+    { id: 'fx-11', form: 'DS', valid: true, text: '김수현은 남자이거나 여자이다. 김수현은 여자가 아니다. 그러므로 그는 남자이다.',
+      p: '김수현은 남자다', q: '김수현은 여자다', symbol: 'P ∨ Q,  ~Q  ∴ P', why: '선언지 하나를 부정해 나머지를 긍정했으므로 선언지 부정식, 타당하다.' },
+    { id: 'fx-12', form: 'AD', valid: false, text: '수사학은 설득술을 가르치거나 사기술을 가르친다. 수사학은 사기술을 가르친다. 그러므로 수사학은 설득술을 가르치지 않는다.',
+      p: '수사학은 설득술을 가르친다', q: '수사학은 사기술을 가르친다', symbol: 'P ∨ Q,  Q  ∴ ~P', why: '선언지 하나를 긍정해 나머지를 부정했다. 둘 다 참일 수 있으므로 부당하다.' },
+    { id: 'fx-13', form: 'AD', valid: false, text: '모든 동물은 공중을 날거나 물속에서 헤엄을 칠 수 있다. 그런데 이 동물은 물속에서 헤엄을 치고 있다. 그러므로 이 동물은 공중을 날 수 없다.',
+      p: '이 동물은 날 수 있다', q: '이 동물은 헤엄칠 수 있다', symbol: 'P ∨ Q,  Q  ∴ ~P', why: '선언지 긍정의 오류. 오리처럼 둘 다 할 수 있는 동물이 있다.' },
+    { id: 'fx-14', form: 'DS', valid: true, text: '민지는 피아노를 치거나 바이올린을 켠다. 민지는 피아노를 치지 않는다. 그러므로 민지는 바이올린을 켠다.',
+      p: '민지는 피아노를 친다', q: '민지는 바이올린을 켠다', symbol: 'P ∨ Q,  ~P  ∴ Q', why: '선언지 하나를 부정해 나머지를 긍정했으므로 타당하다.' },
+    { id: 'fx-15', form: 'MP', valid: true, text: '비가 오면 운동장이 젖는다. 오늘 비가 왔다. 그러므로 운동장이 젖었다.',
+      p: '비가 온다', q: '운동장이 젖는다', symbol: 'P → Q,  P  ∴ Q', why: '전건긍정식, 타당하다.' },
+    { id: 'fx-16', form: 'AC', valid: false, text: '식도락가라면 모두 그 음식점을 좋아한다. 그런데 돌이는 그 음식점을 좋아한다. 그러니까 돌이는 식도락가임에 분명하다.',
+      p: '식도락가다', q: '그 음식점을 좋아한다', symbol: 'P → Q,  Q  ∴ P', why: '후건긍정의 오류. 식도락가가 아니어도 그 음식점을 좋아할 수 있다.' },
+    { id: 'fx-17', form: 'DA', valid: false, text: '진화론이 옳다면 물론 인간은 다른 종보다 특별히 존엄하지 않을 것이다. 그런데 진화론은 옳지 않은 이론이다. 그러니까 인간은 다른 종보다 특별히 더 존엄하다.',
+      p: '진화론이 옳다', q: '인간은 특별히 존엄하지 않다', symbol: 'P → Q,  ~P  ∴ ~Q', why: '전건부정의 오류다.' },
+    { id: 'fx-18', form: 'MT', valid: true, text: '그가 범인이라면 사건 당일 현장 근처에 있었을 것이다. 그는 사건 당일 다른 도시에 있었다. 그러므로 그는 범인이 아니다.',
+      p: '그가 범인이다', q: '현장 근처에 있었다', symbol: 'P → Q,  ~Q  ∴ ~P', why: '후건(현장 근처)을 부정해 전건(범인)을 부정했으므로 후건부정식, 타당하다.' },
+  ];
+
+  // 노트 검증 챌린지: 노트에 적힌 내용 중 틀린 것(6)과 맞는 것(4)을 섞어 판정한다.
+  FT.noteChecks = [
+    { id: 'nc-1', where: '타당성과 건전성 · 필기한 표', wrong: '전제 T·결론 T → 타당 / 전제 F·결론 T → 타당 / 전제 F·결론 F → 부당',
+      right: '전제가 모두 T이고 결론이 F인 조합만 반드시 부당하다. 나머지 조합(T·T, F·T, F·F)은 타당할 수도, 부당할 수도 있다.',
+      why: '예: “모든 고양이는 새다. 모든 새는 물고기다. 그러므로 모든 고양이는 물고기다.” 전제와 결론이 모두 거짓이지만 형식은 타당하다.' },
+    { id: 'nc-2', where: '조건문 추론 · 후건긍정의 오류 예시', wrong: '“여당 지도부의 지지 없이는 증세안은 기각될 것이다. 증세안이 통과되었으므로 지도부는 지지했음에 틀림없다.” → 후건긍정의 오류',
+      right: '후건부정식(타당)이다. 같은 예문이 후건부정식 칸에도 있다.',
+      why: '‘지지 없이는 기각’ = ‘지지하지 않음 → 기각’. ‘통과(기각 아님)’는 후건을 부정한 것이므로 ‘지지했다(전건 부정)’가 타당하게 따라 나온다.' },
+    { id: 'nc-3', where: '선언문 추론 · 필기', wrong: 'A∧B = (~A∨~B)',
+      right: '~(A∧B) = (~A∨~B)  (드모르간 법칙)',
+      why: '‘A이고 B이다’가 거짓이라는 것은 ‘A가 아니거나 B가 아니다’와 같다. 왼쪽에 부정(~)이 빠졌다.' },
+    { id: 'nc-4', where: '인과 추리의 오류 · 거짓 원인의 오류 예시', wrong: '“아빠가 입원하셨지만 놀이동산에 가기로 한 약속은 지켜야 한다.” → 거짓 원인의 오류',
+      right: '우연의 오류(원칙 혼동의 오류)다.',
+      why: '원인과 결과에 대한 추론이 아니라, ‘약속은 지켜야 한다’는 일반 원칙을 입원이라는 예외 상황에 기계적으로 적용했다.' },
+    { id: 'nc-5', where: '기술·설명·논증 예문', wrong: '“사람들의 평균 수명은 계속 길어졌다. 왜냐하면 건강에 대한 관심이 높아졌기 때문이다.” 등의 묶음 제목 → 기술',
+      right: '설명이다.',
+      why: '이미 일어난 사실(수명 연장, 파티장을 떠남, 지각)에 대해 그 원인을 제시하고 있으므로 설명이다.' },
+    { id: 'nc-6', where: '무지에 호소하는 논증', wrong: '무지에 호소하는 논증 예시로 “기사를 보도하는 것은 귀 신문사의 자유이지만, 광고비를 결정하는 것도 우리의 자유입니다.”',
+      right: '힘에 호소하는 오류의 예문이다.',
+      why: '광고비를 끊겠다는 불이익을 암시해 보도를 막으려는 것이므로 힘(위협)에 호소한다. 증거가 없다는 것을 근거로 삼는 무지에 호소와는 관계가 없다.' },
+  ];
+  FT.noteTrue = [
+    { id: 'nt-1', where: '조건문 추론', text: '전건긍정식(P → Q, P ∴ Q)은 항상 타당하다.', why: '노트 내용 그대로 맞다.' },
+    { id: 'nt-2', where: '가능성의 종류', text: '가능성의 범위: 현실적 ⊂ 물리적 ⊂ 논리적', why: '현실적으로 가능하면 물리적으로도, 물리적으로 가능하면 논리적으로도 가능하다. 맞다.' },
+    { id: 'nt-3', where: '타당성과 건전성', text: '건전한 논증 = 타당한 논증 + 전제가 실제로 모두 참', why: '노트(교재) 정의 그대로 맞다.' },
+    { id: 'nt-4', where: '흑백사고의 오류', text: '흑백사고는 반대 관계를 모순 관계처럼 다룰 때 생긴다.', why: '모순은 중립이 없고, 반대는 둘 다 거짓일 수 있다. 맞다.' },
+  ];
+
+  FT.basics = [
+    { id: 'bx-1', topic: '기술·설명·논증', q: '철이는 수업에 늦었다. 왜냐하면 오늘 아침 지하철 노조가 파업을 하여 서울시 교통이 거의 마비 상태였기 때문이다.', choices: ['기술', '설명', '논증'], answer: '설명', why: '이미 일어난 사실(지각)에 대해 그 원인을 제시하는 말이다.' },
+    { id: 'bx-2', topic: '기술·설명·논증', q: '그 상가는 둘로 나뉘어 있었다. 건물의 동쪽에는 청과물을 취급하는 상점이 있었고, 서쪽에는 건어물을 취급하는 상점이 있었다.', choices: ['기술', '설명', '논증'], answer: '기술', why: '관찰된 사실을 있는 그대로 묘사했다.' },
+    { id: 'bx-3', topic: '기술·설명·논증', q: '이 섬 사람들은 대부분 어업에 종사할 것이다. 이 섬에서 농사지을 만한 땅을 보지 못했고, 오직 내가 본 것은 어선과 어업 관련 용품을 파는 상점뿐이기 때문이다.', choices: ['기술', '설명', '논증'], answer: '논증', why: '주장(어업에 종사할 것이다)에 대해 근거를 들어 정당화했다.' },
+    { id: 'bx-4', topic: '기술·설명·논증', q: '곧은 막대가 물에 잠기면 휘어 보인다. 왜냐하면 빛이 공기에서 물로 진행할 때 굴절을 하기 때문이다.', choices: ['기술', '설명', '논증'], answer: '설명', why: '이미 알려진 현상의 원인을 제시한다. ‘왜냐하면’이 있다고 모두 논증은 아니다.' },
+    { id: 'bx-5', topic: '기술·설명·논증', q: '대체로 선인장은 태양빛이 있고 수분이 적은 곳에서 잘 자란다. 여기는 수분이 적고 태양빛이 있다. 따라서 이곳에서는 선인장이 잘 자랄 것이다.', choices: ['기술', '설명', '논증'], answer: '논증', why: '전제로부터 결론(잘 자랄 것이다)을 이끌어 낸다.' },
+    { id: 'bx-6', topic: '연역·귀납', q: '오직 19세 이상인 사람만이 투표를 할 수 있다. 그런데 철이는 아직 18세이다. 따라서 철이는 투표를 할 수 없다.', choices: ['연역', '귀납'], answer: '연역', why: '전제가 참이면 결론이 반드시 참이다(필연성).' },
+    { id: 'bx-7', topic: '연역·귀납', q: '태양은 아주 오래전부터 저녁에 지고 아침에 뜨기를 반복했다. 따라서 내일도 태양은 뜰 것이다.', choices: ['연역', '귀납'], answer: '귀납', why: '전제가 모두 참이어도 결론이 거짓일 가능성이 논리적으로 열려 있다(개연성).' },
+    { id: 'bx-8', topic: '연역·귀납', q: '지구의 전체 인구수는 가장 많은 머리카락을 가진 사람의 머리카락 수보다 2 이상 크다. 그러므로 머리카락 수를 똑같이 가진 사람이 적어도 두 명은 있다.', choices: ['연역', '귀납'], answer: '연역', why: '비둘기집 원리에 따라 결론이 필연적으로 따라 나온다.' },
+    { id: 'bx-9', topic: '연역·귀납', q: '철이는 지금 대학생이고, 삼촌 석이는 70년대에 대학에 다녔다. 현재의 대학생들은 대체로 70년대 대학생들보다 사회 문제에 관심이 적다. 그러므로 철이는 석이보다 사회 문제에 관심이 적을 것이다.', choices: ['연역', '귀납'], answer: '귀납', why: '‘대체로’라는 말이 보여 주듯, 전제가 결론을 개연적으로만 뒷받침한다.' },
+    { id: 'bx-10', topic: '불가능성', q: '한국인인 석이는 그 어떤 한국인보다 키가 크다.', choices: ['수사적(현실적) 불가능', '물리적 불가능', '논리적 불가능'], answer: '논리적 불가능', why: '석이 자신도 한국인이므로 자기 자신보다 키가 클 수 없다. 모순이다.' },
+    { id: 'bx-11', topic: '불가능성', q: '남산에서 돌멩이를 던졌더니 그 돌멩이가 공중에 떠 있다.', choices: ['수사적(현실적) 불가능', '물리적 불가능', '논리적 불가능'], answer: '물리적 불가능', why: '상상은 할 수 있지만 자연법칙(중력)을 어긴다.' },
+    { id: 'bx-12', topic: '불가능성', q: '히딩크가 내년 국가대표 야구팀 감독으로 선임된다.', choices: ['수사적(현실적) 불가능', '물리적 불가능', '논리적 불가능'], answer: '수사적(현실적) 불가능', why: '자연법칙을 어기지는 않지만 현실적으로 이루어지기 매우 힘들다.' },
+    { id: 'bx-13', topic: '불가능성', q: '철이는 둥근 삼각형을 그린다.', choices: ['수사적(현실적) 불가능', '물리적 불가능', '논리적 불가능'], answer: '논리적 불가능', why: '‘둥근’과 ‘삼각형’은 서로 모순이라 상상조차 할 수 없다.' },
+    { id: 'bx-14', topic: '논증 구조', q: '아이들은 대개 사탕을 좋아한다. 영국 아이도 사탕을 좋아하고, 에스키모족의 아이도 사탕을 좋아한다. 그리고 우리 집 아이도 사탕을 좋아한다.', choices: ['단순 논증', '합류 논증', '결합 논증'], answer: '합류 논증', why: '각 전제가 따로따로 결론을 뒷받침한다.' },
+    { id: 'bx-15', topic: '논증 구조', q: '대학은 지식으로 가득 차 있다. 신입생은 지식을 약간씩 가지고 들어온다. 그런데 졸업생은 아무 지식도 가지고 떠나지 않는다. 따라서 지식은 축적된다.', choices: ['단순 논증', '합류 논증', '결합 논증'], answer: '결합 논증', why: '전제들이 합쳐져야 결론을 뒷받침한다.' },
+    { id: 'bx-16', topic: '논증 구조', q: '그는 곧바로 저녁밥을 먹을 것이다. 왜냐하면 그는 배가 고프기 때문이다.', choices: ['단순 논증', '합류 논증', '결합 논증'], answer: '단순 논증', why: '하나의 전제가 하나의 결론을 뒷받침한다.' },
+    { id: 'bx-17', topic: '타당성·건전성', q: '타당한 연역 논증이면서, 동시에 전제들이 모두 실제로 참인 논증은?', choices: ['타당한 논증', '건전한 논증', '강한 귀납 논증'], answer: '건전한 논증', why: '건전성 = 타당성 + 전제가 실제로 참.' },
+    { id: 'bx-18', topic: '타당성·건전성', q: '전제가 모두 참인데 결론이 거짓인 연역 논증은?', choices: ['반드시 타당', '반드시 부당', '알 수 없음'], answer: '반드시 부당', why: '타당한 논증은 전제가 참이면 결론이 거짓일 수 없다. 이런 사례가 바로 반례다.' },
+    { id: 'bx-19', topic: '숨은 전제', q: '“음주 운전은 자살 행위이다. 그러므로 어느 누구도 음주 운전을 해서는 안 된다.” 이 논증의 숨은 전제는?', choices: ['어느 누구도 자살 행위를 해서는 안 된다.', '음주 운전은 불법이다.', '자살 행위를 하는 사람은 음주 운전을 한다.'], answer: '어느 누구도 자살 행위를 해서는 안 된다.', why: '이 전제를 보충해야 반례가 사라지고 타당한 논증이 된다.' },
+    { id: 'bx-20', topic: '숨은 전제', q: '“어리석은 자들은 논리적일 수 없다. 그러므로 어리석은 자들은 올바른 결단을 할 수 없다.” 이 논증의 숨은 전제는?', choices: ['논리적이지 않은 사람은 올바른 결단을 할 수 없다.', '논리적인 사람은 모두 올바른 결단을 한다.', '어리석은 자들은 결단을 하지 않는다.'], answer: '논리적이지 않은 사람은 올바른 결단을 할 수 없다.', why: '‘오직 논리적인 사람만이 올바른 결단을 할 수 있다’와 같은 뜻이다.' },
+  ];
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 순수 로직: 복습 상자, 출제, 보기 구성, 매칭 세트, 해설 선택, 통계. DOM·저장소에 의존하지 않는다. */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+  const INTERVALS = [0, 1, 3, 7, 14];
+  const ALL_CATS = ['language', 'premise', 'formal', 'relevance', 'inductive', 'etc'];
+  const DAY = 86400000;
+
+  function defaultSettings() {
+    return { examDate: null, newPerDay: 10, setN: 8, setM: 12, reuse: false, retry: true,
+      timer: false, cats: ALL_CATS.slice(), choices: 5 };
+  }
+
+  function newProgress() {
+    return { v: 1, updatedAt: 0, items: {}, conf: {}, settings: defaultSettings(), intro: { day: 0, count: 0 } };
+  }
+
+  function dayNum(now) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((d.getTime() - d.getTimezoneOffset() * 60000) / DAY);
+  }
+
+  function daysLeft(settings, now) {
+    const s = settings && settings.examDate;
+    const m = typeof s === 'string' && /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+    if (!m) return null;
+    return dayNum(new Date(+m[1], +m[2] - 1, +m[3])) - dayNum(now);
+  }
+
+  function intervalFor(box, dl) {
+    if (box <= 1) return 0;
+    const base = INTERVALS[Math.min(box, 5) - 1];
+    if (dl == null) return base;
+    return Math.min(base, Math.max(1, Math.floor(dl / 2)));
+  }
+
+  function applyAnswer(p, item, { chosen, confidence, now }) {
+    const correct = chosen === item.f;
+    const today = dayNum(now);
+    const rec = p.items[item.id] || { b: 0, due: 0, h: [] };
+    if (!rec.b) {
+      if (!p.intro || p.intro.day !== today) p.intro = { day: today, count: 0 };
+      p.intro.count += 1;
+    }
+    const base = rec.b || 1;
+    let b;
+    if (!correct) b = 1;
+    else if (confidence === 'sure') b = Math.min(5, base + 1);
+    else b = base < 2 ? base + 1 : base;
+    const h = (rec.h || []).concat([{ t: now.getTime(), c: correct ? 1 : 0, k: (confidence || 's')[0], x: chosen || null }]).slice(-6);
+    p.items[item.id] = { b, due: today + intervalFor(b, daysLeft(p.settings, now)), h };
+    if (!correct && chosen) {
+      const k = item.f + '|' + chosen;
+      p.conf[k] = (p.conf[k] || 0) + 1;
+    }
+    p.updatedAt = Math.max(now.getTime(), (p.updatedAt || 0) + 1);
+    return { correct };
+  }
+
+  function todayQueue(p, items, now) {
+    const today = dayNum(now);
+    const dl = daysLeft(p.settings, now);
+    const eve = dl != null && dl <= 1;
+    const due = [];
+    const fresh = [];
+    for (const it of items) {
+      const r = p.items[it.id];
+      if (r && r.b) {
+        if (r.due <= today || (eve && r.b <= 2)) due.push([it.id, r.b, r.due]);
+      } else fresh.push(it);
+    }
+    due.sort((a, b) => a[1] - b[1] || a[2] - b[2]);
+    const introduced = p.intro && p.intro.day === today ? p.intro.count : 0;
+    const quota = Math.max(0, (p.settings.newPerDay | 0) - introduced);
+    fresh.sort((a, b) => (a.src === 'note' ? 0 : 1) - (b.src === 'note' ? 0 : 1));
+    return due.map(d => d[0]).concat(fresh.slice(0, quota).map(it => it.id));
+  }
+
+  function masteryOf(p, fid, items) {
+    const hist = [];
+    for (const it of items) {
+      if (it.f !== fid) continue;
+      const r = p.items[it.id];
+      if (r && r.h) hist.push(...r.h);
+    }
+    hist.sort((a, b) => b.t - a.t);
+    const last = hist.slice(0, 5);
+    const n = last.length;
+    if (!n) return { level: 'none', acc: 0, n: 0 };
+    const acc = last.reduce((s, h) => s + h.c, 0) / n;
+    return { level: acc < 0.5 ? 'low' : acc < 0.8 ? 'mid' : 'high', acc, n };
+  }
+
+  function shuffle(arr, rng) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function pairKey(a, b) { return [a, b].sort().join('|'); }
+
+  function clusterMates(Fx, fid) {
+    const out = [];
+    for (const c of Fx.clusters) if (c.members.includes(fid)) for (const m of c.members) if (m !== fid && !out.includes(m)) out.push(m);
+    return out;
+  }
+
+  function enabledFallacies(Fx, settings) {
+    const cats = (settings && settings.cats) || ALL_CATS;
+    return Fx.fallacies.filter(f => cats.includes(f.cat)).map(f => f.id);
+  }
+
+  function pickChoices(item, Fx, { count = 5, rng = Math.random, enabled } = {}) {
+    const pool = (enabled || Fx.fallacies.map(f => f.id)).filter(id => id !== item.f);
+    if (count - 1 >= pool.length) return shuffle([item.f, ...pool], rng);
+    const poolSet = new Set(pool);
+    const preferred = [];
+    for (const id of [...Object.keys(item.not || {}), ...shuffle(clusterMates(Fx, item.f), rng)])
+      if (poolSet.has(id) && !preferred.includes(id)) preferred.push(id);
+    const takeNear = Math.min(preferred.length, 3, Math.max(0, count - 2));
+    const picked = preferred.slice(0, takeNear);
+    const rest = shuffle(pool.filter(id => !picked.includes(id)), rng);
+    while (picked.length < count - 1 && rest.length) picked.push(rest.shift());
+    return shuffle([item.f, ...picked], rng);
+  }
+
+  function weightedPick(ids, weightOf, rng) {
+    const total = ids.reduce((s, id) => s + weightOf(id), 0);
+    let r = rng() * total;
+    for (const id of ids) { r -= weightOf(id); if (r < 0) return id; }
+    return ids[ids.length - 1];
+  }
+
+  function buildMatchingSet(Fx, p, { n = 8, m = 12, rng = Math.random, enabled, reuse = false, items } = {}) {
+    const bank = items || Fx.items || [];
+    const enabledIds = enabled || enabledFallacies(Fx, p.settings);
+    const byF = {};
+    for (const it of bank) if (enabledIds.includes(it.f)) (byF[it.f] = byF[it.f] || []).push(it);
+    const avail = enabledIds.filter(id => byF[id]);
+    n = Math.max(0, Math.min(n, avail.length));
+    const W = { none: 3, low: 3, mid: 2, high: 1 };
+    const wCache = {};
+    const weightOf = id => (wCache[id] = wCache[id] || W[masteryOf(p, id, byF[id] || []).level]);
+
+    const chosen = [];
+    const numClusters = n >= 7 ? 3 : n >= 4 ? 2 : n >= 2 ? 1 : 0;
+    for (let k = 0; k < numClusters && chosen.length + 2 <= n; k++) {
+      const cands = Fx.clusters.filter(c => c.members.filter(x => avail.includes(x) && !chosen.includes(x)).length >= 2);
+      if (!cands.length) break;
+      const cw = c => c.members.filter(x => avail.includes(x) && !chosen.includes(x)).reduce((s, x) => s + weightOf(x), 0);
+      const total = cands.reduce((s, c) => s + cw(c), 0);
+      let r = rng() * total;
+      let pick = cands[cands.length - 1];
+      for (const c of cands) { r -= cw(c); if (r < 0) { pick = c; break; } }
+      for (let t = 0; t < 2; t++) {
+        const mem = pick.members.filter(x => avail.includes(x) && !chosen.includes(x));
+        chosen.push(weightedPick(mem, weightOf, rng));
+      }
+    }
+    while (chosen.length < n) {
+      const rest = avail.filter(x => !chosen.includes(x));
+      chosen.push(weightedPick(rest, weightOf, rng));
+    }
+    if (reuse && n >= 4 && rng() < 0.3) {
+      const dupable = chosen.slice(0, -1).filter(id => byF[id].length >= 2);
+      if (dupable.length) chosen[chosen.length - 1] = dupable[Math.floor(rng() * dupable.length)];
+    }
+
+    const today = dayNum(new Date());
+    const usedItems = new Set();
+    const pickItem = fid => {
+      const list = byF[fid].filter(it => !usedItems.has(it.id));
+      const fresh = list.filter(it => { const r = p.items[it.id]; return !r || !r.b || r.due <= today; });
+      const tier = fresh.length ? fresh : list;
+      const it = tier[Math.floor(rng() * tier.length)];
+      usedItems.add(it.id);
+      return it.id;
+    };
+    const itemIds = shuffle(chosen.map(pickItem), rng);
+
+    const answers = [...new Set(chosen)];
+    const mTarget = Math.max(answers.length, Math.min(m, enabledIds.length));
+    const options = answers.slice();
+    for (const id of shuffle(answers.flatMap(a => clusterMates(Fx, a)), rng))
+      if (options.length < mTarget && enabledIds.includes(id) && !options.includes(id)) options.push(id);
+    for (const id of shuffle(enabledIds, rng))
+      if (options.length < mTarget && !options.includes(id)) options.push(id);
+    return { items: itemIds, options: shuffle(options, rng) };
+  }
+
+  function explainNot(item, chosenId, Fx) {
+    let against = chosenId && chosenId !== item.f ? chosenId : null;
+    if (!against) against = Object.keys(item.not || {})[0] || clusterMates(Fx, item.f)[0] || null;
+    if (!against) return null;
+    if (item.not && item.not[against]) return { against, text: item.not[against] };
+    const k = pairKey(item.f, against);
+    for (const c of Fx.clusters) if (c.pairs[k]) return { against, text: c.pairs[k] };
+    const A = Fx.fallacyById[item.f];
+    const B = Fx.fallacyById[against];
+    return { against, text: `${B.name}은(는) "${B.def}" 이 논증은 그렇지 않고, ${A.name}의 특징("${A.signal[0]}")을 보인다.` };
+  }
+
+  function topConfusions(p, k = 5) {
+    return Object.entries(p.conf || {})
+      .map(([key, count]) => { const [answer, chosen] = key.split('|'); return { answer, chosen, count }; })
+      .sort((a, b) => b.count - a.count)
+      .slice(0, k);
+  }
+
+  function guessStats(p) {
+    let correctTotal = 0;
+    let luckyCount = 0;
+    for (const r of Object.values(p.items || {})) for (const h of r.h || []) if (h.c) { correctTotal++; if (h.k === 'g' || h.k === 'u') luckyCount++; }
+    return { correctTotal, luckyCount };
+  }
+
+  function fillDefaults(p) {
+    const d = newProgress();
+    if (!p.items || typeof p.items !== 'object') p.items = {};
+    if (!p.conf || typeof p.conf !== 'object') p.conf = {};
+    if (!p.intro || typeof p.intro !== 'object') p.intro = d.intro;
+    p.settings = Object.assign(d.settings, p.settings || {});
+    p.updatedAt = Number(p.updatedAt) || 0;
+    p.v = 1;
+    return p;
+  }
+
+  function mergeProgress(a, b) {
+    const pick = !a ? b : !b ? a : (b.updatedAt || 0) > (a.updatedAt || 0) ? b : a;
+    return pick ? fillDefaults(pick) : null;
+  }
+
+  FT.core = { INTERVALS, ALL_CATS, newProgress, fillDefaults, dayNum, daysLeft, intervalFor, applyAnswer, todayQueue,
+    masteryOf, shuffle, pairKey, clusterMates, enabledFallacies, pickChoices, buildMatchingSet, explainNot,
+    topConfusions, guessStats, mergeProgress };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 진행 기록 저장: localStorage(즉시) + Artifact db 사용자별 비공개 문서(디바운스, 직렬화).
+   db를 쓸 수 없으면(로그아웃·미허용·파일로 열기) 브라우저 저장만, 그것도 막히면 메모리만 사용한다. */
+(function (g) {
+  const FT = (g.FT = g.FT || {});
+  const KEY = 'ft-progress-v1';
+  let mode = 'memory';
+  let localOk = false;
+  let docRef = null;
+  let debounce = null;
+  let pending = null;
+  let chain = Promise.resolve();
+  let latest = null;
+  const listeners = [];
+
+  function setMode(m) { mode = m; for (const f of listeners) f(m); }
+
+  function readLocal() {
+    try { const s = g.localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+  }
+  function writeLocal(p) {
+    try { g.localStorage.setItem(KEY, JSON.stringify(p)); return true; } catch (e) { return false; }
+  }
+  function probeLocal() {
+    try { g.localStorage.setItem(KEY + '-probe', '1'); g.localStorage.removeItem(KEY + '-probe'); return true; } catch (e) { return false; }
+  }
+  function timeout(promise, ms) {
+    return Promise.race([promise, new Promise(resolve => setTimeout(() => resolve(null), ms))]);
+  }
+
+  function init() {
+    localOk = probeLocal();
+    setMode(localOk ? 'local' : 'memory');
+    latest = FT.core.mergeProgress(readLocal(), null) || FT.core.newProgress();
+    return latest;
+  }
+
+  // onRemoteNewer(progress) is called only when the cloud copy is newer than what is on screen.
+  async function connectCloud(onRemoteNewer) {
+    if (!g.claude || typeof g.claude.use !== 'function') return;
+    try {
+      const pair = await timeout(Promise.all([g.claude.use('db'), g.claude.use('user')]), 10000);
+      if (!pair || !pair[0] || !pair[1]) return;
+      const uid = await pair[1].id();
+      if (!uid) return;
+      const ref = pair[0].doc('data/users/' + uid + '/progress');
+      const snap = await timeout(ref.get(), 10000);
+      if (!snap) return;
+      docRef = ref;
+      setMode('cloud');
+      const body = snap.exists ? snap.data() : null;
+      let remote = null;
+      try { remote = body && typeof body.json === 'string' ? JSON.parse(body.json) : null; } catch (e) { remote = null; }
+      if (remote && (remote.updatedAt || 0) > (latest.updatedAt || 0)) {
+        latest = FT.core.mergeProgress(remote, null);
+        writeLocal(latest);
+        onRemoteNewer(latest);
+      } else if (!remote || (latest.updatedAt || 0) > (remote.updatedAt || 0)) {
+        queueCloud(latest);
+      }
+    } catch (e) { /* 클라우드를 못 쓰면 로컬 모드 유지 */ }
+  }
+
+  function queueCloud(p) {
+    if (!docRef) return;
+    pending = p;
+    chain = chain.then(async () => {
+      if (!pending || !docRef) return;
+      const body = { json: JSON.stringify(pending), updatedAt: pending.updatedAt || 0 };
+      pending = null;
+      try { await docRef.set(body); } catch (e) { docRef = null; setMode(localOk ? 'local' : 'memory'); }
+    });
+  }
+
+  function save(p) {
+    latest = p;
+    if (localOk && !writeLocal(p)) { localOk = false; if (!docRef) setMode('memory'); }
+    if (!docRef) return;
+    clearTimeout(debounce);
+    debounce = setTimeout(() => queueCloud(latest), 1500);
+  }
+
+  function flush() {
+    if (docRef && latest) { clearTimeout(debounce); queueCloud(latest); }
+  }
+
+  function exportText(p) { return JSON.stringify(p); }
+
+  function importText(text) {
+    let p;
+    try { p = JSON.parse(String(text).trim()); } catch (e) { throw new Error('붙여 넣은 내용이 백업 형식(JSON)이 아닙니다. 내보내기로 복사한 글자를 빠짐없이 붙여 넣어 주세요.'); }
+    if (!p || p.v !== 1 || typeof p.items !== 'object') throw new Error('이 앱의 백업이 아닙니다. 내보내기 화면에서 복사한 내용인지 확인해 주세요.');
+    p = FT.core.mergeProgress(p, null);
+    p.updatedAt = Date.now();
+    return p;
+  }
+
+  function onMode(f) { listeners.push(f); f(mode); }
+
+  if (g.addEventListener) g.addEventListener('visibilitychange', () => { if (g.document && g.document.visibilityState === 'hidden') flush(); });
+
+  FT.store = { init, connectCloud, save, flush, exportText, importText, onMode, get mode() { return mode; } };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* UI: 해시 라우팅 + 화면별 렌더 함수. 모든 텍스트는 textContent로 넣는다. */
+(function () {
+  'use strict';
+  const FT = window.FT;
+  const C = FT.core;
+  const S = FT.store;
+  const F = FT.fallacyById;
+  const ITEMS = FT.items;
+  const itemById = {};
+  for (const it of ITEMS) itemById[it.id] = it;
+  const CAT = {};
+  for (const c of FT.categories) CAT[c.id] = c;
+  const LABELS = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ'.split('');
+  const NAV = { cardFocus: null, duelCluster: null };
+  const $view = document.getElementById('view');
+  const $sheet = document.getElementById('sheet');
+  let P = S.init();
+  let leaveFns = [];
+  let KEY = null;
+
+  // ───────────────────────── helpers
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    if (attrs) for (const k of Object.keys(attrs)) {
+      const v = attrs[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.slice(0, 2) === 'on' && typeof v === 'function') el.addEventListener(k.slice(2), v);
+      else if (v === true) el.setAttribute(k, '');
+      else el.setAttribute(k, String(v));
+    }
+    for (const kid of kids.flat(3)) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+    return el;
+  }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+  function onLeave(fn) { leaveFns.push(fn); }
+  function go(name) { if (location.hash === '#' + name) render(); else location.hash = name; }
+  function link(name, label, cls) { return h('a', { class: cls || 'btn', href: '#' + name, text: label }); }
+  function btn(label, onClick, cls, attrs) {
+    const b = h('button', Object.assign({ class: cls || 'btn', type: 'button', text: label }, attrs || {}));
+    b.addEventListener('click', onClick);
+    return b;
+  }
+  function rng() { return Math.random(); }
+  function shuffle(a) { return C.shuffle(a, rng); }
+  function enabledIds() { return C.enabledFallacies(FT, P.settings); }
+  function enabledItems() { const s = new Set(enabledIds()); return ITEMS.filter(i => s.has(i.f)); }
+  function touch() { P.updatedAt = Math.max(Date.now(), (P.updatedAt || 0) + 1); S.save(P); }
+  function record(item, chosen, confidence) {
+    const r = C.applyAnswer(P, item, { chosen: chosen || null, confidence, now: new Date() });
+    S.save(P);
+    return r.correct;
+  }
+  function mastery(fid) { return C.masteryOf(P, fid, ITEMS); }
+  function fmtTime(sec) { const m = Math.floor(sec / 60); const s = sec % 60; return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); }
+  function pct(x) { return Math.round(x * 100) + '%'; }
+  function srcBadge(item) {
+    if (item.src === 'note') return h('span', { class: 'badge note', text: '노트' });
+    return h('span', { class: 'badge', text: item.src === 'var' ? '변형' : '신규' });
+  }
+  function ticker(el, countdownSec, onEnd) {
+    const start = Date.now();
+    let stopped = false;
+    const tick = () => {
+      if (stopped) return;
+      const s = Math.floor((Date.now() - start) / 1000);
+      if (countdownSec != null) {
+        const left = Math.max(0, countdownSec - s);
+        el.textContent = fmtTime(left);
+        if (left === 0) { stopped = true; clearInterval(id); if (onEnd) onEnd(); }
+      } else el.textContent = fmtTime(s);
+    };
+    const id = setInterval(tick, 250);
+    tick();
+    onLeave(() => clearInterval(id));
+    return { stop() { stopped = true; clearInterval(id); return Math.floor((Date.now() - start) / 1000); } };
+  }
+
+  // ───────────────────────── passage + speech bubble
+  function passage(item, highlight) {
+    const p = h('p', { class: 'passage' });
+    fillPassage(p, item, highlight);
+    return p;
+  }
+  function fillPassage(p, item, highlight) {
+    clear(p);
+    if (!highlight || !item.cue) { p.textContent = item.text; return; }
+    const parts = item.text.split(item.cue);
+    parts.forEach((part, i) => {
+      if (part) p.append(document.createTextNode(part));
+      if (i < parts.length - 1) p.append(h('mark', { text: item.cue }));
+    });
+  }
+
+  function bubble(item, chosen) {
+    const f = F[item.f];
+    const wrong = chosen && chosen !== item.f;
+    const ex = C.explainNot(item, chosen, FT);
+    const ans = h('dl', { class: 'ans' }, h('dt', { text: '정답' }), h('dd', { class: 'ok', text: f.name + ' · ' + CAT[f.cat].short }));
+    if (wrong) ans.append(h('dt', { text: '내 답' }), h('dd', { class: 'bad', text: F[chosen].name }));
+    else if (chosen === null) ans.append(h('dt', { text: '내 답' }), h('dd', { class: 'bad', text: '비워 둠' }));
+    const b = h('div', { class: 'bubble', role: 'note' }, ans, h('h4', { text: '왜 오류인가' }), h('p', { text: item.why }));
+    if (ex) b.append(h('h4', { text: '왜 ' + F[ex.against].name + '가 아닌가' }), h('p', { text: ex.text }));
+    const cardLink = btn('단서 카드 보기 ▸', () => { NAV.cardFocus = item.f; go('cards'); }, 'btn ghost');
+    b.append(h('div', { class: 'foot' }, h('span', { class: 'small muted' }, srcBadge(item), ' ', item.ref || ''), cardLink));
+    return b;
+  }
+
+  const BUB = { host: null, el: null, restore: null };
+  function openBubble(host, after, item, chosen, pEl) {
+    closeBubble();
+    const b = bubble(item, chosen);
+    after.after(b);
+    if (pEl) fillPassage(pEl, item, true);
+    BUB.host = host; BUB.el = b; BUB.restore = pEl ? () => fillPassage(pEl, item, false) : null;
+  }
+  function closeBubble() {
+    if (BUB.el) { BUB.el.remove(); if (BUB.restore) BUB.restore(); }
+    BUB.host = null; BUB.el = null; BUB.restore = null;
+  }
+  document.addEventListener('click', e => {
+    if (!BUB.el) return;
+    if (!document.contains(e.target)) return; // the clicked control was removed while handling the click
+    if (BUB.el.contains(e.target)) return;
+    if (BUB.host && BUB.host.contains(e.target)) return;
+    if ($sheet.contains(e.target)) return;
+    closeBubble();
+  });
+  document.addEventListener('keydown', e => {
+    if (!KEY) return;
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return;
+    KEY(e);
+  });
+
+  // A finished question shown as a row; tapping toggles its bubble.
+  function reviewRow(item, chosen, n, correct) {
+    const pEl = passage(item, false);
+    const row = h('div', { class: 'qrow ' + (correct ? 'is-ok' : 'is-bad'), 'data-item': item.id },
+      h('span', { class: 'qn', text: String(n) }), pEl, h('span', { class: 'slot', text: correct ? '✓' : '✗' }));
+    row.addEventListener('click', e => {
+      if (BUB.el && BUB.el.contains(e.target)) return;
+      if (BUB.host === row) closeBubble(); else openBubble(row, pEl, item, chosen, pEl);
+    });
+    return row;
+  }
+
+  // ───────────────────────── single-question quiz engine
+  function defaultChoices(item) {
+    const enabled = enabledIds().includes(item.f) ? enabledIds() : FT.fallacies.map(f => f.id);
+    const count = P.settings.choices === 'all' ? Infinity : 5;
+    return C.pickChoices(item, FT, { count, rng, enabled });
+  }
+
+  function runQuiz(root, queue, opts) {
+    opts = opts || {};
+    const results = [];
+    let i = 0;
+    const box = h('div', { class: 'stack' });
+    root.append(box);
+    show();
+
+    function show() {
+      clear(box);
+      closeBubble();
+      if (i >= queue.length) return done();
+      const item = queue[i];
+      const ids = (opts.choicesFor || defaultChoices)(item);
+      let picked = null;
+      let answered = false;
+      const pEl = passage(item, false);
+      const card = h('section', { class: 'panel stack', 'data-q': item.id });
+      const meta = h('div', { class: 'qmeta' }, h('span', { class: 'num', text: (i + 1) + ' / ' + queue.length }), srcBadge(item));
+      if (opts.metaExtra) meta.append(opts.metaExtra());
+      const list = h('div', { class: 'choices', role: 'group', 'aria-label': '오류 고르기' });
+      const confRow = h('div', { class: 'row' }, h('span', { class: 'small muted', text: '고른 답, 얼마나 확신하나요?' }));
+      const confBtns = [['sure', '확실해요'], ['unsure', '애매해요'], ['guess', '찍었어요']].map(([k, label]) => {
+        const b = btn(label, () => submit(k), k === 'sure' ? 'btn primary' : 'btn', { 'data-conf': k });
+        b.disabled = true;
+        return b;
+      });
+      confRow.append(...confBtns);
+      const choiceBtns = ids.map((fid, k) => {
+        const b = h('button', { class: 'choice', type: 'button', 'aria-pressed': 'false', 'data-fid': fid },
+          h('span', { class: 'k', text: String(k + 1) }), h('span', { text: F[fid].name }));
+        b.addEventListener('click', () => {
+          if (answered) return;
+          picked = fid;
+          for (const x of choiceBtns) x.setAttribute('aria-pressed', String(x === b));
+          for (const c of confBtns) c.disabled = false;
+        });
+        return b;
+      });
+      list.append(...choiceBtns);
+      const after = h('div', { class: 'row' });
+      card.append(meta, pEl, list, confRow, after);
+      box.append(h('div', { class: 'progressline' }, h('i', { style: 'width:' + (i / queue.length * 100).toFixed(1) + '%' })), card);
+
+      card.addEventListener('click', e => {
+        if (!answered) return;
+        if (BUB.el && BUB.el.contains(e.target)) return;
+        if (e.target.closest('button')) return;
+        if (BUB.host === card) closeBubble(); else openBubble(card, list, item, picked, pEl);
+      });
+      KEY = e => {
+        if (!answered && /^[1-9]$/.test(e.key) && choiceBtns[+e.key - 1]) { choiceBtns[+e.key - 1].click(); e.preventDefault(); }
+        else if (!answered && e.key === 'Enter' && picked) { submit('sure'); e.preventDefault(); }
+        else if (answered && e.key === 'Enter') { next(); e.preventDefault(); }
+      };
+
+      function submit(conf) {
+        if (answered || !picked) return;
+        answered = true;
+        const correct = opts.record === false ? picked === item.f : record(item, picked, conf);
+        results.push({ item, chosen: picked, correct, conf });
+        for (const b of choiceBtns) {
+          b.disabled = true;
+          if (b.dataset.fid === item.f) b.classList.add('is-ok');
+          else if (b.dataset.fid === picked) b.classList.add('is-bad');
+        }
+        confRow.remove();
+        if (opts.onAnswer) opts.onAnswer(correct, item);
+        openBubble(card, list, item, picked, pEl);
+        const nextBtn = btn(i + 1 < queue.length ? '다음 문제' : '결과 보기', next, 'btn primary', { id: 'next' });
+        after.append(h('span', { class: 'badge ' + (correct ? 'ok' : 'bad'), text: correct ? '정답' : '오답' }),
+          h('span', { class: 'small muted', text: '문제를 누르면 해설을 접거나 펼 수 있어요' }), h('span', { class: 'spacer' }), nextBtn);
+      }
+      function next() { i++; show(); window.scrollTo({ top: 0 }); }
+    }
+
+    function done() {
+      KEY = null;
+      const ok = results.filter(r => r.correct).length;
+      const by = k => results.filter(r => r.conf === k).length;
+      const panel = h('section', { class: 'panel stack' },
+        h('div', { class: 'eyebrow', text: '결과' }),
+        h('div', { class: 'row' }, h('span', { class: 'score', text: ok + ' / ' + results.length }),
+          h('span', { class: 'muted small', text: '확실 ' + by('sure') + ' · 애매 ' + by('unsure') + ' · 찍음 ' + by('guess') })));
+      const lucky = results.filter(r => r.correct && r.conf !== 'sure').length;
+      if (lucky) panel.append(h('p', { class: 'banner', text: '맞힌 문제 중 ' + lucky + '개는 애매하거나 찍어서 맞혔어요. 이 문제들은 복습 단계가 올라가지 않으니 곧 다시 나옵니다.' }));
+      const actions = h('div', { class: 'row' });
+      if (opts.again) actions.append(btn('한 번 더', opts.again, 'btn primary'));
+      actions.append(link('home', '홈으로'));
+      panel.append(actions);
+      box.append(panel);
+      const wrongs = results.filter(r => !r.correct);
+      if (wrongs.length) {
+        box.append(h('h2', { class: 'h3', text: '틀린 문제 (' + wrongs.length + ') — 누르면 해설' }));
+        wrongs.forEach((r, k) => box.append(reviewRow(r.item, r.chosen, k + 1, false)));
+      }
+      if (opts.onDone) opts.onDone(results);
+    }
+  }
+
+  // ───────────────────────── matching board (exam format)
+  function matchBoard(root, set, opts) {
+    opts = opts || {};
+    const items = set.items.map(id => itemById[id]);
+    const options = set.options;
+    const label = fid => LABELS[options.indexOf(fid)] || '?';
+    const reuse = !!opts.reuse;
+    const assign = {};
+    const locked = new Set();
+    let active = null;
+    let phase = 'answer';
+    let first = null;
+
+    const bogiList = h('div', { class: 'bogi-list' });
+    const bogi = h('div', { class: 'bogi' }, h('span', { class: 'bogi-title', text: '〈보기〉' }), bogiList);
+    const status = h('div', { class: 'row small muted' });
+    const bannerBox = h('div');
+    const rowsBox = h('div', { class: 'stack' });
+    const actions = h('div', { class: 'row' });
+    root.append(bogi, status, bannerBox, rowsBox, actions);
+
+    const rows = items.map((it, i) => {
+      const pEl = passage(it, false);
+      const slot = h('span', { class: 'slot', 'aria-label': '논제 ' + (i + 1) + '의 답' });
+      const hint = h('span', { class: 'hint' });
+      hint.hidden = true;
+      const row = h('div', { class: 'qrow', 'data-i': String(i), role: 'button', tabindex: '0' },
+        h('span', { class: 'qn', text: String(i + 1) }), pEl, slot, hint);
+      row.addEventListener('click', e => {
+        if (BUB.el && BUB.el.contains(e.target)) return;
+        if (phase === 'done') {
+          if (opts.noReveal) return;
+          const chosen = first ? first[i].chosen : assign[i];
+          if (BUB.host === row) closeBubble(); else openBubble(row, hint, it, chosen === undefined ? null : chosen, pEl);
+          return;
+        }
+        if (locked.has(i)) return;
+        setActive(i);
+      });
+      row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); } });
+      rowsBox.append(row);
+      return { row, slot, hint, pEl };
+    });
+
+    function usedBy(fid, except) {
+      for (const k of Object.keys(assign)) if (+k !== except && assign[k] === fid) return true;
+      return false;
+    }
+    function setActive(i) { active = i; refresh(); openSheet(); rows[i].row.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+    function nextOpen(from) {
+      for (let s = 1; s <= items.length; s++) {
+        const j = (from + s) % items.length;
+        if (!locked.has(j) && !assign[j]) return j;
+      }
+      return null;
+    }
+    function openSheet() {
+      if (active == null) return closeSheet();
+      clear($sheet);
+      const grid = h('div', { class: 'sheet-grid' });
+      for (const fid of options) {
+        const b = h('button', { type: 'button', 'data-fid': fid }, h('b', { text: label(fid) }), h('span', { text: F[fid].name }));
+        if (!reuse && usedBy(fid, active)) b.disabled = true;
+        if (assign[active] === fid) b.setAttribute('aria-pressed', 'true');
+        b.addEventListener('click', () => {
+          assign[active] = fid;
+          const nxt = nextOpen(active);
+          if (nxt == null) { active = null; closeSheet(); } else { active = nxt; openSheet(); }
+          refresh();
+        });
+        grid.append(b);
+      }
+      const head = h('div', { class: 'row' }, h('b', { text: '논제 ' + (active + 1) + '에 넣을 보기' }), h('span', { class: 'spacer' }),
+        assign[active] ? btn('비우기', () => { delete assign[active]; openSheet(); refresh(); }, 'btn ghost') : null,
+        btn('닫기', () => { active = null; closeSheet(); refresh(); }, 'btn'));
+      $sheet.append(h('div', { class: 'sheet-in' }, head, grid));
+      $sheet.hidden = false;
+    }
+
+    function refresh() {
+      clear(bogiList);
+      for (const fid of options) {
+        const used = !reuse && Object.values(assign).includes(fid) && phase !== 'done';
+        bogiList.append(h('span', { class: used ? 'used' : null }, h('b', { text: label(fid) }), F[fid].name));
+      }
+      rows.forEach((r, i) => {
+        const fid = assign[i];
+        r.row.classList.toggle('active', active === i);
+        r.slot.textContent = fid ? label(fid) : '　';
+        r.slot.classList.toggle('filled', !!fid);
+        r.row.classList.remove('is-ok', 'is-bad');
+        r.hint.hidden = true;
+        if (phase === 'retry' && locked.has(i)) r.row.classList.add('is-ok');
+        if (phase === 'done' && !opts.noReveal) {
+          const ok = assign[i] === items[i].f;
+          r.row.classList.add(ok ? 'is-ok' : 'is-bad');
+          if (!ok) r.slot.textContent = (fid ? label(fid) : '—') + '→' + label(items[i].f);
+          const f0 = first && first[i];
+          if (f0 && !f0.correct && ok) { r.hint.hidden = false; r.hint.textContent = '첫 시도 ' + (f0.chosen ? label(f0.chosen) + ' ' + F[f0.chosen].name : '비워 둠') + ' → 재도전에서 맞힘'; }
+          else if (!opts.noReveal) { r.hint.hidden = false; r.hint.textContent = '눌러서 해설 보기'; }
+        }
+      });
+      const filled = items.filter((_, i) => locked.has(i) || assign[i]).length;
+      clear(status);
+      if (phase === 'answer') status.append('배정 ' + filled + ' / ' + items.length + ' · 논제를 누른 뒤 아래에서 보기를 고르세요');
+      else if (phase === 'retry') status.append('틀린 논제만 다시 고르세요 · 맞힌 논제는 잠겨 있어요');
+      clear(actions);
+      if (phase !== 'done') {
+        const g = btn(phase === 'retry' ? '다시 채점' : '채점하기', () => grade(false), 'btn primary', { id: 'grade' });
+        g.disabled = filled < items.length;
+        actions.append(g);
+        if (opts.extraActions) actions.append(...opts.extraActions());
+      } else if (opts.doneActions) actions.append(...opts.doneActions());
+    }
+
+    function grade(force) {
+      closeSheet();
+      active = null;
+      const res = items.map((it, i) => ({ item: it, chosen: assign[i] || null, correct: assign[i] === it.f }));
+      if (!first) {
+        first = res;
+        if (opts.record !== false) for (const r of res) if (r.chosen || force) record(r.item, r.chosen, 'sure');
+      }
+      const wrong = res.filter(r => !r.correct).length;
+      const firstOk = first.filter(r => r.correct).length;
+      clear(bannerBox);
+      if (!force && phase === 'answer' && opts.retry && wrong) {
+        phase = 'retry';
+        res.forEach((r, i) => { if (r.correct) locked.add(i); else delete assign[i]; });
+        bannerBox.append(h('p', { class: 'banner', text: '첫 시도 ' + firstOk + ' / ' + items.length + '. 틀린 ' + wrong + '개를 남은 보기로 한 번 더 골라 보세요. 기록은 첫 시도로 남습니다.' }));
+      } else {
+        phase = 'done';
+        const finalOk = res.filter(r => r.correct).length;
+        if (!opts.noReveal) {
+          const txt = first === res || finalOk === firstOk ? '점수 ' + firstOk + ' / ' + items.length : '첫 시도 ' + firstOk + ' / ' + items.length + ' · 재도전 후 ' + finalOk + ' / ' + items.length;
+          bannerBox.append(h('p', { class: 'banner ' + (firstOk === items.length ? 'ok' : ''), text: txt + ' — 논제를 누르면 말풍선으로 해설이 열립니다.' }));
+        }
+      }
+      refresh();
+      if (phase === 'done' && opts.onGraded) opts.onGraded(first);
+      if (phase !== 'done') { const j = nextOpen(-1); if (j != null) setActive(j); }
+    }
+
+    refresh();
+    return { grade: () => grade(true), get phase() { return phase; } };
+  }
+  function closeSheet() { $sheet.hidden = true; clear($sheet); }
+
+  // ───────────────────────── bar
+  const $bar = { back: document.getElementById('back'), title: document.getElementById('barTitle'), dday: document.getElementById('dday'),
+    save: document.getElementById('save'), saveText: document.getElementById('saveText') };
+  $bar.back.addEventListener('click', () => go('home'));
+  function setBar(title, back) { $bar.title.textContent = title || ''; $bar.back.hidden = !back; }
+  function updateBar() {
+    const dl = C.daysLeft(P.settings, new Date());
+    $bar.dday.hidden = dl == null;
+    if (dl != null) $bar.dday.textContent = dl > 0 ? 'D-' + dl : dl === 0 ? 'D-DAY' : 'D+' + (-dl);
+  }
+  S.onMode(m => {
+    $bar.save.dataset.mode = m;
+    $bar.saveText.textContent = { cloud: '계정에 저장', local: '이 브라우저에 저장', memory: '저장 안 됨' }[m] || '';
+  });
+  function shortName(f) { return f.name.replace(/에 호소하는 오류$/, ' 호소').replace(/의 오류$/, '').replace(/ 오류$/, ''); }
+  function pairText(a, b) { const k = C.pairKey(a, b); for (const c of FT.clusters) if (c.pairs[k]) return c.pairs[k]; return ''; }
+  function levelVar(lv) { return lv === 'low' ? 'var(--bad)' : lv === 'mid' ? 'var(--mid)' : lv === 'high' ? 'var(--ok)' : 'var(--none)'; }
+
+  // ───────────────────────── home
+  function home() {
+    setBar('', false);
+    const now = new Date();
+    const q = C.todayQueue(P, enabledItems(), now);
+    const dueN = q.filter(id => P.items[id] && P.items[id].b).length;
+    const newN = q.length - dueN;
+    const dl = C.daysLeft(P.settings, now);
+    const seen = ITEMS.filter(i => P.items[i.id]).length;
+    const noteAll = ITEMS.filter(i => i.src === 'note');
+    const noteSeen = noteAll.filter(i => P.items[i.id]).length;
+    const eyebrow = dl == null ? '오늘 할 일' : dl > 0 ? '시험까지 ' + dl + '일 · 오늘 할 일' : dl === 0 ? '오늘이 시험날 · 마지막 점검' : '시험이 끝났어요';
+
+    const today = h('section', { class: 'panel today' },
+      h('div', { class: 'stack' },
+        h('div', { class: 'eyebrow', text: eyebrow }),
+        h('div', { class: 'stats' },
+          h('div', null, h('span', { class: 'big', text: String(dueN) }), h('span', { class: 'small muted', text: '복습할 문항' })),
+          h('div', null, h('span', { class: 'big', text: String(newN) }), h('span', { class: 'small muted', text: '새 문항' })),
+          h('div', null, h('span', { class: 'big', text: seen + '/' + ITEMS.length }), h('span', { class: 'small muted', text: '풀어 본 문항 · 노트 원문 ' + noteSeen + '/' + noteAll.length }))),
+        dl == null ? h('a', { href: '#prefs', class: 'small', text: '시험 날짜를 넣으면 복습 간격을 시험일에 맞춰 드려요 →' }) : null),
+      h('div', { class: 'stack' },
+        q.length ? link('review', '오늘 공부 시작', 'btn primary') : h('span', { class: 'small muted', text: '오늘 복습은 끝났어요' }),
+        link('match', '매칭 세트 풀기')));
+
+    const map = h('div', { class: 'map' });
+    for (const c of FT.categories) {
+      const cells = h('div', { class: 'map-cells' });
+      for (const f of FT.fallacies.filter(x => x.cat === c.id)) {
+        const m = mastery(f.id);
+        const cell = h('button', { class: 'cell', type: 'button', 'data-level': m.level,
+          title: f.name + (m.n ? ' · 최근 ' + m.n + '번 중 ' + pct(m.acc) : ' · 아직 안 풀어 봄') }, shortName(f));
+        cell.addEventListener('click', () => { NAV.cardFocus = f.id; go('cards'); });
+        cells.append(cell);
+      }
+      map.append(h('div', { class: 'map-row' }, h('span', { class: 'map-cat', text: c.short }), cells));
+    }
+    const legend = h('div', { class: 'legend' }, [['none', '아직 안 풂'], ['low', '50% 미만'], ['mid', '80% 미만'], ['high', '80% 이상']]
+      .map(([lv, t]) => h('span', null, h('i', { style: 'background:' + levelVar(lv) }), t)));
+
+    const groups = [
+      ['시험 형식', [['match', '매칭 세트', '논제 ' + P.settings.setN + '개 + 보기 ' + P.settings.setM + '개, 시험지 그대로', true], ['exam', '모의고사', '세트 3개 · 20분 · 끝나고 성적표']]],
+      ['기본 연습', [['review', '오늘 복습', '틀린 것과 새 문항을 간격 반복으로'], ['drill', '한 문제씩', '논제 하나씩 판정하고 바로 해설'], ['cards', '단서 카드', '정의 · 알아보는 신호 · 헷갈리는 상대']]],
+      ['구별 훈련', [['duel', '구별 대결', '헷갈리는 묶음만 집중해서'], ['contrast', '대조 쌍', '같은 소재, 다른 오류 두 개'], ['formal', '형식 오류 훈련', '문장 → 기호 → 타당/부당']]],
+      ['정리 · 점검', [['report', '약점 리포트', '정답률과 자주 헷갈린 짝'], ['summary', '시험 직전 요약', '31개를 한 장에'], ['notecheck', '노트 검증', '내 노트 속 실수 찾기'],
+        ['speed', '스피드 라운드', '정의 보고 이름 맞히기 60초'], ['basics', '바탕 개념', '기술·설명·논증, 연역·귀납 등']]],
+    ];
+    const modeBox = h('div', { class: 'stack' });
+    for (const [title, modes] of groups) {
+      modeBox.append(h('div', { class: 'group-title', text: title }),
+        h('div', { class: 'modes' }, modes.map(([r, name, desc, key]) => h('a', { class: 'mode' + (key ? ' key' : ''), href: '#' + r }, h('b', { text: name }), h('span', { text: desc })))));
+    }
+
+    $view.append(
+      h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: '논리학 · 오류 찾기 시험 대비' }), h('h1', { class: 'h1', text: '논제를 읽고, 오류를 맞혀라' })),
+      today,
+      h('section', { class: 'panel stack' }, h('div', { class: 'row' }, h('h2', { class: 'h3', text: '오류 지도' }), h('span', { class: 'spacer' }), legend),
+        h('p', { class: 'small muted', text: '칸을 누르면 그 오류의 단서 카드가 열립니다. 색은 최근 5번의 정답률입니다.' }), map),
+      modeBox,
+      h('div', { class: 'row small' }, link('prefs', '설정 · 백업', 'btn ghost'), h('span', { class: 'muted', text: '문항 ' + ITEMS.length + '개 · 오류 ' + FT.fallacies.length + '개' })));
+  }
+
+  // ───────────────────────── cards
+  function cards() {
+    setBar('단서 카드', true);
+    let list = FT.fallacies.slice();
+    let idx = NAV.cardFocus ? Math.max(0, list.findIndex(f => f.id === NAV.cardFocus)) : 0;
+    NAV.cardFocus = null;
+    const catSel = h('select', { id: 'cardCat', 'aria-label': '범주 고르기' }, h('option', { value: '', text: '전체 범주' }),
+      FT.categories.map(c => h('option', { value: c.id, text: c.name })));
+    const counter = h('span', { class: 'num muted small' });
+    const holder = h('div', { class: 'stack' });
+    $view.append(h('h1', { class: 'h2', text: '단서 카드' }), h('div', { class: 'row' }, catSel, h('span', { class: 'spacer' }), counter), holder);
+    catSel.addEventListener('change', () => { list = catSel.value ? FT.fallacies.filter(f => f.cat === catSel.value) : FT.fallacies.slice(); idx = 0; draw(); });
+    draw();
+
+    function draw() {
+      clear(holder); closeBubble(); KEY = null;
+      const f = list[idx];
+      counter.textContent = (idx + 1) + ' / ' + list.length;
+      const m = mastery(f.id);
+      const mates = C.clusterMates(FT, f.id);
+      const card = h('section', { class: 'panel stack' },
+        h('div', { class: 'row' }, h('span', { class: 'eyebrow', text: CAT[f.cat].name }), h('span', { class: 'spacer' }),
+          h('span', { class: 'badge ' + (m.level === 'high' ? 'ok' : m.level === 'low' ? 'bad' : ''), text: m.n ? '최근 정답률 ' + pct(m.acc) : '아직 안 풀어 봄' })),
+        h('h2', { class: 'h1', text: f.name }),
+        f.aka.length ? h('p', { class: 'small muted', text: '= ' + f.aka.join(', ') }) : null,
+        h('p', { class: 'card-def', text: f.def }),
+        h('p', { class: 'small muted', text: f.defNote ? '노트(교재) 정의' : '노트에 정의가 없어 보충한 정의' }),
+        h('h3', { class: 'h3', text: '알아보는 신호' }),
+        h('ul', { class: 'signals' }, f.signal.map(s => h('li', { text: s }))),
+        h('h3', { class: 'h3', text: '대표 예문' }),
+        h('p', { class: 'passage', text: f.example }),
+        mates.length ? h('h3', { class: 'h3', text: '헷갈리는 오류와 구별' }) : null,
+        mates.length ? h('div', { class: 'vs' }, mates.map(mid => h('div', null, h('b', { text: '↔ ' + F[mid].name }), h('span', { text: pairText(f.id, mid) })))) : null);
+      holder.append(card, h('div', { class: 'row' },
+        btn('← 이전', () => { idx = (idx - 1 + list.length) % list.length; draw(); }),
+        btn('다음 →', () => { idx = (idx + 1) % list.length; draw(); }),
+        h('span', { class: 'spacer' }),
+        btn('이 오류 3문제 풀기', () => mini(f), 'btn primary')));
+      KEY = e => { if (e.key === 'ArrowRight') { idx = (idx + 1) % list.length; draw(); } else if (e.key === 'ArrowLeft') { idx = (idx - 1 + list.length) % list.length; draw(); } };
+    }
+    function mini(f) {
+      const own = shuffle(ITEMS.filter(i => i.f === f.id)).slice(0, 2);
+      const mates = C.clusterMates(FT, f.id);
+      const pool = mates.length ? ITEMS.filter(i => mates.includes(i.f)) : ITEMS.filter(i => i.f !== f.id);
+      const q = shuffle(own.concat(shuffle(pool).slice(0, 1)));
+      clear(holder); KEY = null;
+      holder.append(h('p', { class: 'small muted', text: f.name + ' 확인 문제 3개 — 헷갈리는 오류 문제가 하나 섞여 있어요.' }));
+      runQuiz(holder, q, { onDone: () => holder.append(h('div', { class: 'row' }, btn('카드로 돌아가기', draw), btn('다음 카드 →', () => { idx = (idx + 1) % list.length; draw(); }, 'btn primary'))) });
+    }
+  }
+
+  // ───────────────────────── drill
+  function drill() {
+    setBar('한 문제씩', true);
+    const enabled = enabledIds();
+    const cats = FT.categories.filter(c => FT.fallacies.some(f => f.cat === c.id && enabled.includes(f.id)));
+    const catSel = h('select', { id: 'drillCat', 'aria-label': '범주' }, h('option', { value: '', text: '켜 둔 범주 전체' }), cats.map(c => h('option', { value: c.id, text: c.name })));
+    const fSel = h('select', { id: 'drillF', 'aria-label': '오류' });
+    const srcSel = h('select', { id: 'drillSrc', 'aria-label': '출처' }, h('option', { value: '', text: '노트 + 변형 + 신규' }), h('option', { value: 'note', text: '노트 원문만' }), h('option', { value: 'gen', text: '변형 · 신규만' }));
+    const wrongBox = h('input', { type: 'checkbox', id: 'drillWrong' });
+    const countEl = h('span', { class: 'small muted' });
+    const start = btn('20문제 시작', () => begin(), 'btn primary', { id: 'drillStart' });
+    function fillF() {
+      clear(fSel);
+      fSel.append(h('option', { value: '', text: '모든 오류' }));
+      for (const f of FT.fallacies) if (enabled.includes(f.id) && (!catSel.value || f.cat === catSel.value)) fSel.append(h('option', { value: f.id, text: f.name }));
+    }
+    function pool() {
+      return ITEMS.filter(i => enabled.includes(i.f)
+        && (!catSel.value || F[i.f].cat === catSel.value)
+        && (!fSel.value || i.f === fSel.value)
+        && (!srcSel.value || (srcSel.value === 'note' ? i.src === 'note' : i.src !== 'note'))
+        && (!wrongBox.checked || (P.items[i.id] && P.items[i.id].h.length && !P.items[i.id].h[P.items[i.id].h.length - 1].c)));
+    }
+    function update() { const n = pool().length; countEl.textContent = '조건에 맞는 문항 ' + n + '개'; start.textContent = Math.min(20, n) + '문제 시작'; start.disabled = n === 0; }
+    if (NAV.drillFallacy) { const f = F[NAV.drillFallacy]; catSel.value = f.cat; }
+    fillF();
+    if (NAV.drillFallacy) { fSel.value = NAV.drillFallacy; NAV.drillFallacy = null; }
+    catSel.addEventListener('change', () => { fillF(); update(); });
+    for (const el of [fSel, srcSel, wrongBox]) el.addEventListener('change', update);
+    update();
+    $view.append(h('h1', { class: 'h2', text: '한 문제씩' }),
+      h('p', { class: 'lead', text: '논제 하나를 읽고 오류를 고른 뒤, 확신도를 눌러 제출하세요. 바로 말풍선으로 해설이 열립니다. 숫자 키 1~5로 고르고 Enter로 넘어갈 수 있어요.' }),
+      h('section', { class: 'panel stack' }, h('div', { class: 'row' }, catSel, fSel, srcSel), h('label', { class: 'check' }, wrongBox, '마지막에 틀린 문항만'), h('div', { class: 'row' }, countEl, h('span', { class: 'spacer' }), start)));
+    function begin() {
+      const q = shuffle(pool()).slice(0, 20);
+      clear($view);
+      runQuiz($view, q, { again: () => render() });
+    }
+  }
+
+  // ───────────────────────── review (spaced repetition)
+  function review() {
+    setBar('오늘 복습', true);
+    const q = C.todayQueue(P, enabledItems(), new Date()).map(id => itemById[id]);
+    if (!q.length) {
+      $view.append(h('section', { class: 'panel stack' }, h('h1', { class: 'h2', text: '오늘 복습은 끝났어요' }),
+        h('p', { class: 'lead', text: '복습할 때가 된 문항도, 오늘 배정된 새 문항도 없습니다. 매칭 세트로 실전 연습을 하거나, 설정에서 하루 새 문항 수를 늘릴 수 있어요.' }),
+        h('div', { class: 'row' }, link('match', '매칭 세트', 'btn primary'), link('drill', '한 문제씩'), link('prefs', '설정'))));
+      return;
+    }
+    const due = q.filter(i => P.items[i.id] && P.items[i.id].b).length;
+    $view.append(h('p', { class: 'small muted', text: '복습 ' + due + '개 + 새 문항 ' + (q.length - due) + '개. 틀리거나 찍어서 맞힌 문제는 곧 다시 나옵니다.' }));
+    runQuiz($view, q, { again: () => render() });
+  }
+
+  // ───────────────────────── match
+  function match() {
+    setBar('매칭 세트', true);
+    const s = P.settings;
+    const set = C.buildMatchingSet(FT, P, { n: s.setN, m: s.setM, rng, reuse: s.reuse });
+    if (set.items.length < 2) {
+      $view.append(h('section', { class: 'panel stack' }, h('p', { text: '켜 둔 범주의 오류가 너무 적어 세트를 만들 수 없어요. 설정에서 범주를 더 켜 주세요.' }), link('prefs', '설정', 'btn primary')));
+      return;
+    }
+    const timerEl = h('span', { class: 'num muted' });
+    $view.append(h('div', { class: 'row' }, h('h1', { class: 'h2', text: '매칭 세트' }), h('span', { class: 'spacer' }), s.timer ? timerEl : null),
+      h('p', { class: 'small muted', text: '각 논제에 해당하는 오류를 〈보기〉에서 고르세요. 논제마다 오류는 하나입니다.' + (s.reuse ? ' 같은 보기를 여러 번 쓸 수 있어요.' : ' 보기는 한 번씩만 쓸 수 있어요.') }));
+    const t = s.timer ? ticker(timerEl, null) : null;
+    const box = h('div', { class: 'stack' });
+    $view.append(box);
+    matchBoard(box, set, { retry: s.retry, reuse: s.reuse, onGraded: () => { if (t) t.stop(); },
+      doneActions: () => [btn('새 세트', () => render(), 'btn primary', { id: 'newSet' }), link('report', '약점 리포트'), link('home', '홈으로')] });
+  }
+
+  // ───────────────────────── exam
+  function exam() {
+    setBar('모의고사', true);
+    const s = P.settings;
+    const SETS = 3;
+    const LIMIT = 20 * 60;
+    $view.append(h('section', { class: 'panel stack' }, h('div', { class: 'eyebrow', text: '실전처럼' }), h('h1', { class: 'h2', text: '모의고사' }),
+      h('p', { class: 'lead', text: '매칭 세트 ' + SETS + '개(논제 ' + s.setN * SETS + '개)를 ' + LIMIT / 60 + '분 안에 풉니다. 세트마다 제출하면 다음 세트로 넘어가고, 정답과 해설은 모두 끝난 뒤에 볼 수 있어요. 재도전은 없습니다.' }),
+      h('div', { class: 'row' }, btn('시작하기', begin, 'btn primary', { id: 'examStart' }), link('home', '홈으로'))));
+
+    function begin() {
+      clear($view);
+      const used = new Set();
+      const sets = [];
+      for (let k = 0; k < SETS; k++) {
+        const items = enabledItems().filter(i => !used.has(i.id));
+        const st = C.buildMatchingSet(FT, P, { n: s.setN, m: s.setM, rng, reuse: s.reuse, items });
+        st.items.forEach(id => used.add(id));
+        sets.push(st);
+      }
+      const setLabel = h('b');
+      const timerEl = h('span', { class: 'num' });
+      const box = h('div', { class: 'stack' });
+      $view.append(h('div', { class: 'row' }, setLabel, h('span', { class: 'spacer' }), h('span', { class: 'small muted', text: '남은 시간' }), timerEl), box);
+      const results = [];
+      let k = 0;
+      let board = null;
+      let timeUp = false;
+      let finished = false;
+      const t = ticker(timerEl, LIMIT, () => { timeUp = true; if (board && board.phase !== 'done') board.grade(); finish(); });
+      showSet();
+      function showSet() {
+        clear(box); closeSheet();
+        setLabel.textContent = '세트 ' + (k + 1) + ' / ' + SETS;
+        board = matchBoard(box, sets[k], { retry: false, reuse: s.reuse, noReveal: true,
+          onGraded: res => { results.push(...res); k++; if (!timeUp) { if (k < SETS) { showSet(); window.scrollTo({ top: 0 }); } else finish(); } } });
+      }
+      function finish() {
+        if (finished) return;
+        finished = true;
+        const spent = t.stop();
+        closeSheet(); closeBubble(); clear($view);
+        const total = sets.reduce((n, st) => n + st.items.length, 0);
+        const ok = results.filter(r => r.correct).length;
+        const byCat = {};
+        for (const r of results) { const c = F[r.item.f].cat; byCat[c] = byCat[c] || [0, 0]; byCat[c][1]++; if (r.correct) byCat[c][0]++; }
+        const conf = {};
+        for (const r of results) if (!r.correct && r.chosen) { const key = F[r.item.f].name + ' → ' + F[r.chosen].name; conf[key] = (conf[key] || 0) + 1; }
+        $view.append(h('section', { class: 'panel stack' },
+          h('div', { class: 'eyebrow', text: '모의고사 성적표' }),
+          h('div', { class: 'row' }, h('span', { class: 'score', text: ok + ' / ' + total }), h('span', { class: 'muted', text: pct(total ? ok / total : 0) + ' · 걸린 시간 ' + fmtTime(spent) })),
+          timeUp ? h('p', { class: 'banner bad', text: '시간이 끝나 제출되었어요. 풀지 못한 논제는 오답으로 계산했습니다.' }) : null,
+          h('div', { class: 'tablewrap' }, h('table', null, h('thead', null, h('tr', null, h('th', { text: '범주' }), h('th', { text: '맞힘' }))),
+            h('tbody', null, FT.categories.filter(c => byCat[c.id]).map(c => h('tr', null, h('td', { text: c.name }), h('td', { class: 'num', text: byCat[c.id][0] + ' / ' + byCat[c.id][1] })))))),
+          Object.keys(conf).length ? h('div', { class: 'stack' }, h('h2', { class: 'h3', text: '헷갈린 짝 (정답 → 내가 고른 답)' }),
+            h('ul', { class: 'signals' }, Object.entries(conf).sort((a, b) => b[1] - a[1]).map(([k2, v]) => h('li', { text: k2 + (v > 1 ? ' (' + v + '번)' : '') })))) : null,
+          h('div', { class: 'row' }, btn('다시 응시', () => render(), 'btn primary'), link('report', '약점 리포트'), link('home', '홈으로'))));
+        const ordered = results.slice().sort((a, b) => (a.correct ? 1 : 0) - (b.correct ? 1 : 0));
+        $view.append(h('h2', { class: 'h3', text: '전체 해설 — 틀린 문제부터, 누르면 말풍선' }));
+        ordered.forEach((r, i) => $view.append(reviewRow(r.item, r.chosen, i + 1, r.correct)));
+      }
+    }
+  }
+
+  // ───────────────────────── report
+  function report() {
+    setBar('약점 리포트', true);
+    let attempts = 0;
+    for (const r of Object.values(P.items)) attempts += (r.h || []).length;
+    if (!attempts) {
+      $view.append(h('section', { class: 'panel stack' }, h('h1', { class: 'h2', text: '아직 기록이 없어요' }),
+        h('p', { class: 'lead', text: '문제를 풀면 오류별 정답률과 자주 헷갈린 짝이 여기에 쌓입니다.' }),
+        h('div', { class: 'row' }, link('match', '매칭 세트', 'btn primary'), link('drill', '한 문제씩'))));
+      return;
+    }
+    const gs = C.guessStats(P);
+    const seen = ITEMS.filter(i => P.items[i.id]).length;
+    $view.append(h('h1', { class: 'h2', text: '약점 리포트' }),
+      h('section', { class: 'panel' }, h('dl', { class: 'kv' },
+        h('dt', { text: '총 풀이' }), h('dd', { class: 'num', text: attempts + '번' }),
+        h('dt', { text: '풀어 본 문항' }), h('dd', { class: 'num', text: seen + ' / ' + ITEMS.length }),
+        h('dt', { text: '운으로 맞힌 비율' }), h('dd', { text: gs.correctTotal ? pct(gs.luckyCount / gs.correctTotal) + ' (맞힌 ' + gs.correctTotal + '번 중 애매·찍음 ' + gs.luckyCount + '번)' : '—' }))));
+
+    const conf = C.topConfusions(P, 5);
+    if (conf.length) {
+      const list = h('div', { class: 'stack' });
+      for (const c of conf) {
+        const cl = FT.clusters.find(x => x.members.includes(c.answer) && x.members.includes(c.chosen)) || FT.clusters.find(x => x.members.includes(c.answer));
+        list.append(h('div', { class: 'row' }, h('span', null, h('b', { text: F[c.answer].name }), ' 를 ', h('b', { text: F[c.chosen].name }), '(으)로 고름 ', h('span', { class: 'num muted', text: c.count + '번' })),
+          h('span', { class: 'spacer' }), cl ? btn('구별 대결', () => { NAV.duelCluster = cl.id; go('duel'); }, 'btn') : null));
+      }
+      $view.append(h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '자주 헷갈린 짝 Top ' + conf.length }), list));
+    }
+
+    for (const c of FT.categories) {
+      const bars = h('div', { class: 'bars' });
+      for (const f of FT.fallacies.filter(x => x.cat === c.id)) {
+        const m = mastery(f.id);
+        const row = h('div', { class: 'barrow' }, h('a', { href: '#cards', text: shortName(f), onclick: () => { NAV.cardFocus = f.id; } }),
+          h('div', { class: 'track' }, h('div', { class: 'fill', 'data-level': m.level, style: 'width:' + (m.n ? Math.max(4, m.acc * 100) : 0) + '%' })),
+          h('span', { class: 'v', text: m.n ? pct(m.acc) + ' · ' + m.n : '—' }));
+        bars.append(row);
+      }
+      $view.append(h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: c.name }), bars));
+    }
+    const weak = FT.fallacies.map(f => ({ f, m: mastery(f.id) })).filter(x => x.m.n && x.m.level !== 'high').sort((a, b) => a.m.acc - b.m.acc).slice(0, 5);
+    if (weak.length) {
+      $view.append(h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '먼저 다시 볼 오류' }),
+        weak.map(x => h('div', { class: 'row' }, h('b', { text: x.f.name }), h('span', { class: 'muted small num', text: pct(x.m.acc) }), h('span', { class: 'spacer' }),
+          btn('단서 카드', () => { NAV.cardFocus = x.f.id; go('cards'); }), btn('이 오류만 연습', () => { NAV.drillFallacy = x.f.id; go('drill'); }, 'btn primary')))));
+    }
+  }
+
+  // ───────────────────────── duel
+  function duel() {
+    setBar('구별 대결', true);
+    if (!NAV.duelCluster) {
+      $view.append(h('h1', { class: 'h2', text: '구별 대결' }), h('p', { class: 'lead', text: '서로 헷갈리는 오류끼리 묶었어요. 묶음 하나를 골라 그 오류들만 빠르게 구별해 봅니다.' }));
+      const grid = h('div', { class: 'modes' });
+      for (const c of FT.clusters) {
+        const b = h('button', { class: 'mode', type: 'button' }, h('b', { text: c.name }), h('span', { text: c.members.map(id => shortName(F[id])).join(' · ') }));
+        b.addEventListener('click', () => { NAV.duelCluster = c.id; render(); });
+        grid.append(b);
+      }
+      $view.append(grid);
+      return;
+    }
+    const c = FT.clusters.find(x => x.id === NAV.duelCluster);
+    const intro = h('div', { class: 'stack' },
+      h('div', { class: 'row' }, h('h1', { class: 'h2', text: '구별 대결 · ' + c.name }), h('span', { class: 'spacer' }), btn('다른 묶음', () => { NAV.duelCluster = null; render(); }, 'btn ghost')),
+      h('p', { class: 'banner', text: c.tip }),
+      h('div', { class: 'tablewrap' }, h('table', null, h('thead', null, h('tr', null, h('th', { text: '오류' }), h('th', { text: '알아보는 신호' }))),
+        h('tbody', null, c.members.map(id => h('tr', null, h('td', { class: 'name', text: F[id].name }), h('td', { text: F[id].signal[0] })))))),
+      h('div', { class: 'vs' }, Object.entries(c.pairs).map(([k, v]) => { const [a, b] = k.split('|'); return h('div', null, h('b', { text: shortName(F[a]) + ' ↔ ' + shortName(F[b]) }), h('span', { text: v })); })),
+      h('div', { class: 'row' }, btn('시작하기', start, 'btn primary', { id: 'duelStart' })));
+    $view.append(intro);
+    function start() {
+      clear($view);
+      let streak = 0;
+      let best = 0;
+      const streakEl = h('span', { class: 'badge' });
+      const paint = () => { streakEl.textContent = '연속 ' + streak + ' · 최고 ' + best; };
+      paint();
+      $view.append(h('div', { class: 'row' }, h('h1', { class: 'h3', text: '구별 대결 · ' + c.name }), h('span', { class: 'spacer' }), streakEl));
+      const q = shuffle(ITEMS.filter(i => c.members.includes(i.f))).slice(0, 12);
+      runQuiz($view, q, { choicesFor: () => shuffle(c.members), onAnswer: ok => { streak = ok ? streak + 1 : 0; best = Math.max(best, streak); paint(); }, again: () => render() });
+    }
+  }
+
+  // ───────────────────────── contrast pairs
+  function contrast() {
+    setBar('대조 쌍', true);
+    const byPair = {};
+    for (const it of ITEMS) if (it.pair) (byPair[it.pair] = byPair[it.pair] || []).push(it);
+    const pairs = shuffle(Object.values(byPair)).map(p => shuffle(p));
+    let k = 0;
+    const box = h('div', { class: 'stack' });
+    $view.append(h('h1', { class: 'h2', text: '대조 쌍' }), h('p', { class: 'lead', text: '소재는 거의 같은데 오류가 다른 두 논증입니다. 무엇이 갈림길인지에 주목해서 각각 고르세요.' }), box);
+    draw();
+    function draw() {
+      clear(box);
+      if (k >= pairs.length) { box.append(h('section', { class: 'panel stack' }, h('p', { text: '대조 쌍 ' + pairs.length + '개를 모두 풀었어요.' }), h('div', { class: 'row' }, btn('처음부터', () => render(), 'btn primary'), link('home', '홈으로')))); return; }
+      const [a, b] = pairs[k];
+      const opts = [];
+      for (const id of [a.f, b.f, C.clusterMates(FT, a.f)[0], C.clusterMates(FT, b.f)[0]]) if (id && !opts.includes(id) && opts.length < 4) opts.push(id);
+      const choices = shuffle(opts);
+      const picked = {};
+      const panels = [a, b].map((it, side) => {
+        const btns = choices.map(fid => {
+          const x = h('button', { class: 'choice', type: 'button', 'aria-pressed': 'false', 'data-fid': fid }, h('span', { text: F[fid].name }));
+          x.addEventListener('click', () => { if (checked) return; picked[side] = fid; btns.forEach(y => y.setAttribute('aria-pressed', String(y === x))); check.disabled = !(picked[0] && picked[1]); });
+          return x;
+        });
+        const panel = h('section', { class: 'panel stack' }, h('div', { class: 'eyebrow', text: side ? '논제 B' : '논제 A' }), passage(it, false), h('div', { class: 'choices' }, btns));
+        return { panel, btns, it };
+      });
+      let checked = false;
+      const check = btn('확인', () => {
+        checked = true;
+        panels.forEach((p, side) => {
+          record(p.it, picked[side], 'sure');
+          p.btns.forEach(x => { x.disabled = true; if (x.dataset.fid === p.it.f) x.classList.add('is-ok'); else if (x.dataset.fid === picked[side]) x.classList.add('is-bad'); });
+          p.panel.append(bubble(p.it, picked[side]));
+        });
+        check.remove();
+        actions.append(btn(k + 1 < pairs.length ? '다음 쌍' : '마치기', () => { k++; draw(); window.scrollTo({ top: 0 }); }, 'btn primary', { id: 'next' }));
+      }, 'btn primary', { id: 'pairCheck' });
+      check.disabled = true;
+      const actions = h('div', { class: 'row' }, h('span', { class: 'num muted small', text: (k + 1) + ' / ' + pairs.length }), h('span', { class: 'spacer' }), check);
+      box.append(h('div', { class: 'two' }, panels.map(p => p.panel)), actions);
+    }
+  }
+
+  // ───────────────────────── formal fallacy drill
+  function formal() {
+    setBar('형식 오류 훈련', true);
+    const forms = Object.entries(FT.forms);
+    const q = shuffle(FT.formalDrills);
+    let k = 0;
+    let ok = 0;
+    const box = h('div', { class: 'stack' });
+    $view.append(h('h1', { class: 'h2', text: '형식 오류 훈련' }),
+      h('p', { class: 'lead', text: '문장을 P, Q로 바꾸고 두 번째 전제가 무엇을 긍정·부정하는지 보면 형식이 보입니다. “~인 경우에만”, “~없이는”은 화살표 방향부터 바로잡으세요.' }),
+      h('div', { class: 'tablewrap' }, h('table', null, h('thead', null, h('tr', null, h('th', { text: '형식' }), h('th', { text: '모양' }), h('th', { text: '판정' }))),
+        h('tbody', null, forms.map(([, f]) => h('tr', null, h('td', { class: 'name', text: f.name }), h('td', { class: 'mono', text: f.shape }), h('td', { text: f.valid ? '타당' : '부당' })))))),
+      box);
+    draw();
+    function draw() {
+      clear(box);
+      if (k >= q.length) { box.append(h('section', { class: 'panel stack' }, h('div', { class: 'score', text: ok + ' / ' + q.length }), h('div', { class: 'row' }, btn('다시', () => render(), 'btn primary'), link('home', '홈으로')))); return; }
+      const d = q[k];
+      const reveal = h('div', { class: 'stack' });
+      const btns = forms.map(([key, f]) => {
+        const b = h('button', { class: 'choice', type: 'button', 'data-form': key }, h('span', { class: 'k', text: f.valid ? '○' : '✕' }), h('span', null, f.name, ' ', h('span', { class: 'mono small muted', text: f.shape })));
+        b.addEventListener('click', () => {
+          const right = key === d.form;
+          if (right) ok++;
+          btns.forEach(x => { x.disabled = true; if (x.dataset.form === d.form) x.classList.add('is-ok'); else if (x === b) x.classList.add('is-bad'); });
+          reveal.append(h('div', { class: 'bubble' },
+            h('dl', { class: 'kv' }, h('dt', { text: 'P' }), h('dd', { text: d.p }), h('dt', { text: 'Q' }), h('dd', { text: d.q }),
+              h('dt', { text: '기호화' }), h('dd', null, h('span', { class: 'symbol', text: d.symbol })),
+              h('dt', { text: '판정' }), h('dd', { text: FT.forms[d.form].name + ' · ' + (d.valid ? '타당' : '부당') })),
+            h('p', { text: d.why })),
+            h('div', { class: 'row' }, h('span', { class: 'badge ' + (right ? 'ok' : 'bad'), text: right ? '정답' : '오답' }), d.trick ? h('span', { class: 'badge note', text: '함정 문장' }) : null,
+              h('span', { class: 'spacer' }), btn(k + 1 < q.length ? '다음' : '결과', () => { k++; draw(); }, 'btn primary', { id: 'next' })));
+        });
+        return b;
+      });
+      box.append(h('section', { class: 'panel stack' }, h('div', { class: 'qmeta' }, h('span', { class: 'num', text: (k + 1) + ' / ' + q.length })),
+        h('p', { class: 'passage', text: d.text }), h('h2', { class: 'h3', text: '이 논증의 형식은?' }), h('div', { class: 'choices' }, btns), reveal));
+    }
+  }
+
+  // ───────────────────────── summary sheet
+  function summary() {
+    setBar('시험 직전 요약', true);
+    $view.append(h('h1', { class: 'h2', text: '시험 직전 요약' }), h('p', { class: 'lead', text: '오류 31개를 범주별로 한 장에 모았습니다. 신호 한 줄과 대표 예문만 빠르게 훑어보세요.' }));
+    for (const c of FT.categories) {
+      $view.append(h('h2', { class: 'h3', text: c.name + ' · ' + c.note }),
+        h('div', { class: 'tablewrap' }, h('table', null, h('thead', null, h('tr', null, h('th', { text: '오류' }), h('th', { text: '알아보는 신호' }), h('th', { text: '대표 예문' }))),
+          h('tbody', null, FT.fallacies.filter(f => f.cat === c.id).map(f => h('tr', null, h('td', { class: 'name', text: shortName(f) }), h('td', { text: f.signal[0] }), h('td', { text: f.example })))))));
+    }
+    $view.append(h('h2', { class: 'h3', text: '헷갈리는 묶음 한눈에' }),
+      h('div', { class: 'tablewrap' }, h('table', null, h('thead', null, h('tr', null, h('th', { text: '묶음' }), h('th', { text: '구별 포인트' }))),
+        h('tbody', null, FT.clusters.map(c => h('tr', null, h('td', { class: 'name', text: c.name }), h('td', { text: c.tip })))))));
+  }
+
+  // ───────────────────────── note check
+  function notecheck() {
+    setBar('노트 검증', true);
+    const qs = shuffle(FT.noteChecks.map(n => ({ bad: true, where: n.where, text: n.wrong, right: n.right, why: n.why }))
+      .concat(FT.noteTrue.map(n => ({ bad: false, where: n.where, text: n.text, why: n.why }))));
+    let k = 0;
+    let ok = 0;
+    const box = h('div', { class: 'stack' });
+    $view.append(h('h1', { class: 'h2', text: '노트 검증' }), h('p', { class: 'lead', text: '노트에 적힌 내용 가운데 일부는 틀렸습니다. 노트에 적힌 그대로가 맞는지 판정해 보세요. 시험 전에 잘못 외운 것을 바로잡는 연습입니다.' }), box);
+    draw();
+    function draw() {
+      clear(box);
+      if (k >= qs.length) { box.append(h('section', { class: 'panel stack' }, h('div', { class: 'score', text: ok + ' / ' + qs.length }), h('div', { class: 'row' }, btn('다시', () => render(), 'btn primary'), link('home', '홈으로')))); return; }
+      const s = qs[k];
+      const reveal = h('div', { class: 'stack' });
+      const answer = sayBad => {
+        const right = sayBad === s.bad;
+        if (right) ok++;
+        yes.disabled = no.disabled = true;
+        (s.bad ? no : yes).classList.add('is-ok');
+        if (!right) (sayBad ? no : yes).classList.add('is-bad');
+        reveal.append(h('div', { class: 'bubble' }, h('h4', { text: s.bad ? '노트가 틀렸어요' : '노트가 맞아요' }), s.bad ? h('p', null, h('b', { text: '바른 내용: ' }), s.right) : null, h('p', { text: s.why })),
+          h('div', { class: 'row' }, h('span', { class: 'badge ' + (right ? 'ok' : 'bad'), text: right ? '정답' : '오답' }), h('span', { class: 'spacer' }), btn(k + 1 < qs.length ? '다음' : '결과', () => { k++; draw(); }, 'btn primary', { id: 'next' })));
+      };
+      const yes = btn('노트가 맞다', () => answer(false), 'choice');
+      const no = btn('노트가 틀렸다', () => answer(true), 'choice');
+      box.append(h('section', { class: 'panel stack' }, h('div', { class: 'qmeta' }, h('span', { class: 'num', text: (k + 1) + ' / ' + qs.length }), h('span', { text: s.where })),
+        h('p', { class: 'small muted', text: '노트에 이렇게 적혀 있습니다' }), h('p', { class: 'passage', text: s.text }), h('div', { class: 'choices two' }, yes, no), reveal));
+    }
+  }
+
+  // ───────────────────────── speed round
+  function speed() {
+    setBar('스피드 라운드', true);
+    const best = (P.best && P.best.speed) || 0;
+    $view.append(h('section', { class: 'panel stack' }, h('h1', { class: 'h2', text: '스피드 라운드' }),
+      h('p', { class: 'lead', text: '정의를 보고 오류 이름을 고르세요. 60초 동안 몇 개나 맞힐 수 있을까요? 보기 이름을 보는 순간 정의가 떠오르게 만드는 연습입니다.' }),
+      h('p', { class: 'small muted', text: best ? '최고 기록 ' + best + '개' : '첫 도전입니다' }),
+      h('div', { class: 'row' }, btn('시작', begin, 'btn primary', { id: 'speedStart' }))));
+    function begin() {
+      clear($view);
+      let score = 0;
+      let total = 0;
+      let over = false;
+      const timerEl = h('span', { class: 'num' });
+      const scoreEl = h('span', { class: 'num' });
+      const box = h('div', { class: 'stack' });
+      $view.append(h('div', { class: 'row' }, h('b', null, '맞힘 ', scoreEl), h('span', { class: 'spacer' }), h('span', { class: 'small muted', text: '남은 시간' }), timerEl), box);
+      ticker(timerEl, 60, end);
+      next();
+      function next() {
+        if (over) return;
+        clear(box);
+        scoreEl.textContent = String(score);
+        const pool = enabledIds();
+        const fid = pool[Math.floor(rng() * pool.length)];
+        const choices = C.pickChoices({ id: '_', f: fid, not: {} }, FT, { count: 4, rng, enabled: pool });
+        const btns = choices.map(id => {
+          const b = h('button', { class: 'choice', type: 'button' }, h('span', { text: F[id].name }));
+          b.addEventListener('click', () => {
+            if (over) return;
+            total++;
+            if (id === fid) score++;
+            btns.forEach(x => { x.disabled = true; });
+            b.classList.add(id === fid ? 'is-ok' : 'is-bad');
+            if (id !== fid) btns[choices.indexOf(fid)].classList.add('is-ok');
+            const tid = setTimeout(next, id === fid ? 350 : 900);
+            onLeave(() => clearTimeout(tid));
+          });
+          return b;
+        });
+        box.append(h('section', { class: 'panel stack' }, h('p', { class: 'card-def', text: F[fid].def.replace(/\s*\(노트에는[^)]*\)/, '') }), h('div', { class: 'choices' }, btns)));
+      }
+      function end() {
+        over = true;
+        clear(box);
+        const prev = (P.best && P.best.speed) || 0;
+        if (score > prev) { P.best = Object.assign({}, P.best, { speed: score }); touch(); }
+        box.append(h('section', { class: 'panel stack' }, h('div', { class: 'score', text: score + '개' }),
+          h('p', { class: 'muted', text: total + '번 중 ' + score + '번 맞힘' + (score > prev ? ' · 최고 기록!' : ' · 최고 기록 ' + prev + '개') }),
+          h('div', { class: 'row' }, btn('다시', () => render(), 'btn primary'), link('home', '홈으로'))));
+      }
+    }
+  }
+
+  // ───────────────────────── basics quiz
+  function basics() {
+    setBar('바탕 개념', true);
+    const qs = shuffle(FT.basics);
+    let k = 0;
+    let ok = 0;
+    const box = h('div', { class: 'stack' });
+    $view.append(h('h1', { class: 'h2', text: '바탕 개념' }), h('p', { class: 'lead', text: '오류를 구별하는 데 필요한 기초입니다: 기술·설명·논증, 연역·귀납, 불가능성, 논증 구조, 타당성·건전성, 숨은 전제.' }), box);
+    draw();
+    function draw() {
+      clear(box);
+      if (k >= qs.length) { box.append(h('section', { class: 'panel stack' }, h('div', { class: 'score', text: ok + ' / ' + qs.length }), h('div', { class: 'row' }, btn('다시', () => render(), 'btn primary'), link('home', '홈으로')))); return; }
+      const b = qs[k];
+      const reveal = h('div', { class: 'stack' });
+      const btns = b.choices.map(c => {
+        const x = h('button', { class: 'choice', type: 'button' }, h('span', { text: c }));
+        x.addEventListener('click', () => {
+          const right = c === b.answer;
+          if (right) ok++;
+          btns.forEach((y, i) => { y.disabled = true; if (b.choices[i] === b.answer) y.classList.add('is-ok'); });
+          if (!right) x.classList.add('is-bad');
+          reveal.append(h('div', { class: 'bubble' }, h('h4', { text: '정답: ' + b.answer }), h('p', { text: b.why })),
+            h('div', { class: 'row' }, h('span', { class: 'spacer' }), btn(k + 1 < qs.length ? '다음' : '결과', () => { k++; draw(); }, 'btn primary', { id: 'next' })));
+        });
+        return x;
+      });
+      box.append(h('section', { class: 'panel stack' }, h('div', { class: 'qmeta' }, h('span', { class: 'num', text: (k + 1) + ' / ' + qs.length }), h('span', { text: b.topic })),
+        h('p', { class: 'passage', text: b.q }), h('div', { class: 'choices' }, btns), reveal));
+    }
+  }
+
+  // ───────────────────────── prefs
+  function prefs() {
+    setBar('설정 · 백업', true);
+    const s = P.settings;
+    const change = fn => () => { fn(); touch(); updateBar(); };
+
+    const date = h('input', { type: 'date', id: 'examDate', value: s.examDate || '' });
+    date.addEventListener('change', change(() => { s.examDate = date.value || null; }));
+
+    const catMsg = h('p', { class: 'small muted' });
+    const catBoxes = FT.categories.map(c => {
+      const cb = h('input', { type: 'checkbox', id: 'cat-' + c.id });
+      cb.checked = s.cats.includes(c.id);
+      cb.addEventListener('change', () => {
+        const next = FT.categories.filter(x => document.getElementById('cat-' + x.id).checked).map(x => x.id);
+        if (!next.length) { cb.checked = true; catMsg.textContent = '범주를 하나 이상 켜 두어야 해요.'; return; }
+        catMsg.textContent = '';
+        s.cats = next; touch();
+      });
+      return h('label', { class: 'check' }, cb, c.name);
+    });
+
+    const perDay = h('input', { type: 'number', id: 'newPerDay', min: '0', max: '60', value: String(s.newPerDay) });
+    perDay.addEventListener('change', change(() => { s.newPerDay = Math.max(0, Math.min(60, parseInt(perDay.value, 10) || 0)); perDay.value = String(s.newPerDay); }));
+
+    const choiceSeg = h('div', { class: 'seg', role: 'group', 'aria-label': '한 문제씩 보기 수' });
+    for (const [v, t] of [[5, '5개'], ['all', '31개 전부']]) {
+      const b = btn(t, () => { s.choices = v; touch(); for (const x of choiceSeg.children) x.setAttribute('aria-pressed', String(x === b)); });
+      b.setAttribute('aria-pressed', String(s.choices === v));
+      choiceSeg.append(b);
+    }
+
+    const nSel = h('select', { id: 'setN', 'aria-label': '논제 수' });
+    for (let n = 4; n <= 12; n++) nSel.append(h('option', { value: String(n), text: n + '개' }));
+    nSel.value = String(s.setN);
+    const mSel = h('select', { id: 'setM', 'aria-label': '보기 수' });
+    const fillM = () => { clear(mSel); for (let m = s.setN; m <= LABELS.length; m++) mSel.append(h('option', { value: String(m), text: m + '개' })); mSel.value = String(Math.max(s.setM, s.setN)); };
+    fillM();
+    nSel.addEventListener('change', change(() => { s.setN = +nSel.value; if (s.setM < s.setN) s.setM = s.setN; fillM(); }));
+    mSel.addEventListener('change', change(() => { s.setM = +mSel.value; }));
+    const toggle = (key, text) => { const cb = h('input', { type: 'checkbox', id: 'opt-' + key }); cb.checked = !!s[key]; cb.addEventListener('change', change(() => { s[key] = cb.checked; })); return h('label', { class: 'check' }, cb, text); };
+
+    const modeText = { cloud: '이 계정에 저장하고 있어요. 다른 기기에서 열어도 이어서 공부할 수 있습니다.', local: '이 브라우저에만 저장하고 있어요. 기기를 바꾸거나 방문 기록을 지우면 사라지니 가끔 백업을 내보내 두세요.', memory: '저장이 막혀 있어 창을 닫으면 기록이 사라집니다. 공부를 마치면 백업을 내보내 두세요.' }[S.mode];
+    const backupBox = h('div', { class: 'stack' });
+    const showExport = () => {
+      clear(backupBox);
+      const ta = h('textarea', { id: 'backupOut', readonly: true, 'aria-label': '백업 내용' });
+      ta.value = S.exportText(P);
+      const msg = h('span', { class: 'small muted' });
+      const copy = btn('복사', () => {
+        const done = () => { msg.textContent = '복사했어요. 메모장 등에 붙여 넣어 보관하세요.'; };
+        const fallback = () => { ta.focus(); ta.select(); msg.textContent = '자동 복사가 막혀 있어요. 선택된 글자를 직접 복사하세요.'; };
+        try { navigator.clipboard.writeText(ta.value).then(done, fallback); } catch (e) { fallback(); }
+      }, 'btn primary');
+      backupBox.append(ta, h('div', { class: 'row' }, copy, msg));
+    };
+    const showImport = () => {
+      clear(backupBox);
+      const ta = h('textarea', { id: 'backupIn', 'aria-label': '백업 붙여 넣기', placeholder: '내보내기로 복사해 둔 글자를 여기에 붙여 넣으세요' });
+      const msg = h('span', { class: 'small' });
+      const load = btn('불러오기', () => {
+        try { P = S.importText(ta.value); S.save(P); msg.textContent = '불러왔어요. 기록 ' + Object.keys(P.items).length + '문항.'; updateBar(); }
+        catch (e) { msg.textContent = e.message; }
+      }, 'btn primary');
+      backupBox.append(ta, h('div', { class: 'row' }, load, msg));
+    };
+    const resetBox = h('div', { class: 'row' });
+    const askReset = () => {
+      clear(resetBox);
+      resetBox.append(h('span', { text: '모든 풀이 기록이 지워집니다. 설정은 남아요.' }),
+        btn('지우기', () => { const keep = P.settings; P = C.newProgress(); P.settings = keep; touch(); clear(resetBox); resetBox.append(h('span', { class: 'small', text: '기록을 지웠어요.' })); }, 'btn danger'),
+        btn('취소', () => { clear(resetBox); resetBox.append(resetBtn); }));
+    };
+    const resetBtn = btn('기록 모두 지우기', askReset, 'btn danger');
+    resetBox.append(resetBtn);
+
+    $view.append(h('h1', { class: 'h2', text: '설정 · 백업' }),
+      h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '시험 날짜' }),
+        h('p', { class: 'small muted', text: '넣어 두면 D-day가 표시되고, 복습 간격이 남은 날짜의 절반을 넘지 않게 줄어듭니다. 시험 전날에는 아직 불안한 문항이 모두 다시 나와요.' }),
+        h('div', { class: 'row' }, date, btn('지우기', () => { date.value = ''; s.examDate = null; touch(); updateBar(); }, 'btn ghost'))),
+      h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '공부 범위' }), h('p', { class: 'small muted', text: '시험 범위에 없는 범주는 꺼 두세요. 출제와 보기에서 빠집니다.' }), h('div', { class: 'row' }, catBoxes), catMsg),
+      h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '문제 수' }),
+        h('div', { class: 'row' }, h('label', { for: 'newPerDay', text: '하루 새 문항' }), perDay),
+        h('div', { class: 'row' }, h('span', { text: '한 문제씩 보기 수' }), choiceSeg)),
+      h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '매칭 세트' }),
+        h('div', { class: 'row' }, h('label', { for: 'setN', text: '논제' }), nSel, h('label', { for: 'setM', text: '보기' }), mSel),
+        toggle('reuse', '같은 보기를 여러 번 쓸 수 있게'), toggle('retry', '채점 후 틀린 것만 한 번 더 고르기'), toggle('timer', '걸린 시간 표시')),
+      h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '저장 · 백업' }), h('p', { class: 'small', text: modeText }),
+        h('div', { class: 'row' }, btn('백업 내보내기', showExport), btn('백업 가져오기', showImport)), backupBox),
+      h('section', { class: 'panel stack' }, h('h2', { class: 'h3', text: '기록 초기화' }), resetBox));
+  }
+
+  // ───────────────────────── router
+  const ROUTES = { home, cards, drill, review, match, exam, report, duel, contrast, formal, summary, notecheck, speed, basics, prefs };
+  function routeName() { return (location.hash || '').replace(/^#/, ''); }
+  function render() {
+    for (const f of leaveFns) { try { f(); } catch (e) { /* ignore */ } }
+    leaveFns = [];
+    KEY = null;
+    closeBubble();
+    closeSheet();
+    clear($view);
+    (ROUTES[routeName()] || home)();
+    updateBar();
+  }
+  window.addEventListener('hashchange', () => { render(); window.scrollTo({ top: 0 }); });
+  render();
+  S.connectCloud(remote => { P = remote; if (['', 'home', 'report', 'prefs'].includes(routeName())) render(); else updateBar(); });
+})();
+
+</script>
+</body>
+</html>
