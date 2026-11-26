@@ -2220,7 +2220,7 @@ tr:last-child td { border-bottom: 0; }
     return ids[ids.length - 1];
   }
 
-  function buildMatchingSet(Fx, p, { n = 8, m = 12, rng = Math.random, enabled, reuse = false, items } = {}) {
+  function buildMatchingSet(Fx, p, { n = 8, m = 12, rng = Math.random, enabled, reuse = false, items, avoid } = {}) {
     const bank = items || Fx.items || [];
     const enabledIds = enabled || enabledFallacies(Fx, p.settings);
     const byF = {};
@@ -2229,26 +2229,20 @@ tr:last-child td { border-bottom: 0; }
     n = Math.max(0, Math.min(n, avail.length));
     const hasUnseen = {};
     for (const id of avail) hasUnseen[id] = byF[id].some(it => !isSeen(p, it.id));
-    const weightOf = id => (hasUnseen[id] ? 3 : 1); // 안 푼 문항이 남은 오류를 더 자주 고른다
-
+    // 논제의 오류는 전체에서 고르게 뽑는다. 안 푼 문항이 남은 오류는 3배, 바로 앞 세트에 나온 오류는 1/5 가중치.
+    const avoidSet = new Set(avoid || []);
+    const weightOf = id => (hasUnseen[id] ? 3 : 1) * (avoidSet.has(id) ? 0.2 : 1);
+    // 한 범주에서 너무 많이 나오지 않게(기본 3개까지). 켜 둔 범주가 적으면 그만큼 늘린다.
+    const catOf = id => Fx.fallacyById[id].cat;
+    const catCap = Math.max(3, Math.ceil(n / new Set(avail.map(catOf)).size));
+    const catCount = {};
     const chosen = [];
-    const numClusters = n >= 7 ? 3 : n >= 4 ? 2 : n >= 2 ? 1 : 0;
-    for (let k = 0; k < numClusters && chosen.length + 2 <= n; k++) {
-      const cands = Fx.clusters.filter(c => c.members.filter(x => avail.includes(x) && !chosen.includes(x)).length >= 2);
-      if (!cands.length) break;
-      const cw = c => c.members.filter(x => avail.includes(x) && !chosen.includes(x)).reduce((s, x) => s + weightOf(x), 0);
-      const total = cands.reduce((s, c) => s + cw(c), 0);
-      let r = rng() * total;
-      let pick = cands[cands.length - 1];
-      for (const c of cands) { r -= cw(c); if (r < 0) { pick = c; break; } }
-      for (let t = 0; t < 2; t++) {
-        const mem = pick.members.filter(x => avail.includes(x) && !chosen.includes(x));
-        chosen.push(weightedPick(mem, weightOf, rng));
-      }
-    }
     while (chosen.length < n) {
-      const rest = avail.filter(x => !chosen.includes(x));
-      chosen.push(weightedPick(rest, weightOf, rng));
+      let cands = avail.filter(x => !chosen.includes(x) && (catCount[catOf(x)] || 0) < catCap);
+      if (!cands.length) cands = avail.filter(x => !chosen.includes(x));
+      const pick = weightedPick(cands, weightOf, rng);
+      chosen.push(pick);
+      catCount[catOf(pick)] = (catCount[catOf(pick)] || 0) + 1;
     }
     if (reuse && n >= 4 && rng() < 0.3) {
       const dupable = chosen.slice(0, -1).filter(id => byF[id].length >= 2);
@@ -2448,6 +2442,7 @@ tr:last-child td { border-bottom: 0; }
   const $sheet = document.getElementById('sheet');
   let P = S.init();
   let leaveFns = [];
+  let lastSetFallacies = []; // 바로 앞 매칭 세트의 정답 오류들 — 다음 세트에서 덜 나오게 한다
   let KEY = null;
 
   // ───────────────────────── helpers
@@ -3024,7 +3019,8 @@ tr:last-child td { border-bottom: 0; }
   function match() {
     setBar('매칭 세트', true);
     const s = P.settings;
-    const set = C.buildMatchingSet(FT, P, { n: s.setN, m: s.setM, rng, reuse: s.reuse });
+    const set = C.buildMatchingSet(FT, P, { n: s.setN, m: s.setM, rng, reuse: s.reuse, avoid: lastSetFallacies });
+    lastSetFallacies = set.items.map(id => itemById[id].f);
     if (set.items.length < 2) {
       $view.append(h('section', { class: 'panel stack' }, h('p', { text: '켜 둔 범주의 오류가 너무 적어 세트를 만들 수 없어요. 설정에서 범주를 더 켜 주세요.' }), link('prefs', '설정', 'btn primary')));
       return;
@@ -3055,7 +3051,8 @@ tr:last-child td { border-bottom: 0; }
       const sets = [];
       for (let k = 0; k < SETS; k++) {
         const items = enabledItems().filter(i => !used.has(i.id));
-        const st = C.buildMatchingSet(FT, P, { n: s.setN, m: s.setM, rng, reuse: s.reuse, items });
+        const prevAnswers = [...used].map(id => itemById[id].f);
+        const st = C.buildMatchingSet(FT, P, { n: s.setN, m: s.setM, rng, reuse: s.reuse, items, avoid: prevAnswers.length ? prevAnswers : lastSetFallacies });
         st.items.forEach(id => used.add(id));
         sets.push(st);
       }
